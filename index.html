@@ -51,7 +51,6 @@ button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;mar
 <div id="loginMsg" class="status hidden"></div>
 </div>
 
-
 <div id="app" class="hidden">
 
 <div class="card">
@@ -59,7 +58,6 @@ button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;mar
 <div class="muted" id="judgeName">Loading judge…</div>
 <div id="roleStatus" class="status"></div>
 </div>
-
 
 <div class="card" id="scanCard">
 
@@ -89,7 +87,6 @@ Stop scanner
 
 </div>
 
-
 <div class="card">
 
 <h2>Current Question</h2>
@@ -101,7 +98,6 @@ Waiting for an active question…
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -119,14 +115,12 @@ Waiting for an active question…
 
 </div>
 
-
 <button id="logoutBtn" class="secondary">
 Log out
 </button>
 
 </div>
 </div>
-
 
 <script>
 
@@ -156,7 +150,6 @@ el.classList.remove('hidden');
 
 }
 
-
 async function loadJudge(){
 
 const {data:{user},error:userError}=await sb.auth.getUser();
@@ -174,13 +167,11 @@ throw new Error(
 if(!user)
 throw new Error('No authenticated user found.');
 
-
 const {data,error}=await sb
 .from('Users')
 .select('id,name,"Role",auth_user_id')
 .eq('auth_user_id',user.id)
 .maybeSingle();
-
 
 if(error){
 
@@ -227,22 +218,50 @@ $('scanCard').classList.toggle(
 }
 
 
+/* FIXED QUESTION LOADING */
+
 async function loadQuestion(){
 
-const {data,error}=await sb
-.from('judge_question_view')
-.select('*')
-.limit(1);
+const student=$('studentId').value.trim();
 
-if(error){
+if(!student){
 
-msg($('questionBox'),error.message);
+$('questionBox').innerHTML=
+'<div class="muted">Enter a student ID.</div>';
+
+currentSession=null;
 
 return;
 
 }
 
-if(!data||!data.length){
+const {data,error}=await sb
+.from('judge_question_view')
+.select('*')
+.eq('student_id',student)
+.eq('status','active')
+.limit(1)
+.maybeSingle();
+
+if(error){
+
+console.error('Question load error:',error);
+
+$('questionBox').innerHTML=`
+
+<div class="status error">
+${esc(error.message)}
+</div>
+
+`;
+
+currentSession=null;
+
+return;
+
+}
+
+if(!data){
 
 $('questionBox').innerHTML=
 '<div class="muted">No active question.</div>';
@@ -253,36 +272,36 @@ return;
 
 }
 
-currentSession=data[0];
+currentSession=data;
 
 $('questionBox').innerHTML=`
 
 <div>
 
 <span class="pill">
-Student: ${esc(data[0].student_id)}
+Student: ${esc(data.student_id)}
 </span>
 
 <span class="pill">
-Number: ${esc(data[0].selected_number)}
+Number: ${esc(data.selected_number)}
 </span>
 
 </div>
 
 <p class="question">
 Question:
-${esc(data[0].question_number)}
+${esc(data.question_number)}
 —
-${esc(data[0].title||'')}
+${esc(data.title||'')}
 </p>
 
 <p>
 <b>Surah / Ayah:</b>
-${esc(data[0].surah||'—')}
+${esc(data.surah||'—')}
 ${
-data[0].ayah_start!=null
+data.ayah_start!=null
 ?
-' '+esc(data[0].ayah_start)+'–'+esc(data[0].ayah_end)
+' '+esc(data.ayah_start)+'–'+esc(data.ayah_end)
 :
 ''
 }
@@ -290,12 +309,12 @@ data[0].ayah_start!=null
 
 <p>
 <b>Riwayah:</b>
-${esc(data[0].riwayah||'—')}
+${esc(data.riwayah||'—')}
 </p>
 
 <p>
 <b>Instructions:</b>
-${esc(data[0].instructions||'—')}
+${esc(data.instructions||'—')}
 </p>
 
 <div>
@@ -303,7 +322,7 @@ ${esc(data[0].instructions||'—')}
 <b>Passage:</b>
 
 <div class="passage">
-${esc(data[0].text||'—')}
+${esc(data.text||'—')}
 </div>
 
 </div>
@@ -329,7 +348,6 @@ c=>({
 
 }
 
-
 function startRealtime(){
 
 if(realtimeChannel)
@@ -350,13 +368,11 @@ table:'competition_sessions'
 
 }
 
-
 async function scanCode(code){
 
 code=(code||'')
 .trim()
 .toUpperCase();
-
 
 if(!/^QIRAAT-\d+$/.test(code)){
 
@@ -369,10 +385,8 @@ return;
 
 }
 
-
 const student=
 $('studentId').value.trim();
-
 
 if(!student){
 
@@ -385,7 +399,6 @@ return;
 
 }
 
-
 const {data,error}=await sb.rpc(
 'scan_competition_barcode',
 {
@@ -393,7 +406,6 @@ p_student_id:student,
 p_barcode:code
 }
 );
-
 
 if(error){
 
@@ -406,7 +418,6 @@ return;
 
 }
 
-
 msg(
 $('scanMsg'),
 `Scanned ${code}. Question ${data} assigned.`,
@@ -417,7 +428,6 @@ await loadQuestion();
 
 }
 
-
 async function startScanner(){
 
 $('reader').classList.remove('hidden');
@@ -425,7 +435,6 @@ $('reader').classList.remove('hidden');
 $('stopScanBtn').classList.remove('hidden');
 
 $('scanBtn').disabled=true;
-
 
 try{
 
@@ -436,7 +445,6 @@ throw new Error(
 );
 
 }
-
 
 if(
 !navigator.mediaDevices||
@@ -449,7 +457,6 @@ throw new Error(
 
 }
 
-
 const testStream=
 await navigator.mediaDevices.getUserMedia({
 video:{
@@ -459,15 +466,12 @@ ideal:'environment'
 }
 });
 
-
 testStream
 .getTracks()
 .forEach(t=>t.stop());
 
-
 const devices=
 await Html5Qrcode.getCameras();
-
 
 if(!devices||!devices.length){
 
@@ -477,20 +481,16 @@ throw new Error(
 
 }
 
-
 const backCamera=
 devices.find(
 d=>/back|rear|environment/i.test(d.label)
 );
 
-
 const cameraId=
 (backCamera||devices[0]).id;
 
-
 scanner=
 new Html5Qrcode('reader');
-
 
 await scanner.start(
 
@@ -508,7 +508,6 @@ async text=>{
 
 await stopScanner();
 
-/* TEST: SHOW EXACT QR CONTENT */
 alert('QR CODE READ: '+text);
 
 await scanCode(text);
@@ -518,7 +517,6 @@ await scanCode(text);
 ()=>{}
 
 );
-
 
 }catch(e){
 
@@ -538,7 +536,6 @@ await stopScanner();
 }
 
 }
-
 
 async function stopScanner(){
 
@@ -563,7 +560,6 @@ $('stopScanBtn').classList.add('hidden');
 $('scanBtn').disabled=false;
 
 }
-
 
 $('loginBtn').onclick=async()=>{
 
@@ -614,11 +610,9 @@ e.message
 
 };
 
-
 $('scanBtn').onclick=startScanner;
 
 $('stopScanBtn').onclick=stopScanner;
-
 
 $('submitBtn').onclick=async()=>{
 
@@ -627,10 +621,8 @@ try{
 if(!currentSession)
 throw new Error('No active question.');
 
-
 const score=
 Number($('score').value);
-
 
 if(
 !Number.isFinite(score)||
@@ -644,7 +636,6 @@ throw new Error(
 
 }
 
-
 const {data,error}=await sb.rpc(
 'submit_judge_score',
 {
@@ -655,9 +646,7 @@ p_comments:$('comments').value.trim()
 }
 );
 
-
 if(error)throw error;
-
 
 msg(
 $('scoreMsg'),
@@ -680,7 +669,6 @@ e.message
 
 };
 
-
 $('logoutBtn').onclick=async()=>{
 
 await stopScanner();
@@ -693,7 +681,6 @@ await sb.auth.signOut();
 location.reload();
 
 };
-
 
 (async()=>{
 
