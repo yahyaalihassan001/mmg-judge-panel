@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muslim Mercy Group — Judge Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
+<style>
+body{font-family:Arial,sans-serif;background:#f6f7f9;margin:0;color:#18202a}.wrap{max-width:720px;margin:auto;padding:18px}.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 10px #0001}h1{font-size:22px;margin:0 0 4px}.muted{color:#697586;font-size:14px}.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:180px}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,textarea,button{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}textarea{min-height:90px;resize:vertical}button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;margin-top:10px}.secondary{background:#e9edf2;color:#111827}.danger{background:#b42318}.hidden{display:none}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700}.question{font-size:18px;font-weight:700}.passage{white-space:pre-wrap;line-height:1.8;background:#fafafa;padding:12px;border-radius:10px;margin-top:8px}.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}.success{background:#ecfdf3}.error{background:#fef3f2;color:#b42318}#reader{margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card" id="loginCard">
+<h1>Muslim Mercy Group</h1><div class="muted">Judge Panel</div>
+<label>Email</label><input id="email" type="email" autocomplete="username">
+<label>Password</label><input id="password" type="password" autocomplete="current-password">
+<button id="loginBtn">Log in</button><div id="loginMsg" class="status hidden"></div>
+</div>
+
+<div id="app" class="hidden">
+<div class="card">
+<h1>Judge Panel</h1><div class="muted" id="judgeName">Loading judge…</div>
+<div id="roleStatus" class="status"></div>
+</div>
+
+<div class="card" id="scanCard">
+<h2>Scan Barcode</h2>
+<div class="muted">Only Judge 1 can scan. Example: MMG-001</div>
+<div class="row"><div class="field"><label>Student ID</label><input id="studentId" value="Stu-001"></div></div>
+<button id="scanBtn">📷 Scan Barcode</button>
+<div id="reader" class="hidden"></div>
+<button id="stopScanBtn" class="secondary hidden">Stop scanner</button>
+<div id="scanMsg" class="status hidden"></div>
+</div>
+
+<div class="card">
+<h2>Current Question</h2>
+<div id="questionBox"><div class="muted">Waiting for an active question…</div></div>
+</div>
+
+<div class="card">
+<h2>Score</h2>
+<label>Score</label><input id="score" type="number" min="0" max="100" step="0.01" placeholder="0–100">
+<label>Comments</label><textarea id="comments" placeholder="Judge comments"></textarea>
+<button id="submitBtn">Submit Score</button>
+<div id="scoreMsg" class="status hidden"></div>
+</div>
+
+<button id="logoutBtn" class="secondary">Log out</button>
+</div>
+</div>
+<script>
+const SUPABASE_URL='https://nsalofqzqhivlaiqpfhe.supabase.co';
+const SUPABASE_KEY='sb_publishable_8AhIurbjKxLbn4rwoQE3ww_7ffssjoX';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentJudge=null,currentSession=null,realtimeChannel=null,scanner=null;
+const $=id=>document.getElementById(id);
+function msg(el,text,ok=false){el.textContent=text;el.className='status '+(ok?'success':'error');el.classList.remove('hidden')}
+async function loadJudge(){
+ const {data:{user},error:userError}=await sb.auth.getUser();
+ if(userError){console.error('Auth lookup error:',userError);throw new Error('Auth lookup failed: '+userError.message);}
+ if(!user) throw new Error('No authenticated user found.');
+ const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();
+ if(error){console.error('Users lookup error:',error);throw new Error('Users lookup failed: '+error.message+' (Auth ID: '+user.id+')');}
+ if(!data){throw new Error('No Users record found for Auth ID: '+user.id);}
+ currentJudge=data;$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');
+ const isJudge1=Number(data.id)===1;
+ $('roleStatus').textContent=isJudge1?'Judge 1: barcode scanning enabled.':'Barcode scanning is disabled for this judge.';
+ $('scanCard').classList.toggle('hidden',!isJudge1);
+}
+async function loadQuestion(){
+ const {data,error}=await sb.from('judge_question_view').select('*').limit(1);
+ if(error){msg($('questionBox'),error.message);return;}
+ if(!data||!data.length){$('questionBox').innerHTML='<div class="muted">No active question.</div>';currentSession=null;return;}
+ currentSession=data[0];
+ $('questionBox').innerHTML=`<div><span class="pill">Student: ${esc(data[0].student_id)}</span> <span class="pill">Number: ${esc(data[0].selected_number)}</span></div><p class="question">Question: ${esc(data[0].question_number)} — ${esc(data[0].title||'')}</p><p><b>Surah / Ayah:</b> ${esc(data[0].surah||'—')} ${data[0].ayah_start!=null?' '+esc(data[0].ayah_start)+'–'+esc(data[0].ayah_end):''}</p><p><b>Riwayah:</b> ${esc(data[0].riwayah||'—')}</p><p><b>Instructions:</b> ${esc(data[0].instructions||'—')}</p><div><b>Passage:</b><div class="passage">${esc(data[0].text||'—')}</div></div>`;
+}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function startRealtime(){
+ if(realtimeChannel) sb.removeChannel(realtimeChannel);
+ realtimeChannel=sb.channel('competition-session-live').on('postgres_changes',{event:'*',schema:'public',table:'competition_sessions'},()=>loadQuestion()).subscribe();
+}
+async function scanCode(code){
+ code=(code||'').trim().toUpperCase();
+ if(!/^MMG-\d+$/.test(code)){msg($('scanMsg'),'Invalid barcode. Use a code like MMG-001.');return;}
+ const student=$('studentId').value.trim(); if(!student){msg($('scanMsg'),'Enter the student ID first.');return;}
+ const {data,error}=await sb.rpc('scan_competition_barcode',{p_student_id:student,p_barcode:code});
+ if(error){msg($('scanMsg'),error.message);return;}
+ msg($('scanMsg'),`Scanned ${code}. Question ${data} assigned.`,true); await loadQuestion();
+}
+async function startScanner(){
+ $('reader').classList.remove('hidden');$('stopScanBtn').classList.remove('hidden');$('scanBtn').disabled=true;
+ try{
+  if(!window.isSecureContext) throw new Error('This page is not running in a secure HTTPS context.');
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('Camera access is not available in this browser.');
+  const testStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+  testStream.getTracks().forEach(t=>t.stop());
+  const devices=await Html5Qrcode.getCameras();
+  if(!devices || !devices.length) throw new Error('No camera was found on this device.');
+  const backCamera=devices.find(d=>/back|rear|environment/i.test(d.label));
+  const cameraId=(backCamera||devices[0]).id;
+  scanner=new Html5Qrcode('reader');
+  await scanner.start(cameraId,{fps:10,qrbox:{width:250,height:250}},async text=>{await stopScanner();await scanCode(text);},()=>{});
+ }catch(e){
+  console.error('Camera start error:',e);
+  msg($('scanMsg'),'Camera could not start: '+(e.message||e));
+  await stopScanner();
+ }
+}
+async function stopScanner(){if(scanner){try{await scanner.stop();}catch(e){}try{scanner.clear();}catch(e){}}scanner=null;$('reader').classList.add('hidden');$('stopScanBtn').classList.add('hidden');$('scanBtn').disabled=false;}
+$('loginBtn').onclick=async()=>{const email=$('email').value.trim(),password=$('password').value;try{const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;$('loginMsg').classList.add('hidden');$('loginCard').classList.add('hidden');$('app').classList.remove('hidden');try{await loadJudge();await loadQuestion();startRealtime();}catch(e){msg($('roleStatus'),e.message)}}catch(e){msg($('loginMsg'),e.message)}};
+$('scanBtn').onclick=startScanner;$('stopScanBtn').onclick=stopScanner;
+$('submitBtn').onclick=async()=>{try{if(!currentSession)throw new Error('No active question.');const score=Number($('score').value);if(!Number.isFinite(score)||score<0||score>100)throw new Error('Enter a score from 0 to 100.');const {data,error}=await sb.rpc('submit_judge_score',{p_student_id:currentSession.student_id,p_question_id:currentSession.question_id,p_score:score,p_comments:$('comments').value.trim()});if(error)throw error;msg($('scoreMsg'),data||'Score saved successfully.',true);$('score').value='';$('comments').value='';}catch(e){msg($('scoreMsg'),e.message)}};
+$('logoutBtn').onclick=async()=>{await stopScanner();if(realtimeChannel)await sb.removeChannel(realtimeChannel);await sb.auth.signOut();location.reload()};
+(async()=>{const {data:{session}}=await sb.auth.getSession();if(session){$('loginCard').classList.add('hidden');$('app').classList.remove('hidden');try{await loadJudge();await loadQuestion();startRealtime();}catch(e){msg($('roleStatus'),e.message)}}})();
+</script>
+</body></html>
