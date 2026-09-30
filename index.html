@@ -493,6 +493,29 @@ scanner=
 new Html5Qrcode('reader');
 
 await scanner.start(
+  cameraId,
+  {
+    fps: 10,
+    qrbox: {
+      width: 280,
+      height: 280
+    },
+    aspectRatio: 1.0
+  },
+  (decodedText, decodedResult) => {
+
+    console.log("QR SCANNED:", decodedText);
+
+    stopScanner().then(() => {
+      alert("QR CODE READ: " + decodedText);
+      scanCode(decodedText);
+    });
+
+  },
+  (errorMessage) => {
+    // Ignore normal scanning errors while searching for a QR code
+  }
+);
 
 cameraId,
 
