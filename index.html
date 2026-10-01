@@ -75,8 +75,6 @@ background:#f0fdf4;
 
 <div class="wrap">
 
-<!-- LOGIN -->
-
 <div class="card" id="loginCard">
 
 <h1>Muslim Mercy Group</h1>
@@ -95,8 +93,6 @@ background:#f0fdf4;
 </div>
 
 
-<!-- APP -->
-
 <div id="app" class="hidden">
 
 <div class="card">
@@ -112,8 +108,6 @@ Loading judge…
 </div>
 
 
-<!-- STUDENT IDENTIFICATION -->
-
 <div class="card" id="studentCard">
 
 <h2>👤 Student Identification</h2>
@@ -125,7 +119,6 @@ Enter the student's ID to identify the student before starting.
 <label>Student ID</label>
 
 <div class="row">
-
 <div class="field">
 
 <input
@@ -134,7 +127,6 @@ value="Stu-001"
 placeholder="Example: Stu-001">
 
 </div>
-
 </div>
 
 <button type="button" id="findStudentBtn">
@@ -176,7 +168,6 @@ alt="Student photo">
 </div>
 
 </div>
-
 </div>
 
 
@@ -193,8 +184,6 @@ Student confirmed. The student may now choose a question number.
 
 </div>
 
-
-<!-- QUESTION NUMBER -->
 
 <div class="card hidden" id="questionSelectionCard">
 
@@ -221,8 +210,6 @@ placeholder="Enter question number">
 </div>
 
 
-<!-- SCANNER -->
-
 <div class="card" id="scanCard">
 
 <h2>Scan Question Paper</h2>
@@ -247,8 +234,6 @@ Stop scanner
 </div>
 
 
-<!-- CURRENT QUESTION -->
-
 <div class="card">
 
 <h2>Current Question</h2>
@@ -263,8 +248,6 @@ Waiting for an active question…
 
 </div>
 
-
-<!-- COMMENTS -->
 
 <div class="card">
 
@@ -319,6 +302,7 @@ let currentStudent=null;
 let studentConfirmed=false;
 let realtimeChannel=null;
 let scanner=null;
+let scanLocked=false;
 
 
 const $=id=>
@@ -739,7 +723,7 @@ $('scanMsg'),
 'Invalid paper code. Use a code like QIRAAT-001.'
 );
 
-return;
+return false;
 
 }
 
@@ -751,7 +735,7 @@ $('scanMsg'),
 'Confirm the student before scanning.'
 );
 
-return;
+return false;
 
 }
 
@@ -769,7 +753,7 @@ $('scanMsg'),
 'Enter the student ID first.'
 );
 
-return;
+return false;
 
 }
 
@@ -788,9 +772,16 @@ $('scanMsg'),
 'Select the question number first.'
 );
 
-return;
+return false;
 
 }
+
+
+msg(
+$('scanMsg'),
+'Processing '+code+'…',
+true
+);
 
 
 const {
@@ -809,10 +800,10 @@ if(error){
 
 msg(
 $('scanMsg'),
-error.message
+'Database error: '+error.message
 );
 
-return;
+return false;
 
 }
 
@@ -826,64 +817,51 @@ true
 
 await loadQuestion();
 
+return true;
+
 }
 
 
 /* =========================
-   START SCANNER
+   START SCANNER — FIXED
 ========================= */
 
 async function startScanner(){
+
+if(scanLocked)
+return;
+
+scanLocked=false;
 
 $('reader')
 .classList
 .remove('hidden');
 
-
 $('stopScanBtn')
 .classList
 .remove('hidden');
-
 
 $('scanBtn').disabled=true;
 
 
 try{
 
+if(!window.Html5Qrcode){
+
+throw new Error(
+'QR scanner library is still loading. Please wait a few seconds and try again.'
+);
+
+}
+
+
 if(!window.isSecureContext){
 
 throw new Error(
-'This page is not running in a secure HTTPS context.'
+'Camera requires HTTPS.'
 );
 
 }
-
-
-if(
-!navigator.mediaDevices||
-!navigator.mediaDevices.getUserMedia
-){
-
-throw new Error(
-'Camera access is not available in this browser.'
-);
-
-}
-
-
-const testStream=
-await navigator.mediaDevices.getUserMedia({
-video:{
-facingMode:{
-ideal:'environment'
-}
-}
-});
-
-
-testStream
-.getTracks()
-.forEach(t=>t.stop());
 
 
 const devices=
@@ -893,7 +871,7 @@ await Html5Qrcode.getCameras();
 if(!devices||!devices.length){
 
 throw new Error(
-'No camera was found on this device.'
+'No camera was found.'
 );
 
 }
@@ -902,11 +880,8 @@ throw new Error(
 const backCamera=
 devices.find(
 d=>/back|rear|environment/i.test(d.label)
-);
-
-
-const cameraId=
-(backCamera||devices[0]).id;
+)
+||devices[0];
 
 
 scanner=
@@ -915,7 +890,7 @@ new Html5Qrcode('reader');
 
 await scanner.start(
 
-cameraId,
+backCamera.id,
 
 {
 fps:20,
@@ -926,29 +901,69 @@ height:300
 aspectRatio:1.0
 },
 
-(decodedText)=>{
+async(decodedText)=>{
+
+if(scanLocked)
+return;
+
+scanLocked=true;
+
 
 console.log(
-'QR SCANNED:',
+'QR RESULT:',
 decodedText
 );
 
-stopScanner().then(()=>{
 
-alert(
-'QR CODE READ: '+
-decodedText
+msg(
+$('scanMsg'),
+'QR detected: '+decodedText,
+true
 );
 
-scanCode(decodedText);
 
-});
+try{
+
+const success=
+await scanCode(decodedText);
+
+
+if(success){
+
+await stopScanner();
+
+}
+
+else{
+
+scanLocked=false;
+
+}
+
+}catch(e){
+
+console.error(
+'QR processing error:',
+e
+);
+
+msg(
+$('scanMsg'),
+'Could not process QR code: '+
+(e.message||e)
+);
+
+scanLocked=false;
+
+}
 
 },
 
-()=>{
+(errorMessage)=>{
 
-/* Normal scan errors ignored. */
+/*
+Normal camera scanning errors are ignored.
+*/
 
 }
 
@@ -957,7 +972,7 @@ scanCode(decodedText);
 }catch(e){
 
 console.error(
-'Camera start error:',
+'Scanner start error:',
 e
 );
 
@@ -980,29 +995,49 @@ await stopScanner();
 
 async function stopScanner(){
 
+scanLocked=true;
+
+
 if(scanner){
 
 try{
+
 await scanner.stop();
-}catch(e){}
+
+}catch(e){
+
+console.warn(
+'Scanner stop warning:',
+e
+);
+
+}
 
 try{
+
 scanner.clear();
+
 }catch(e){}
 
 }
 
+
 scanner=null;
+
 
 $('reader')
 .classList
 .add('hidden');
 
+
 $('stopScanBtn')
 .classList
 .add('hidden');
 
+
 $('scanBtn').disabled=false;
+
+scanLocked=false;
 
 }
 
@@ -1198,6 +1233,7 @@ return;
 
 
 $('loginBtn').disabled=true;
+
 $('loginBtn').textContent=
 'Logging in…';
 
@@ -1369,4 +1405,4 @@ e
 </script>
 
 </body>
-</html>
+   </html>
