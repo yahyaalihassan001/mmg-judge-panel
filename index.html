@@ -427,7 +427,7 @@ $('scanCard')
 
 
 /* =========================
-   FIND STUDENT — CORRECTED
+   FIND STUDENT — FIXED
 ========================= */
 
 async function findStudent(){
@@ -470,9 +470,9 @@ error
 }=await sb
 .from('Students')
 .select(
-'id,"students id","full name","madrasa type",nationality,"photo url",gender,"date of birth","madrasa id",status'
+'id,"student\'s_id",full_name,madrasa_type,nationality,photo_url,gender,date_of_birth,madrasa_id,status'
 )
-.eq('students id',studentId)
+.eq("student's_id",studentId)
 .maybeSingle();
 
 
@@ -510,27 +510,31 @@ return;
 currentStudent=data;
 
 
-$('studentName').textContent =
-data['full name'] ||
+$('studentName')
+.textContent =
+data.full_name ||
 'Unnamed Student';
 
 
-$('studentIdDisplay').textContent =
-data['students id'] ||
+$('studentIdDisplay')
+.textContent =
+data["student's_id"] ||
 studentId;
 
 
-$('studentMadrasa').textContent =
-data['madrasa type'] ||
+$('studentMadrasa')
+.textContent =
+data.madrasa_type ||
 '—';
 
 
-$('studentCategory').textContent =
+$('studentCategory')
+.textContent =
 '—';
 
 
 const photo =
-data['photo url'];
+data.photo_url;
 
 
 if(photo){
@@ -978,7 +982,7 @@ scanLocked=false;
 
 (errorMessage)=>{
 
-/* Normal scanning errors ignored. */
+/* Normal camera scanning errors ignored. */
 
 }
 
@@ -1420,4 +1424,4 @@ e
 </script>
 
 </body>
-   </html>
+</html>
