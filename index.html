@@ -75,6 +75,8 @@ background:#f0fdf4;
 
 <div class="wrap">
 
+<!-- LOGIN -->
+
 <div class="card" id="loginCard">
 
 <h1>Muslim Mercy Group</h1>
@@ -93,6 +95,8 @@ background:#f0fdf4;
 </div>
 
 
+<!-- APP -->
+
 <div id="app" class="hidden">
 
 <div class="card">
@@ -107,6 +111,8 @@ Loading judge…
 
 </div>
 
+
+<!-- STUDENT IDENTIFICATION -->
 
 <div class="card" id="studentCard">
 
@@ -185,6 +191,8 @@ Student confirmed. The student may now choose a question number.
 </div>
 
 
+<!-- QUESTION NUMBER -->
+
 <div class="card hidden" id="questionSelectionCard">
 
 <h2>🔢 Choose Question Number</h2>
@@ -210,6 +218,8 @@ placeholder="Enter question number">
 </div>
 
 
+<!-- SCANNER -->
+
 <div class="card" id="scanCard">
 
 <h2>Scan Question Paper</h2>
@@ -234,6 +244,8 @@ Stop scanner
 </div>
 
 
+<!-- CURRENT QUESTION -->
+
 <div class="card">
 
 <h2>Current Question</h2>
@@ -248,6 +260,8 @@ Waiting for an active question…
 
 </div>
 
+
+<!-- COMMENTS -->
 
 <div class="card">
 
@@ -305,7 +319,7 @@ let scanner=null;
 let scanLocked=false;
 
 
-const $=id=>
+const $=id =>
 document.getElementById(id);
 
 
@@ -313,7 +327,7 @@ function msg(el,text,ok=false){
 
 el.textContent=text;
 
-el.className=
+el.className =
 'status '+(ok?'success':'error');
 
 el.classList.remove('hidden');
@@ -389,17 +403,17 @@ user.id
 currentJudge=data;
 
 
-$('judgeName').textContent=
+$('judgeName').textContent =
 (data.name||'Judge')+
 ' • '+
 (data['Role']||'');
 
 
-const isJudge1=
+const isJudge1 =
 Number(data.id)===1;
 
 
-$('roleStatus').textContent=
+$('roleStatus').textContent =
 isJudge1
 ?'Judge 1: barcode scanning enabled.'
 :'Barcode scanning is disabled for this judge.';
@@ -413,12 +427,12 @@ $('scanCard')
 
 
 /* =========================
-   FIND STUDENT
+   FIND STUDENT — CORRECTED
 ========================= */
 
 async function findStudent(){
 
-const studentId=
+const studentId =
 $('studentId')
 .value
 .trim();
@@ -456,9 +470,9 @@ error
 }=await sb
 .from('Students')
 .select(
-'id,students_id,"full name","madrasa type",nationality,"photo url",gender,"date of birth","madrasa id",status'
+'id,"students id","full name","madrasa type",nationality,"photo url",gender,"date of birth","madrasa id",status'
 )
-.eq('students_id',studentId)
+.eq('students id',studentId)
 .maybeSingle();
 
 
@@ -496,37 +510,39 @@ return;
 currentStudent=data;
 
 
-$('studentName')
-.textContent=
-data['full name']||
+$('studentName').textContent =
+data['full name'] ||
 'Unnamed Student';
 
 
-$('studentIdDisplay')
-.textContent=
-data.students_id||
+$('studentIdDisplay').textContent =
+data['students id'] ||
 studentId;
 
 
-$('studentMadrasa')
-.textContent=
-data['madrasa type']||
+$('studentMadrasa').textContent =
+data['madrasa type'] ||
 '—';
 
 
-$('studentCategory')
-.textContent='—';
+$('studentCategory').textContent =
+'—';
 
 
-const photo=
+const photo =
 data['photo url'];
 
 
-if(photo)
+if(photo){
+
 $('studentPhoto').src=photo;
-else
+
+}else{
+
 $('studentPhoto')
 .removeAttribute('src');
+
+}
 
 
 $('studentDetails')
@@ -549,7 +565,7 @@ true
 
 async function loadQuestion(){
 
-const student=
+const student =
 $('studentId')
 .value
 .trim();
@@ -557,7 +573,7 @@ $('studentId')
 
 if(!student){
 
-$('questionBox').innerHTML=
+$('questionBox').innerHTML =
 '<div class="muted">Enter a student ID.</div>';
 
 currentSession=null;
@@ -586,7 +602,7 @@ console.error(
 error
 );
 
-$('questionBox').innerHTML=
+$('questionBox').innerHTML =
 '<div class="status error">'+
 esc(error.message)+
 '</div>';
@@ -600,7 +616,7 @@ return;
 
 if(!data){
 
-$('questionBox').innerHTML=
+$('questionBox').innerHTML =
 '<div class="muted">No active question.</div>';
 
 currentSession=null;
@@ -686,7 +702,7 @@ if(realtimeChannel)
 sb.removeChannel(realtimeChannel);
 
 
-realtimeChannel=
+realtimeChannel =
 sb
 .channel('competition-session-live')
 
@@ -711,7 +727,8 @@ table:'competition_sessions'
 
 async function scanCode(code){
 
-code=(code||'')
+code =
+(code||'')
 .trim()
 .toUpperCase();
 
@@ -740,7 +757,7 @@ return false;
 }
 
 
-const student=
+const student =
 $('studentId')
 .value
 .trim();
@@ -758,10 +775,9 @@ return false;
 }
 
 
-const selectedNumber=
+const selectedNumber =
 Number(
-$('selectedNumber')
-.value
+$('selectedNumber').value
 );
 
 
@@ -823,7 +839,7 @@ return true;
 
 
 /* =========================
-   START SCANNER — FIXED
+   START SCANNER
 ========================= */
 
 async function startScanner(){
@@ -833,13 +849,16 @@ return;
 
 scanLocked=false;
 
+
 $('reader')
 .classList
 .remove('hidden');
 
+
 $('stopScanBtn')
 .classList
 .remove('hidden');
+
 
 $('scanBtn').disabled=true;
 
@@ -864,11 +883,11 @@ throw new Error(
 }
 
 
-const devices=
+const devices =
 await Html5Qrcode.getCameras();
 
 
-if(!devices||!devices.length){
+if(!devices || !devices.length){
 
 throw new Error(
 'No camera was found.'
@@ -877,14 +896,14 @@ throw new Error(
 }
 
 
-const backCamera=
+const backCamera =
 devices.find(
 d=>/back|rear|environment/i.test(d.label)
 )
 ||devices[0];
 
 
-scanner=
+scanner =
 new Html5Qrcode('reader');
 
 
@@ -924,7 +943,7 @@ true
 
 try{
 
-const success=
+const success =
 await scanCode(decodedText);
 
 
@@ -932,9 +951,7 @@ if(success){
 
 await stopScanner();
 
-}
-
-else{
+}else{
 
 scanLocked=false;
 
@@ -961,9 +978,7 @@ scanLocked=false;
 
 (errorMessage)=>{
 
-/*
-Normal camera scanning errors are ignored.
-*/
+/* Normal scanning errors ignored. */
 
 }
 
@@ -1053,11 +1068,11 @@ console.log(
 );
 
 
-$('loginBtn').onclick=
+$('loginBtn').onclick =
 login;
 
 
-$('findStudentBtn').onclick=
+$('findStudentBtn').onclick =
 findStudent;
 
 
@@ -1119,13 +1134,13 @@ return;
 }
 
 
-const number=
+const number =
 Number(
 $('selectedNumber').value
 );
 
 
-if(!number||number<1){
+if(!number || number<1){
 
 msg(
 $('numberMsg'),
@@ -1148,11 +1163,11 @@ true
 };
 
 
-$('scanBtn').onclick=
+$('scanBtn').onclick =
 startScanner;
 
 
-$('stopScanBtn').onclick=
+$('stopScanBtn').onclick =
 stopScanner;
 
 
@@ -1170,7 +1185,7 @@ return;
 }
 
 
-const comment=
+const comment =
 $('comments')
 .value
 .trim();
@@ -1197,7 +1212,7 @@ true
 };
 
 
-$('logoutBtn').onclick=
+$('logoutBtn').onclick =
 logout;
 
 }
@@ -1209,18 +1224,18 @@ logout;
 
 async function login(){
 
-const email=
+const email =
 $('email')
 .value
 .trim();
 
 
-const password=
+const password =
 $('password')
 .value;
 
 
-if(!email||!password){
+if(!email || !password){
 
 msg(
 $('loginMsg'),
@@ -1234,7 +1249,7 @@ return;
 
 $('loginBtn').disabled=true;
 
-$('loginBtn').textContent=
+$('loginBtn').textContent =
 'Logging in…';
 
 
@@ -1306,7 +1321,7 @@ e.message
 
 $('loginBtn').disabled=false;
 
-$('loginBtn').textContent=
+$('loginBtn').textContent =
 'Log in';
 
 }
