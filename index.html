@@ -36,6 +36,8 @@ button:disabled{opacity:.6}
 .student-name{font-size:20px;font-weight:700;margin-bottom:6px}
 .student-detail{font-size:14px;margin:4px 0}
 .confirmed{border:2px solid #16a34a;background:#f0fdf4}
+.comment-item{white-space:pre-wrap;line-height:1.6;background:#fff;padding:12px;border-radius:10px;margin-top:8px;border:1px solid #e5e7eb}
+.comment-date{display:block;color:#697586;font-size:12px;margin-top:6px}
 </style>
 </head>
 
@@ -119,6 +121,7 @@ Student confirmed. The student may now choose a question number.
 <textarea id="comments" placeholder="Enter your observation or comment..."></textarea>
 <button type="button" id="commentBtn">Save Comment</button>
 <div id="commentMsg" class="status hidden"></div>
+<div id="savedComments" class="status hidden"></div>
 </div>
 
 <button type="button" id="logoutBtn" class="secondary">Log out</button>
@@ -191,10 +194,11 @@ async function findStudent(){
   $('studentConfirmedMsg').classList.add('hidden');
   $('questionSelectionCard').classList.add('hidden');
   $('studentCardDisplay').classList.remove('confirmed');
+  $('savedComments').classList.add('hidden');
   studentConfirmed=false;
   currentStudent=null;
+  currentSession=null;
 
-  // Fetch permitted student rows, then match the exact apostrophe-containing column in JavaScript.
   const {data,error}=await sb.from('Students').select('*');
 
   if(error){
@@ -229,6 +233,86 @@ async function findStudent(){
   msg($('studentMsg'),'Student found. Please verify the student details.',true);
 }
 
+/* LOAD SAVED COMMENTS */
+async function loadSavedComments(){
+  const area=$('savedComments');
+
+  if(!currentSession||!currentJudge){
+    area.classList.add('hidden');
+    area.innerHTML='';
+    return;
+  }
+
+  const {data,error}=await sb.from('judge_comments')
+    .select('id,student_id,judge_id,comment,created_at')
+    .eq('student_id',currentSession.student_id)
+    .eq('judge_id',currentJudge.id)
+    .order('created_at',{ascending:false});
+
+  if(error){
+    console.error('Load comments error:',error);
+    area.textContent='Could not load saved comments: '+error.message;
+    area.className='status error';
+    return;
+  }
+
+  area.innerHTML='<b>Your saved comments</b>'+
+    ((data||[]).length
+      ?data.map(c=>`
+        <div class="comment-item">
+          ${esc(c.comment)}
+          <small class="comment-date">${esc(new Date(c.created_at).toLocaleString())}</small>
+        </div>
+      `).join('')
+      :'<p class="muted">No saved comments yet.</p>');
+
+  area.className='status';
+}
+
+/* SAVE COMMENT */
+async function saveComment(){
+  if(!currentSession||!currentJudge){
+    msg($('commentMsg'),'No active question/student session.');
+    return;
+  }
+
+  const comment=$('comments').value.trim();
+
+  if(!comment){
+    msg($('commentMsg'),'Enter a comment or observation first.');
+    return;
+  }
+
+  $('commentBtn').disabled=true;
+  $('commentBtn').textContent='Saving…';
+
+  try{
+    const {data:{user},error:userError}=await sb.auth.getUser();
+    if(userError) throw userError;
+    if(!user) throw new Error('Please log in again.');
+
+    const {error}=await sb.from('judge_comments').insert({
+      student_id:currentSession.student_id,
+      judge_id:currentJudge.id,
+      auth_user_id:user.id,
+      comment:comment
+    });
+
+    if(error) throw error;
+
+    $('comments').value='';
+    msg($('commentMsg'),'Comment saved successfully.',true);
+    await loadSavedComments();
+
+  }catch(e){
+    console.error('Save comment error:',e);
+    msg($('commentMsg'),'Could not save comment: '+e.message);
+  }finally{
+    $('commentBtn').disabled=false;
+    $('commentBtn').textContent='Save Comment';
+  }
+}
+
 /* LOAD QUESTION */
 async function loadQuestion(){
   const student=$('studentId').value.trim();
@@ -236,6 +320,7 @@ async function loadQuestion(){
   if(!student){
     $('questionBox').innerHTML='<div class="muted">Enter a student ID.</div>';
     currentSession=null;
+    $('savedComments').classList.add('hidden');
     return;
   }
 
@@ -250,12 +335,15 @@ async function loadQuestion(){
     console.error('Question load error:',error);
     $('questionBox').innerHTML='<div class="status error">'+esc(error.message)+'</div>';
     currentSession=null;
+    $('savedComments').classList.add('hidden');
     return;
   }
 
   if(!data){
     $('questionBox').innerHTML='<div class="muted">No active question.</div>';
     currentSession=null;
+    $('savedComments').classList.add('hidden');
+    $('savedComments').innerHTML='';
     return;
   }
 
@@ -273,6 +361,8 @@ async function loadQuestion(){
     <p><b>Instructions:</b> ${esc(data.instructions||'—')}</p>
     <div><b>Passage:</b><div class="passage">${esc(data.text||'—')}</div></div>
   `;
+
+  await loadSavedComments();
 }
 
 /* REALTIME */
@@ -444,25 +534,7 @@ function initializeButtons(){
 
   $('scanBtn').onclick=startScanner;
   $('stopScanBtn').onclick=stopScanner;
-
-  $('commentBtn').onclick=()=>{
-    if(!currentSession){
-      msg($('commentMsg'),'No active question/student session.');
-      return;
-    }
-
-    const comment=$('comments').value.trim();
-    if(!comment){
-      msg($('commentMsg'),'Enter a comment or observation first.');
-      return;
-    }
-
-    msg($('commentMsg'),
-      'Comment entered. The secure database saving step will be connected next.',
-      true
-    );
-  };
-
+  $('commentBtn').onclick=saveComment;
   $('logoutBtn').onclick=logout;
 }
 
@@ -538,4 +610,4 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 </script>
 </body>
-</html>
+                                          </html>
