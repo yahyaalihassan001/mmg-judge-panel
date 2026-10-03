@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Muslim Mercy Group — Judge Panel</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/html5-qrcode" defer></script>
-
-<style>
+<title>Muslim Mercy Group — Judge Panel</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/html5-qrcode" defer></script><style>
 body{font-family:Arial,sans-serif;background:#f6f7f9;margin:0;color:#18202a}
 .wrap{max-width:720px;margin:auto;padding:18px}
 .card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 10px #0001}
@@ -27,6 +21,41 @@ button:disabled{opacity:.6}
 .pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700;margin:2px}
 .question{font-size:18px;font-weight:700}
 .passage{white-space:pre-wrap;line-height:1.8;background:#fafafa;padding:12px;border-radius:10px;margin-top:8px}
+
+/* QUR'AN IMAGE PASSAGE */
+.quran-pages{
+  max-height:650px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:#f5f5f5;
+  padding:8px;
+  border-radius:12px;
+  margin-top:8px;
+  border:1px solid #e5e7eb;
+  -webkit-overflow-scrolling:touch;
+}
+
+.quran-page{
+  display:block;
+  width:100%;
+  height:auto;
+  margin:0 auto 10px;
+  border-radius:6px;
+  background:#fff;
+}
+
+.quran-page:last-child{
+  margin-bottom:0;
+}
+
+.quran-page-label{
+  text-align:center;
+  font-size:12px;
+  color:#697586;
+  padding:5px 0 8px;
+  font-weight:700;
+}
+
 .status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}
 .success{background:#ecfdf3}
 .error{background:#fef3f2;color:#b42318}
@@ -44,357 +73,336 @@ button:disabled{opacity:.6}
 .score-input{font-size:20px;font-weight:700}
 .admin-comment{white-space:pre-wrap;line-height:1.6;padding:10px;background:#fff;border-radius:10px;border:1px solid #e5e7eb;margin-top:8px}
 .total-box{font-size:20px;font-weight:700;padding:14px;background:#eef2f6;border-radius:12px;margin-top:12px;line-height:1.6}
-</style>
-</head>
-
-<body>
-<div class="wrap">
-
-<!-- LOGIN -->
-<div class="card" id="loginCard">
+</style></head><body>
+<div class="wrap"><!-- LOGIN --><div class="card" id="loginCard">
   <h1>Muslim Mercy Group</h1>
-  <div class="muted">Judge Panel / Admin Panel</div>
+  <div class="muted">Judge Panel / Admin Panel</div><label>Email</label>
+<input id="email" type="email" autocomplete="username">
 
-  <label>Email</label>
-  <input id="email" type="email" autocomplete="username">
+<label>Password</label>
+<input id="password" type="password" autocomplete="current-password">
 
-  <label>Password</label>
-  <input id="password" type="password" autocomplete="current-password">
+<button type="button" id="loginBtn">Log in</button>
 
-  <button type="button" id="loginBtn">Log in</button>
   <div id="loginMsg" class="status hidden"></div>
-</div>
-
-<!-- APPLICATION -->
-<div id="app" class="hidden">
-
-  <!-- HEADER -->
-  <div class="card">
+</div><!-- APPLICATION --><div id="app" class="hidden">  <!-- HEADER -->  <div class="card">
     <h1>Muslim Mercy Group</h1>
     <div class="muted" id="judgeName">Loading user…</div>
     <div id="roleStatus" class="status"></div>
+  </div>  <!-- ADMIN PANEL -->  <div id="adminPanel" class="hidden"><!-- ADMIN LOAD -->
+<div class="card">
+  <h2>👑 Admin Score Entry</h2>
+
+  <div class="muted">
+    Enter the student's ID and load the current active question.
+    The Admin enters the four judges' scores separately.
   </div>
 
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" class="hidden">
-
-    <!-- ADMIN LOAD -->
-    <div class="card">
-      <h2>👑 Admin Score Entry</h2>
-
-      <div class="muted">
-        Enter the student's ID and load the current active question.
-        The Admin enters the four judges' scores separately.
-      </div>
-
-      <label>Student ID</label>
-      <input id="adminStudentId" placeholder="Example: Stu-001">
-
-      <button type="button" id="adminLoadBtn">
-        🔎 Load Student / Question
-      </button>
-
-      <div id="adminStudentMsg" class="status hidden"></div>
-    </div>
-
-    <!-- ADMIN STUDENT -->
-    <div class="card hidden" id="adminStudentCard">
-      <h2>👤 Student</h2>
-
-      <div class="student-card">
-        <img id="adminStudentPhoto"
-             class="student-photo"
-             src=""
-             alt="Student photo">
-
-        <div class="student-info">
-          <div id="adminStudentName" class="student-name">—</div>
-
-          <div class="student-detail">
-            <b>Student ID:</b>
-            <span id="adminStudentIdDisplay">—</span>
-          </div>
-
-          <div class="student-detail">
-            <b>Madrasa:</b>
-            <span id="adminStudentMadrasa">—</span>
-          </div>
-
-          <div class="student-detail">
-            <b>Category:</b>
-            <span id="adminStudentCategory">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ADMIN CURRENT QUESTION -->
-    <div class="card hidden" id="adminQuestionCard">
-      <h2>📖 Current Question</h2>
-
-      <div id="adminQuestionBox">
-        <div class="muted">No active question loaded.</div>
-      </div>
-    </div>
-
-    <!-- ADMIN JUDGE COMMENTS -->
-    <div class="card hidden" id="adminCommentsCard">
-      <h2>📝 Judges' Comments / Observations</h2>
-
-      <div class="muted">
-        These are the observations saved by Judges 1–4.
-      </div>
-
-      <div id="adminCommentsBox">
-        <div class="muted">No comments loaded.</div>
-      </div>
-    </div>
-
-    <!-- ADMIN SCORES -->
-    <div class="card hidden" id="adminScoresCard">
-      <h2>📊 Judge Scores</h2>
-
-      <div class="muted">
-        Each judge is scored separately out of 100.
-      </div>
-
-      <div class="score-card">
-        <div class="score-title">Judge 1 — /100</div>
-        <label>Score</label>
-        <input id="score1"
-               class="score-input"
-               type="number"
-               min="0"
-               max="100"
-               step="1"
-               placeholder="0–100">
-      </div>
-
-      <div class="score-card">
-        <div class="score-title">Judge 2 — /100</div>
-        <label>Score</label>
-        <input id="score2"
-               class="score-input"
-               type="number"
-               min="0"
-               max="100"
-               step="1"
-               placeholder="0–100">
-      </div>
-
-      <div class="score-card">
-        <div class="score-title">Judge 3 — /100</div>
-        <label>Score</label>
-        <input id="score3"
-               class="score-input"
-               type="number"
-               min="0"
-               max="100"
-               step="1"
-               placeholder="0–100">
-      </div>
-
-      <div class="score-card">
-        <div class="score-title">Judge 4 — /100</div>
-        <label>Score</label>
-        <input id="score4"
-               class="score-input"
-               type="number"
-               min="0"
-               max="100"
-               step="1"
-               placeholder="0–100">
-      </div>
-
-      <div id="adminTotal" class="total-box">
-        Total: 0 / 400<br>
-        Average: — / 100
-      </div>
-
-      <button type="button" id="saveScoresBtn">
-        💾 Save All Four Scores
-      </button>
-
-      <div id="scoresMsg" class="status hidden"></div>
-    </div>
-  </div>
-
-  <!-- JUDGE PANEL -->
-  <div id="judgePanel" class="hidden">
-
-    <!-- STUDENT IDENTIFICATION -->
-    <div class="card" id="studentCard">
-      <h2>👤 Student Identification</h2>
-
-      <div class="muted">
-        Enter the student's ID to identify the student before starting.
-      </div>
-
-      <label>Student ID</label>
-
-      <div class="row">
-        <div class="field">
-          <input id="studentId"
-                 value="Stu-001"
-                 placeholder="Example: Stu-001">
-        </div>
-      </div>
-
-      <button type="button" id="findStudentBtn">
-        🔎 Find Student
-      </button>
-
-      <div id="studentMsg" class="status hidden"></div>
-
-      <div id="studentDetails" class="hidden">
-
-        <div class="student-card" id="studentCardDisplay">
-
-          <img id="studentPhoto"
-               class="student-photo"
-               src=""
-               alt="Student photo">
-
-          <div class="student-info">
-
-            <div id="studentName" class="student-name">—</div>
-
-            <div class="student-detail">
-              <b>Student ID:</b>
-              <span id="studentIdDisplay">—</span>
-            </div>
-
-            <div class="student-detail">
-              <b>Madrasa:</b>
-              <span id="studentMadrasa">—</span>
-            </div>
-
-            <div class="student-detail">
-              <b>Category:</b>
-              <span id="studentCategory">—</span>
-            </div>
-
-          </div>
-        </div>
-
-        <button type="button" id="confirmStudentBtn">
-          ✅ Confirm Student
-        </button>
-
-      </div>
-
-      <div id="studentConfirmedMsg"
-           class="status success hidden">
-        Student confirmed. The student may now choose a question number.
-      </div>
-
-    </div>
-
-    <!-- QUESTION NUMBER -->
-    <div class="card hidden" id="questionSelectionCard">
-
-      <h2>🔢 Choose Question Number</h2>
-
-      <div class="muted">
-        After the student chooses a number, Judge 1 scans the corresponding
-        question paper QR code.
-      </div>
-
-      <label>Selected Number</label>
-
-      <input id="selectedNumber"
-             type="number"
-             min="1"
-             placeholder="Enter question number">
-
-      <button type="button" id="selectNumberBtn">
-        ✅ Confirm Number
-      </button>
-
-      <div id="numberMsg" class="status hidden"></div>
-
-    </div>
-
-    <!-- SCANNER -->
-    <div class="card hidden" id="scanCard">
-
-      <h2>Scan Question Paper</h2>
-
-      <div class="muted">
-        Only Judge 1 can scan.<br>
-        Example: QIRAAT-001
-      </div>
-
-      <button type="button" id="scanBtn">
-        📷 Scan Barcode
-      </button>
-
-      <div id="reader" class="hidden"></div>
-
-      <button type="button"
-              id="stopScanBtn"
-              class="secondary hidden">
-        Stop scanner
-      </button>
-
-      <div id="scanMsg" class="status hidden"></div>
-
-    </div>
-
-    <!-- CURRENT QUESTION -->
-    <div class="card">
-
-      <h2>Current Question</h2>
-
-      <div id="questionBox">
-        <div class="muted">
-          Waiting for an active question…
-        </div>
-      </div>
-
-    </div>
-
-    <!-- JUDGE COMMENT -->
-    <div class="card">
-
-      <h2>Judge Comment / Observation</h2>
-
-      <div class="muted">
-        Judges do not enter scores. Add your observation for this student here.
-      </div>
-
-      <label>Comment</label>
-
-      <textarea id="comments"
-                placeholder="Enter your observation or comment..."></textarea>
-
-      <button type="button" id="commentBtn">
-        Save Comment
-      </button>
-
-      <div id="commentMsg" class="status hidden"></div>
-
-      <div id="savedComments" class="status hidden"></div>
-
-    </div>
-
-  </div>
-
-  <!-- LOGOUT -->
-  <button type="button"
-          id="logoutBtn"
-          class="secondary">
-    Log out
+  <label>Student ID</label>
+  <input id="adminStudentId" placeholder="Example: Stu-001">
+
+  <button type="button" id="adminLoadBtn">
+    🔎 Load Student / Question
   </button>
 
-</div>
+  <div id="adminStudentMsg" class="status hidden"></div>
 </div>
 
-<script>
+<!-- ADMIN STUDENT -->
+<div class="card hidden" id="adminStudentCard">
+  <h2>👤 Student</h2>
+
+  <div class="student-card">
+    <img id="adminStudentPhoto"
+         class="student-photo"
+         src=""
+         alt="Student photo">
+
+    <div class="student-info">
+      <div id="adminStudentName" class="student-name">—</div>
+
+      <div class="student-detail">
+        <b>Student ID:</b>
+        <span id="adminStudentIdDisplay">—</span>
+      </div>
+
+      <div class="student-detail">
+        <b>Madrasa:</b>
+        <span id="adminStudentMadrasa">—</span>
+      </div>
+
+      <div class="student-detail">
+        <b>Category:</b>
+        <span id="adminStudentCategory">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CURRENT QUESTION -->
+<div class="card hidden" id="adminQuestionCard">
+  <h2>📖 Current Question</h2>
+
+  <div id="adminQuestionBox">
+    <div class="muted">No active question loaded.</div>
+  </div>
+</div>
+
+<!-- ADMIN JUDGE COMMENTS -->
+<div class="card hidden" id="adminCommentsCard">
+  <h2>📝 Judges' Comments / Observations</h2>
+
+  <div class="muted">
+    These are the observations saved by Judges 1–4.
+  </div>
+
+  <div id="adminCommentsBox">
+    <div class="muted">No comments loaded.</div>
+  </div>
+</div>
+
+<!-- ADMIN SCORES -->
+<div class="card hidden" id="adminScoresCard">
+  <h2>📊 Judge Scores</h2>
+
+  <div class="muted">
+    Each judge is scored separately out of 100.
+  </div>
+
+  <div class="score-card">
+    <div class="score-title">Judge 1 — /100</div>
+    <label>Score</label>
+    <input id="score1"
+           class="score-input"
+           type="number"
+           min="0"
+           max="100"
+           step="1"
+           placeholder="0–100">
+  </div>
+
+  <div class="score-card">
+    <div class="score-title">Judge 2 — /100</div>
+    <label>Score</label>
+    <input id="score2"
+           class="score-input"
+           type="number"
+           min="0"
+           max="100"
+           step="1"
+           placeholder="0–100">
+  </div>
+
+  <div class="score-card">
+    <div class="score-title">Judge 3 — /100</div>
+    <label>Score</label>
+    <input id="score3"
+           class="score-input"
+           type="number"
+           min="0"
+           max="100"
+           step="1"
+           placeholder="0–100">
+  </div>
+
+  <div class="score-card">
+    <div class="score-title">Judge 4 — /100</div>
+    <label>Score</label>
+    <input id="score4"
+           class="score-input"
+           type="number"
+           min="0"
+           max="100"
+           step="1"
+           placeholder="0–100">
+  </div>
+
+  <div id="adminTotal" class="total-box">
+    Total: 0 / 400<br>
+    Average: — / 100
+  </div>
+
+  <button type="button" id="saveScoresBtn">
+    💾 Save All Four Scores
+  </button>
+
+  <div id="scoresMsg" class="status hidden"></div>
+</div>
+
+  </div>  <!-- JUDGE PANEL -->  <div id="judgePanel" class="hidden"><!-- STUDENT IDENTIFICATION -->
+<div class="card" id="studentCard">
+  <h2>👤 Student Identification</h2>
+
+  <div class="muted">
+    Enter the student's ID to identify the student before starting.
+  </div>
+
+  <label>Student ID</label>
+
+  <div class="row">
+    <div class="field">
+      <input id="studentId"
+             value="Stu-001"
+             placeholder="Example: Stu-001">
+    </div>
+  </div>
+
+  <button type="button" id="findStudentBtn">
+    🔎 Find Student
+  </button>
+
+  <div id="studentMsg" class="status hidden"></div>
+
+  <div id="studentDetails" class="hidden">
+
+    <div class="student-card" id="studentCardDisplay">
+
+      <img id="studentPhoto"
+           class="student-photo"
+           src=""
+           alt="Student photo">
+
+      <div class="student-info">
+
+        <div id="studentName" class="student-name">—</div>
+
+        <div class="student-detail">
+          <b>Student ID:</b>
+          <span id="studentIdDisplay">—</span>
+        </div>
+
+        <div class="student-detail">
+          <b>Madrasa:</b>
+          <span id="studentMadrasa">—</span>
+        </div>
+
+        <div class="student-detail">
+          <b>Category:</b>
+          <span id="studentCategory">—</span>
+        </div>
+
+      </div>
+    </div>
+
+    <button type="button" id="confirmStudentBtn">
+      ✅ Confirm Student
+    </button>
+
+  </div>
+
+  <div id="studentConfirmedMsg"
+       class="status success hidden">
+    Student confirmed. The student may now choose a question number.
+  </div>
+
+</div>
+
+<!-- QUESTION NUMBER -->
+<div class="card hidden" id="questionSelectionCard">
+
+  <h2>🔢 Choose Question Number</h2>
+
+  <div class="muted">
+    After the student chooses a number, Judge 1 scans the corresponding
+    question paper QR code.
+  </div>
+
+  <label>Selected Number</label>
+
+  <input id="selectedNumber"
+         type="number"
+         min="1"
+         placeholder="Enter question number">
+
+  <button type="button" id="selectNumberBtn">
+    ✅ Confirm Number
+  </button>
+
+  <div id="numberMsg" class="status hidden"></div>
+
+</div>
+
+<!-- SCANNER -->
+<div class="card hidden" id="scanCard">
+
+  <h2>Scan Question Paper</h2>
+
+  <div class="muted">
+    Only Judge 1 can scan.<br>
+    Example: QIRAAT-001
+  </div>
+
+  <button type="button" id="scanBtn">
+    📷 Scan Barcode
+  </button>
+
+  <div id="reader" class="hidden"></div>
+
+  <button type="button"
+          id="stopScanBtn"
+          class="secondary hidden">
+    Stop scanner
+  </button>
+
+  <div id="scanMsg" class="status hidden"></div>
+
+</div>
+
+<!-- CURRENT QUESTION -->
+<div class="card">
+
+  <h2>Current Question</h2>
+
+  <div id="questionBox">
+    <div class="muted">
+      Waiting for an active question…
+    </div>
+  </div>
+
+</div>
+
+<!-- JUDGE COMMENT -->
+<div class="card">
+
+  <h2>Judge Comment / Observation</h2>
+
+  <div class="muted">
+    Judges do not enter scores. Add your observation for this student here.
+  </div>
+
+  <label>Comment</label>
+
+  <textarea id="comments"
+            placeholder="Enter your observation or comment..."></textarea>
+
+  <button type="button" id="commentBtn">
+    Save Comment
+  </button>
+
+  <div id="commentMsg" class="status hidden"></div>
+
+  <div id="savedComments" class="status hidden"></div>
+
+</div>
+
+  </div>  <!-- LOGOUT --><button type="button"
+id="logoutBtn"
+class="secondary">
+Log out
+</button>
+
+</div>
+</div><script>
 
 const SUPABASE_URL='https://nsalofqzqhivlaiqpfhe.supabase.co';
 const SUPABASE_KEY='sb_publishable_8AhIurbjKxLbn4rwoQE3ww_7ffssjoX';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const QURAN_PAGE_8=
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_008.png';
+
+const QURAN_PAGE_9=
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_009.png';
 
 let currentJudge=null;
 let currentSession=null;
@@ -420,6 +428,49 @@ function esc(v){
     "'":'&#39;',
     '"':'&quot;'
   }[c]));
+}
+
+/*
+  Qur'an image passage.
+  Page 8 and Page 9 are displayed vertically
+  inside a scrollable container.
+*/
+function quranPassage(){
+
+  return `
+
+    <div>
+      <b>Passage:</b>
+
+      <div class="quran-pages">
+
+        <div class="quran-page-label">
+          Qur'an Page 8
+        </div>
+
+        <img
+          class="quran-page"
+          src="${QURAN_PAGE_8}"
+          alt="Qur'an passage — page 8"
+          loading="lazy"
+        >
+
+        <div class="quran-page-label">
+          Qur'an Page 9
+        </div>
+
+        <img
+          class="quran-page"
+          src="${QURAN_PAGE_9}"
+          alt="Qur'an passage — page 9"
+          loading="lazy"
+        >
+
+      </div>
+
+    </div>
+
+  `;
 }
 
 /* LOAD USER */
@@ -791,12 +842,7 @@ async function loadQuestion(){
       ${esc(data.instructions||'—')}
     </p>
 
-    <div>
-      <b>Passage:</b>
-      <div class="passage">
-        ${esc(data.text||'—')}
-      </div>
-    </div>
+    ${quranPassage()}
 
   `;
 
@@ -952,13 +998,7 @@ async function adminLoadStudent(){
       ${esc(question.instructions||'—')}
     </p>
 
-    <div>
-      <b>Passage:</b>
-
-      <div class="passage">
-        ${esc(question.text||'—')}
-      </div>
-    </div>
+    ${quranPassage()}
 
   `;
 
@@ -1886,6 +1926,5 @@ document.addEventListener(
   }
 );
 
-</script>
-</body>
+</script></body>
 </html>
