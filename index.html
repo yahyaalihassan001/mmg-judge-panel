@@ -1,417 +1,189 @@
-<!DOCTYPE html><html lang="en">
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Muslim Mercy Group — Judge Panel</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/html5-qrcode" defer></script><style>
+<title>Muslim Mercy Group — Judge Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
+<style>
+*{box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:#f6f7f9;margin:0;color:#18202a}
 .wrap{max-width:720px;margin:auto;padding:18px}
 .card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 10px #0001}
-h1{font-size:22px;margin:0 0 4px}
-h2{margin-top:0}
+h1{font-size:22px;margin:0 0 4px}h2{margin-top:0}
 .muted{color:#697586;font-size:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.field{flex:1;min-width:180px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:180px}
 label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}
-input,textarea,button{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}
+input,textarea,button{width:100%;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}
 textarea{min-height:110px;resize:vertical}
-button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;margin-top:10px}
-button:disabled{opacity:.6}
-.secondary{background:#e9edf2;color:#111827}
-.hidden{display:none}
+button{background:#111827;color:white;border:0;font-weight:700;cursor:pointer;margin-top:10px}
+button:disabled{opacity:.6}.secondary{background:#e9edf2;color:#111827}
+.hidden{display:none!important}
 .pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700;margin:2px}
 .question{font-size:18px;font-weight:700}
 .passage{white-space:pre-wrap;line-height:1.8;background:#fafafa;padding:12px;border-radius:10px;margin-top:8px}
-
-/* QUR'AN IMAGE PASSAGE */
-.quran-pages{
-  max-height:650px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  background:#f5f5f5;
-  padding:8px;
-  border-radius:12px;
-  margin-top:8px;
-  border:1px solid #e5e7eb;
-  -webkit-overflow-scrolling:touch;
-}
-
-.quran-page{
-  display:block;
-  width:100%;
-  height:auto;
-  margin:0 auto 10px;
-  border-radius:6px;
-  background:#fff;
-}
-
-.quran-page:last-child{
-  margin-bottom:0;
-}
-
-.quran-page-label{
-  text-align:center;
-  font-size:12px;
-  color:#697586;
-  padding:5px 0 8px;
-  font-weight:700;
-}
-
-.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}
-.success{background:#ecfdf3}
-.error{background:#fef3f2;color:#b42318}
+.quran-pages{max-height:650px;overflow-y:auto;overflow-x:hidden;background:#f5f5f5;padding:8px;border-radius:12px;margin-top:8px;border:1px solid #e5e7eb;-webkit-overflow-scrolling:touch}
+.quran-page{display:block;width:100%;height:auto;margin:0 auto 10px;border-radius:6px;background:#fff}
+.quran-page:last-child{margin-bottom:0}
+.quran-page-label{text-align:center;font-size:12px;color:#697586;padding:5px 0 8px;font-weight:700}
+.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px;white-space:pre-wrap}
+.success{background:#ecfdf3}.error{background:#fef3f2;color:#b42318}
 #reader{margin-top:12px}
 .student-card{display:flex;gap:16px;align-items:center;margin-top:12px;padding:14px;background:#f8fafc;border-radius:14px}
 .student-photo{width:90px;height:90px;border-radius:12px;object-fit:cover;background:#e5e7eb;flex-shrink:0}
-.student-info{flex:1}
-.student-name{font-size:20px;font-weight:700;margin-bottom:6px}
-.student-detail{font-size:14px;margin:4px 0}
-.confirmed{border:2px solid #16a34a;background:#f0fdf4}
+.student-info{flex:1}.student-name{font-size:20px;font-weight:700;margin-bottom:6px}
+.student-detail{font-size:14px;margin:4px 0}.confirmed{border:2px solid #16a34a;background:#f0fdf4}
 .comment-item{white-space:pre-wrap;line-height:1.6;background:#fff;padding:12px;border-radius:10px;margin-top:8px;border:1px solid #e5e7eb}
 .comment-date{display:block;color:#697586;font-size:12px;margin-top:6px}
 .score-card{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin-top:12px;background:#fafafa}
-.score-title{font-weight:700;font-size:17px;margin-bottom:8px}
-.score-input{font-size:20px;font-weight:700}
+.score-title{font-weight:700;font-size:17px;margin-bottom:8px}.score-input{font-size:20px;font-weight:700}
 .admin-comment{white-space:pre-wrap;line-height:1.6;padding:10px;background:#fff;border-radius:10px;border:1px solid #e5e7eb;margin-top:8px}
 .total-box{font-size:20px;font-weight:700;padding:14px;background:#eef2f6;border-radius:12px;margin-top:12px;line-height:1.6}
-</style></head><body>
-<div class="wrap"><!-- LOGIN --><div class="card" id="loginCard">
-  <h1>Muslim Mercy Group</h1>
-  <div class="muted">Judge Panel / Admin Panel</div><label>Email</label>
-<input id="email" type="email" autocomplete="username">
+@media(max-width:480px){.wrap{padding:10px}.card{padding:14px}.student-card{align-items:flex-start}.student-photo{width:72px;height:72px}}
+</style>
+</head>
+<body>
+<div class="wrap">
 
-<label>Password</label>
-<input id="password" type="password" autocomplete="current-password">
-
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+<h1>Muslim Mercy Group</h1>
+<div class="muted">Judge Panel / Admin Panel</div>
+<label>Email</label><input id="email" type="email" autocomplete="username">
+<label>Password</label><input id="password" type="password" autocomplete="current-password">
 <button type="button" id="loginBtn">Log in</button>
-
-  <div id="loginMsg" class="status hidden"></div>
-</div><!-- APPLICATION --><div id="app" class="hidden">  <!-- HEADER -->  <div class="card">
-    <h1>Muslim Mercy Group</h1>
-    <div class="muted" id="judgeName">Loading user…</div>
-    <div id="roleStatus" class="status"></div>
-  </div>  <!-- ADMIN PANEL -->  <div id="adminPanel" class="hidden"><!-- ADMIN LOAD -->
-<div class="card">
-  <h2>👑 Admin Score Entry</h2>
-
-  <div class="muted">
-    Enter the student's ID and load the current active question.
-    The Admin enters the four judges' scores separately.
-  </div>
-
-  <label>Student ID</label>
-  <input id="adminStudentId" placeholder="Example: Stu-001">
-
-  <button type="button" id="adminLoadBtn">
-    🔎 Load Student / Question
-  </button>
-
-  <div id="adminStudentMsg" class="status hidden"></div>
+<div id="loginMsg" class="status hidden"></div>
 </div>
 
-<!-- ADMIN STUDENT -->
+<!-- APPLICATION -->
+<div id="app" class="hidden">
+<div class="card">
+<h1>Muslim Mercy Group</h1>
+<div class="muted" id="judgeName">Loading user…</div>
+<div id="roleStatus" class="status"></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden">
+<div class="card">
+<h2>👑 Admin Score Entry</h2>
+<div class="muted">Enter the student's ID and load the current active question. The Admin enters the four judges' scores separately.</div>
+<label>Student ID</label><input id="adminStudentId" placeholder="Example: Stu-001">
+<button type="button" id="adminLoadBtn">🔎 Load Student / Question</button>
+<div id="adminStudentMsg" class="status hidden"></div>
+</div>
+
 <div class="card hidden" id="adminStudentCard">
-  <h2>👤 Student</h2>
-
-  <div class="student-card">
-    <img id="adminStudentPhoto"
-         class="student-photo"
-         src=""
-         alt="Student photo">
-
-    <div class="student-info">
-      <div id="adminStudentName" class="student-name">—</div>
-
-      <div class="student-detail">
-        <b>Student ID:</b>
-        <span id="adminStudentIdDisplay">—</span>
-      </div>
-
-      <div class="student-detail">
-        <b>Madrasa:</b>
-        <span id="adminStudentMadrasa">—</span>
-      </div>
-
-      <div class="student-detail">
-        <b>Category:</b>
-        <span id="adminStudentCategory">—</span>
-      </div>
-    </div>
-  </div>
+<h2>👤 Student</h2>
+<div class="student-card">
+<img id="adminStudentPhoto" class="student-photo" src="" alt="Student photo">
+<div class="student-info">
+<div id="adminStudentName" class="student-name">—</div>
+<div class="student-detail"><b>Student ID:</b> <span id="adminStudentIdDisplay">—</span></div>
+<div class="student-detail"><b>Madrasa:</b> <span id="adminStudentMadrasa">—</span></div>
+<div class="student-detail"><b>Category:</b> <span id="adminStudentCategory">—</span></div>
+</div>
+</div>
 </div>
 
-<!-- ADMIN CURRENT QUESTION -->
 <div class="card hidden" id="adminQuestionCard">
-  <h2>📖 Current Question</h2>
-
-  <div id="adminQuestionBox">
-    <div class="muted">No active question loaded.</div>
-  </div>
+<h2>📖 Current Question</h2>
+<div id="adminQuestionBox"><div class="muted">No active question loaded.</div></div>
 </div>
 
-<!-- ADMIN JUDGE COMMENTS -->
 <div class="card hidden" id="adminCommentsCard">
-  <h2>📝 Judges' Comments / Observations</h2>
-
-  <div class="muted">
-    These are the observations saved by Judges 1–4.
-  </div>
-
-  <div id="adminCommentsBox">
-    <div class="muted">No comments loaded.</div>
-  </div>
+<h2>📝 Judges' Comments / Observations</h2>
+<div class="muted">These are the observations saved by Judges 1–4.</div>
+<div id="adminCommentsBox"><div class="muted">No comments loaded.</div></div>
 </div>
 
-<!-- ADMIN SCORES -->
 <div class="card hidden" id="adminScoresCard">
-  <h2>📊 Judge Scores</h2>
-
-  <div class="muted">
-    Each judge is scored separately out of 100.
-  </div>
-
-  <div class="score-card">
-    <div class="score-title">Judge 1 — /100</div>
-    <label>Score</label>
-    <input id="score1"
-           class="score-input"
-           type="number"
-           min="0"
-           max="100"
-           step="1"
-           placeholder="0–100">
-  </div>
-
-  <div class="score-card">
-    <div class="score-title">Judge 2 — /100</div>
-    <label>Score</label>
-    <input id="score2"
-           class="score-input"
-           type="number"
-           min="0"
-           max="100"
-           step="1"
-           placeholder="0–100">
-  </div>
-
-  <div class="score-card">
-    <div class="score-title">Judge 3 — /100</div>
-    <label>Score</label>
-    <input id="score3"
-           class="score-input"
-           type="number"
-           min="0"
-           max="100"
-           step="1"
-           placeholder="0–100">
-  </div>
-
-  <div class="score-card">
-    <div class="score-title">Judge 4 — /100</div>
-    <label>Score</label>
-    <input id="score4"
-           class="score-input"
-           type="number"
-           min="0"
-           max="100"
-           step="1"
-           placeholder="0–100">
-  </div>
-
-  <div id="adminTotal" class="total-box">
-    Total: 0 / 400<br>
-    Average: — / 100
-  </div>
-
-  <button type="button" id="saveScoresBtn">
-    💾 Save All Four Scores
-  </button>
-
-  <div id="scoresMsg" class="status hidden"></div>
+<h2>📊 Judge Scores</h2>
+<div class="muted">Each judge is scored separately out of 100.</div>
+<div class="score-card"><div class="score-title">Judge 1 — /100</div><label>Score</label><input id="score1" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100"></div>
+<div class="score-card"><div class="score-title">Judge 2 — /100</div><label>Score</label><input id="score2" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100"></div>
+<div class="score-card"><div class="score-title">Judge 3 — /100</div><label>Score</label><input id="score3" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100"></div>
+<div class="score-card"><div class="score-title">Judge 4 — /100</div><label>Score</label><input id="score4" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100"></div>
+<div id="adminTotal" class="total-box">Total: 0 / 400<br>Average: — / 100</div>
+<button type="button" id="saveScoresBtn">💾 Save All Four Scores</button>
+<div id="scoresMsg" class="status hidden"></div>
+</div>
 </div>
 
-  </div>  <!-- JUDGE PANEL -->  <div id="judgePanel" class="hidden"><!-- STUDENT IDENTIFICATION -->
+<!-- JUDGE PANEL -->
+<div id="judgePanel" class="hidden">
 <div class="card" id="studentCard">
-  <h2>👤 Student Identification</h2>
-
-  <div class="muted">
-    Enter the student's ID to identify the student before starting.
-  </div>
-
-  <label>Student ID</label>
-
-  <div class="row">
-    <div class="field">
-      <input id="studentId"
-             value="Stu-001"
-             placeholder="Example: Stu-001">
-    </div>
-  </div>
-
-  <button type="button" id="findStudentBtn">
-    🔎 Find Student
-  </button>
-
-  <div id="studentMsg" class="status hidden"></div>
-
-  <div id="studentDetails" class="hidden">
-
-    <div class="student-card" id="studentCardDisplay">
-
-      <img id="studentPhoto"
-           class="student-photo"
-           src=""
-           alt="Student photo">
-
-      <div class="student-info">
-
-        <div id="studentName" class="student-name">—</div>
-
-        <div class="student-detail">
-          <b>Student ID:</b>
-          <span id="studentIdDisplay">—</span>
-        </div>
-
-        <div class="student-detail">
-          <b>Madrasa:</b>
-          <span id="studentMadrasa">—</span>
-        </div>
-
-        <div class="student-detail">
-          <b>Category:</b>
-          <span id="studentCategory">—</span>
-        </div>
-
-      </div>
-    </div>
-
-    <button type="button" id="confirmStudentBtn">
-      ✅ Confirm Student
-    </button>
-
-  </div>
-
-  <div id="studentConfirmedMsg"
-       class="status success hidden">
-    Student confirmed. The student may now choose a question number.
-  </div>
-
+<h2>👤 Student Identification</h2>
+<div class="muted">Enter the student's ID to identify the student before starting.</div>
+<label>Student ID</label>
+<div class="row"><div class="field"><input id="studentId" value="Stu-001" placeholder="Example: Stu-001"></div></div>
+<button type="button" id="findStudentBtn">🔎 Find Student</button>
+<div id="studentMsg" class="status hidden"></div>
+<div id="studentDetails" class="hidden">
+<div class="student-card" id="studentCardDisplay">
+<img id="studentPhoto" class="student-photo" src="" alt="Student photo">
+<div class="student-info">
+<div id="studentName" class="student-name">—</div>
+<div class="student-detail"><b>Student ID:</b> <span id="studentIdDisplay">—</span></div>
+<div class="student-detail"><b>Madrasa:</b> <span id="studentMadrasa">—</span></div>
+<div class="student-detail"><b>Category:</b> <span id="studentCategory">—</span></div>
+</div>
+</div>
+<button type="button" id="confirmStudentBtn">✅ Confirm Student</button>
+</div>
+<div id="studentConfirmedMsg" class="status success hidden">Student confirmed. The student may now choose a question number.</div>
 </div>
 
-<!-- QUESTION NUMBER -->
 <div class="card hidden" id="questionSelectionCard">
-
-  <h2>🔢 Choose Question Number</h2>
-
-  <div class="muted">
-    After the student chooses a number, Judge 1 scans the corresponding
-    question paper QR code.
-  </div>
-
-  <label>Selected Number</label>
-
-  <input id="selectedNumber"
-         type="number"
-         min="1"
-         placeholder="Enter question number">
-
-  <button type="button" id="selectNumberBtn">
-    ✅ Confirm Number
-  </button>
-
-  <div id="numberMsg" class="status hidden"></div>
-
+<h2>🔢 Choose Question Number</h2>
+<div class="muted">After the student chooses a number, Judge 1 scans the corresponding question paper QR code.</div>
+<label>Selected Number</label>
+<input id="selectedNumber" type="number" min="1" placeholder="Enter question number">
+<button type="button" id="selectNumberBtn">✅ Confirm Number</button>
+<div id="numberMsg" class="status hidden"></div>
 </div>
 
-<!-- SCANNER -->
 <div class="card hidden" id="scanCard">
-
-  <h2>Scan Question Paper</h2>
-
-  <div class="muted">
-    Only Judge 1 can scan.<br>
-    Example: QIRAAT-001
-  </div>
-
-  <button type="button" id="scanBtn">
-    📷 Scan Barcode
-  </button>
-
-  <div id="reader" class="hidden"></div>
-
-  <button type="button"
-          id="stopScanBtn"
-          class="secondary hidden">
-    Stop scanner
-  </button>
-
-  <div id="scanMsg" class="status hidden"></div>
-
+<h2>Scan Question Paper</h2>
+<div class="muted">Only Judge 1 can scan.<br>Example: QIRAAT-001</div>
+<button type="button" id="scanBtn">📷 Scan Barcode</button>
+<div id="reader" class="hidden"></div>
+<button type="button" id="stopScanBtn" class="secondary hidden">Stop scanner</button>
+<div id="scanMsg" class="status hidden"></div>
 </div>
 
-<!-- CURRENT QUESTION -->
 <div class="card">
-
-  <h2>Current Question</h2>
-
-  <div id="questionBox">
-    <div class="muted">
-      Waiting for an active question…
-    </div>
-  </div>
-
+<h2>Current Question</h2>
+<div id="questionBox"><div class="muted">Waiting for an active question…</div></div>
 </div>
 
-<!-- JUDGE COMMENT -->
 <div class="card">
-
-  <h2>Judge Comment / Observation</h2>
-
-  <div class="muted">
-    Judges do not enter scores. Add your observation for this student here.
-  </div>
-
-  <label>Comment</label>
-
-  <textarea id="comments"
-            placeholder="Enter your observation or comment..."></textarea>
-
-  <button type="button" id="commentBtn">
-    Save Comment
-  </button>
-
-  <div id="commentMsg" class="status hidden"></div>
-
-  <div id="savedComments" class="status hidden"></div>
-
+<h2>Judge Comment / Observation</h2>
+<div class="muted">Judges do not enter scores. Add your observation for this student here.</div>
+<label>Comment</label>
+<textarea id="comments" placeholder="Enter your observation or comment..."></textarea>
+<button type="button" id="commentBtn">Save Comment</button>
+<div id="commentMsg" class="status hidden"></div>
+<div id="savedComments" class="status hidden"></div>
+</div>
 </div>
 
-  </div>  <!-- LOGOUT --><button type="button"
-id="logoutBtn"
-class="secondary">
-Log out
-</button>
-
+<button type="button" id="logoutBtn" class="secondary">Log out</button>
 </div>
-</div><script>
+</div>
 
+<script>
 const SUPABASE_URL='https://nsalofqzqhivlaiqpfhe.supabase.co';
 const SUPABASE_KEY='sb_publishable_8AhIurbjKxLbn4rwoQE3ww_7ffssjoX';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const QURAN_PAGE_8=
-'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_008.png';
+const QURAN_PAGE_8='https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_008.png';
+const QURAN_PAGE_9='https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_009.png';
 
-const QURAN_PAGE_9=
-'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_009.png';
-
-let currentJudge=null;
-let currentSession=null;
-let currentStudent=null;
-let studentConfirmed=false;
-let realtimeChannel=null;
-let scanner=null;
-let scanLocked=false;
-
+let currentJudge=null,currentSession=null,currentStudent=null;
+let studentConfirmed=false,realtimeChannel=null,scanner=null,scanLocked=false;
 const $=id=>document.getElementById(id);
 
 function msg(el,text,ok=false){
@@ -419,220 +191,103 @@ function msg(el,text,ok=false){
   el.className='status '+(ok?'success':'error');
   el.classList.remove('hidden');
 }
-
 function esc(v){
-  return String(v??'').replace(/[&<>'"]/g,c=>({
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    "'":'&#39;',
-    '"':'&quot;'
-  }[c]));
+  return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
 
-/*
-  Qur'an image passage.
-  Page 8 and Page 9 are displayed vertically
-  inside a scrollable container.
-*/
-function quranPassage(){
+/* Show the uploaded Quran pages only for their matching passage.
+   Other passages display the text stored in the database. */
+function quranPassage(data){
+  const surah=String(data?.surah||'').trim();
+  const riwayah=String(data?.riwayah||'').trim();
+  const start=Number(data?.ayah_start);
+  const end=Number(data?.ayah_end);
+  const isBaqarahDuri=
+    surah.includes('البقرة') &&
+    start===50 && end===58 &&
+    riwayah.includes('الدوري') &&
+    riwayah.includes('الكسائي');
 
-  return `
-
-    <div>
-      <b>Passage:</b>
-
+  if(isBaqarahDuri){
+    return `<div><b>Passage:</b>
       <div class="quran-pages">
-
-        <div class="quran-page-label">
-          Qur'an Page 8
-        </div>
-
-        <img
-          class="quran-page"
-          src="${QURAN_PAGE_8}"
-          alt="Qur'an passage — page 8"
-          loading="lazy"
-        >
-
-        <div class="quran-page-label">
-          Qur'an Page 9
-        </div>
-
-        <img
-          class="quran-page"
-          src="${QURAN_PAGE_9}"
-          alt="Qur'an passage — page 9"
-          loading="lazy"
-        >
-
+        <div class="quran-page-label">Qur'an Page 8</div>
+        <img class="quran-page" src="${QURAN_PAGE_8}" alt="Quran passage page 8" loading="lazy">
+        <div class="quran-page-label">Qur'an Page 9</div>
+        <img class="quran-page" src="${QURAN_PAGE_9}" alt="Quran passage page 9" loading="lazy">
       </div>
+    </div>`;
+  }
 
-    </div>
-
-  `;
+  return `<div><b>Passage:</b><div class="passage">${esc(data?.text||'—')}</div></div>`;
 }
 
-/* LOAD USER */
+/* LOAD USER / ROLE */
 async function loadJudge(){
-
   const {data:{user},error:userError}=await sb.auth.getUser();
-
-  if(userError){
-    throw new Error('Auth lookup failed: '+userError.message);
-  }
-
-  if(!user){
-    throw new Error('No authenticated user found.');
-  }
+  if(userError) throw new Error('Auth lookup failed: '+userError.message);
+  if(!user) throw new Error('No authenticated user found.');
 
   const {data,error}=await sb.from('Users')
     .select('id,name,"Role",auth_user_id')
-    .eq('auth_user_id',user.id)
-    .maybeSingle();
+    .eq('auth_user_id',user.id).maybeSingle();
 
-  if(error){
-    throw new Error('Users lookup failed: '+error.message);
-  }
-
-  if(!data){
-    throw new Error('No Users record found for Auth ID: '+user.id);
-  }
+  if(error) throw new Error('Users lookup failed: '+error.message);
+  if(!data) throw new Error('No Users record found for this Auth account.');
 
   currentJudge=data;
-
-  $('judgeName').textContent=
-    (data.name||'User')+' • '+(data['Role']||'');
-
-  const role=
-    String(data['Role']||'').trim().toLowerCase();
-
-  const isAdmin=role==='admin';
-  const isJudge=role==='judge';
+  $('judgeName').textContent=(data.name||'User')+' • '+(data['Role']||'');
+  const role=String(data['Role']||'').trim().toLowerCase();
+  const isAdmin=role==='admin',isJudge=role==='judge';
 
   $('adminPanel').classList.toggle('hidden',!isAdmin);
   $('judgePanel').classList.toggle('hidden',!isJudge);
 
   if(isAdmin){
-
-    $('roleStatus').textContent=
-      'Admin: score entry and judge observations enabled.';
-
+    $('roleStatus').textContent='Admin: score entry and judge observations enabled.';
   }else if(isJudge){
-
-    /*
-      IMPORTANT:
-      Users.id = 1 identifies Judge 1 for scanner access.
-      This is separate from judges.id values 3,4,5,6
-      used for the four score records.
-    */
-
     const isJudge1=Number(data.id)===1;
-
-    $('roleStatus').textContent=isJudge1
-      ?'Judge 1: barcode scanning enabled.'
-      :'Barcode scanning is disabled for this judge.';
-
+    $('roleStatus').textContent=isJudge1?'Judge 1: barcode scanning enabled.':'Barcode scanning is disabled for this judge.';
     $('scanCard').classList.toggle('hidden',!isJudge1);
-
   }else{
-
-    $('roleStatus').textContent=
-      'Unknown role. Please contact the administrator.';
-
+    $('roleStatus').textContent='Unknown role. Please contact the administrator.';
   }
 }
 
 /* FIND STUDENT — JUDGE */
 async function findStudent(){
-
   const studentId=$('studentId').value.trim();
-
-  if(!studentId){
-    msg($('studentMsg'),'Enter the student ID first.');
-    return;
-  }
+  if(!studentId){msg($('studentMsg'),'Enter the student ID first.');return;}
 
   $('studentDetails').classList.add('hidden');
   $('studentConfirmedMsg').classList.add('hidden');
   $('questionSelectionCard').classList.add('hidden');
   $('studentCardDisplay').classList.remove('confirmed');
   $('savedComments').classList.add('hidden');
-
-  studentConfirmed=false;
-  currentStudent=null;
-  currentSession=null;
+  studentConfirmed=false;currentStudent=null;currentSession=null;
 
   const {data,error}=await sb.from('Students').select('*');
+  if(error){console.error(error);msg($('studentMsg'),'Could not find student: '+error.message);return;}
 
-  if(error){
-
-    console.error('Student lookup error:',error);
-
-    msg(
-      $('studentMsg'),
-      'Could not find student: '+error.message
-    );
-
-    return;
-  }
-
-  const student=(data||[]).find(s=>
-    String(s["student's_id"]??'')
-      .trim()
-      .toLowerCase()===studentId.toLowerCase()
-  );
-
-  if(!student){
-
-    msg(
-      $('studentMsg'),
-      'No student found with ID: '+studentId
-    );
-
-    return;
-  }
+  const student=(data||[]).find(s=>String(s["student's_id"]??'').trim().toLowerCase()===studentId.toLowerCase());
+  if(!student){msg($('studentMsg'),'No student found with ID: '+studentId);return;}
 
   currentStudent=student;
-
-  $('studentName').textContent=
-    student.full_name||'Unnamed Student';
-
-  $('studentIdDisplay').textContent=
-    student["student's_id"]||studentId;
-
-  $('studentMadrasa').textContent=
-    student.madrasa_type||'—';
-
+  $('studentName').textContent=student.full_name||'Unnamed Student';
+  $('studentIdDisplay').textContent=student["student's_id"]||studentId;
+  $('studentMadrasa').textContent=student.madrasa_type||'—';
   $('studentCategory').textContent='—';
-
-  if(student.photo_url){
-    $('studentPhoto').src=student.photo_url;
-  }else{
-    $('studentPhoto').removeAttribute('src');
-  }
+  if(student.photo_url)$('studentPhoto').src=student.photo_url;
+  else $('studentPhoto').removeAttribute('src');
 
   $('studentDetails').classList.remove('hidden');
-
-  msg(
-    $('studentMsg'),
-    'Student found. Please verify the student details.',
-    true
-  );
+  msg($('studentMsg'),'Student found. Please verify the student details.',true);
 }
 
 /* LOAD SAVED COMMENTS — JUDGE */
 async function loadSavedComments(){
-
   const area=$('savedComments');
-
-  if(!currentSession||!currentJudge){
-
-    area.classList.add('hidden');
-    area.innerHTML='';
-
-    return;
-  }
+  if(!currentSession||!currentJudge){area.classList.add('hidden');area.innerHTML='';return;}
 
   const {data,error}=await sb.from('judge_comments')
     .select('id,student_id,judge_id,comment,created_at')
@@ -641,1290 +296,368 @@ async function loadSavedComments(){
     .order('created_at',{ascending:false});
 
   if(error){
-
-    console.error('Load comments error:',error);
-
-    area.textContent=
-      'Could not load saved comments: '+error.message;
-
-    area.className='status error';
-
-    return;
+    console.error(error);area.textContent='Could not load saved comments: '+error.message;
+    area.className='status error';return;
   }
 
-  area.innerHTML=
-    '<b>Your saved comments</b>'+
-    ((data||[]).length
-
-      ?data.map(c=>`
-        <div class="comment-item">
-          ${esc(c.comment)}
-          <small class="comment-date">
-            ${esc(new Date(c.created_at).toLocaleString())}
-          </small>
-        </div>
-      `).join('')
-
-      :'<p class="muted">No saved comments yet.</p>'
-    );
-
+  area.innerHTML='<b>Your saved comments</b>'+
+    ((data||[]).length?data.map(c=>`<div class="comment-item">${esc(c.comment)}<small class="comment-date">${esc(new Date(c.created_at).toLocaleString())}</small></div>`).join(''):'<p class="muted">No saved comments yet.</p>');
   area.className='status';
 }
 
 /* SAVE COMMENT — JUDGE */
 async function saveComment(){
-
-  if(!currentSession||!currentJudge){
-
-    msg(
-      $('commentMsg'),
-      'No active question/student session.'
-    );
-
-    return;
-  }
-
+  if(!currentSession||!currentJudge){msg($('commentMsg'),'No active question/student session.');return;}
   const comment=$('comments').value.trim();
+  if(!comment){msg($('commentMsg'),'Enter a comment or observation first.');return;}
 
-  if(!comment){
-
-    msg(
-      $('commentMsg'),
-      'Enter a comment or observation first.'
-    );
-
-    return;
-  }
-
-  $('commentBtn').disabled=true;
-  $('commentBtn').textContent='Saving…';
-
+  $('commentBtn').disabled=true;$('commentBtn').textContent='Saving…';
   try{
-
-    const {data:{user},error:userError}=
-      await sb.auth.getUser();
-
-    if(userError) throw userError;
-
-    if(!user) throw new Error('Please log in again.');
+    const {data:{user},error:userError}=await sb.auth.getUser();
+    if(userError)throw userError;if(!user)throw new Error('Please log in again.');
 
     const {error}=await sb.from('judge_comments').insert({
-
       student_id:currentSession.student_id,
-
       judge_id:currentJudge.id,
-
       auth_user_id:user.id,
-
-      comment:comment
-
+      comment
     });
-
-    if(error) throw error;
-
+    if(error)throw error;
     $('comments').value='';
-
-    msg(
-      $('commentMsg'),
-      'Comment saved successfully.',
-      true
-    );
-
+    msg($('commentMsg'),'Comment saved successfully.',true);
     await loadSavedComments();
-
   }catch(e){
-
-    console.error('Save comment error:',e);
-
-    msg(
-      $('commentMsg'),
-      'Could not save comment: '+e.message
-    );
-
+    console.error(e);msg($('commentMsg'),'Could not save comment: '+e.message);
   }finally{
-
-    $('commentBtn').disabled=false;
-    $('commentBtn').textContent='Save Comment';
-
+    $('commentBtn').disabled=false;$('commentBtn').textContent='Save Comment';
   }
 }
 
 /* LOAD QUESTION — JUDGE */
 async function loadQuestion(){
-
   const student=$('studentId').value.trim();
+  if(!student){$('questionBox').innerHTML='<div class="muted">Enter a student ID.</div>';currentSession=null;$('savedComments').classList.add('hidden');return;}
 
-  if(!student){
-
-    $('questionBox').innerHTML=
-      '<div class="muted">Enter a student ID.</div>';
-
-    currentSession=null;
-
-    $('savedComments').classList.add('hidden');
-
-    return;
-  }
-
-  const {data,error}=await sb.from('judge_question_view')
-    .select('*')
-    .eq('student_id',student)
-    .eq('status','active')
-    .limit(1)
-    .maybeSingle();
+  const {data,error}=await sb.from('judge_question_view').select('*')
+    .eq('student_id',student).eq('status','active').limit(1).maybeSingle();
 
   if(error){
-
-    console.error('Question load error:',error);
-
-    $('questionBox').innerHTML=
-      '<div class="status error">'+
-      esc(error.message)+
-      '</div>';
-
-    currentSession=null;
-
-    $('savedComments').classList.add('hidden');
-
-    return;
+    console.error(error);$('questionBox').innerHTML='<div class="status error">'+esc(error.message)+'</div>';
+    currentSession=null;$('savedComments').classList.add('hidden');return;
   }
-
   if(!data){
-
-    $('questionBox').innerHTML=
-      '<div class="muted">No active question.</div>';
-
-    currentSession=null;
-
-    $('savedComments').classList.add('hidden');
-    $('savedComments').innerHTML='';
-
-    return;
+    $('questionBox').innerHTML='<div class="muted">No active question.</div>';
+    currentSession=null;$('savedComments').classList.add('hidden');$('savedComments').innerHTML='';return;
   }
 
   currentSession=data;
-
   $('questionBox').innerHTML=`
-
-    <div>
-      <span class="pill">
-        Student: ${esc(data.student_id)}
-      </span>
-
-      <span class="pill">
-        Number: ${esc(data.selected_number)}
-      </span>
-    </div>
-
-    <p class="question">
-      Question:
-      ${esc(data.question_number)}
-      —
-      ${esc(data.title||'')}
-    </p>
-
-    <p>
-      <b>Surah / Ayah:</b>
-      ${esc(data.surah||'')}
-      ${data.ayah_start!=null
-        ?' '+esc(data.ayah_start)+'–'+esc(data.ayah_end)
-        :''
-      }
-    </p>
-
-    <p>
-      <b>Riwayah:</b>
-      ${esc(data.riwayah||'—')}
-    </p>
-
-    <p>
-      <b>Instructions:</b>
-      ${esc(data.instructions||'—')}
-    </p>
-
-    ${quranPassage()}
-
+    <div><span class="pill">Student: ${esc(data.student_id)}</span><span class="pill">Number: ${esc(data.selected_number)}</span></div>
+    <p class="question">Question: ${esc(data.question_number)} — ${esc(data.title||'')}</p>
+    <p><b>Surah / Ayah:</b> ${esc(data.surah||'—')}${data.ayah_start!=null?' '+esc(data.ayah_start)+'–'+esc(data.ayah_end):''}</p>
+    <p><b>Riwayah:</b> ${esc(data.riwayah||'—')}</p>
+    <p><b>Instructions:</b> ${esc(data.instructions||'—')}</p>
+    ${quranPassage(data)}
   `;
-
   await loadSavedComments();
 }
 
 /* ADMIN — LOAD STUDENT */
 async function adminLoadStudent(){
-
   const studentId=$('adminStudentId').value.trim();
-
-  if(!studentId){
-
-    msg(
-      $('adminStudentMsg'),
-      'Enter the student ID first.'
-    );
-
-    return;
-  }
+  if(!studentId){msg($('adminStudentMsg'),'Enter the student ID first.');return;}
 
   $('adminStudentCard').classList.add('hidden');
   $('adminQuestionCard').classList.add('hidden');
   $('adminCommentsCard').classList.add('hidden');
   $('adminScoresCard').classList.add('hidden');
-
-  currentStudent=null;
-  currentSession=null;
+  currentStudent=null;currentSession=null;
 
   const {data,error}=await sb.from('Students').select('*');
+  if(error){console.error(error);msg($('adminStudentMsg'),'Could not find student: '+error.message);return;}
 
-  if(error){
-
-    console.error('Admin student lookup error:',error);
-
-    msg(
-      $('adminStudentMsg'),
-      'Could not find student: '+error.message
-    );
-
-    return;
-  }
-
-  const student=(data||[]).find(s=>
-    String(s["student's_id"]??'')
-      .trim()
-      .toLowerCase()===studentId.toLowerCase()
-  );
-
-  if(!student){
-
-    msg(
-      $('adminStudentMsg'),
-      'No student found with ID: '+studentId
-    );
-
-    return;
-  }
+  const student=(data||[]).find(s=>String(s["student's_id"]??'').trim().toLowerCase()===studentId.toLowerCase());
+  if(!student){msg($('adminStudentMsg'),'No student found with ID: '+studentId);return;}
 
   currentStudent=student;
-
-  $('adminStudentName').textContent=
-    student.full_name||'Unnamed Student';
-
-  $('adminStudentIdDisplay').textContent=
-    student["student's_id"]||studentId;
-
-  $('adminStudentMadrasa').textContent=
-    student.madrasa_type||'—';
-
+  $('adminStudentName').textContent=student.full_name||'Unnamed Student';
+  $('adminStudentIdDisplay').textContent=student["student's_id"]||studentId;
+  $('adminStudentMadrasa').textContent=student.madrasa_type||'—';
   $('adminStudentCategory').textContent='—';
-
-  if(student.photo_url){
-    $('adminStudentPhoto').src=student.photo_url;
-  }else{
-    $('adminStudentPhoto').removeAttribute('src');
-  }
-
+  if(student.photo_url)$('adminStudentPhoto').src=student.photo_url;
+  else $('adminStudentPhoto').removeAttribute('src');
   $('adminStudentCard').classList.remove('hidden');
 
-  const {data:question,error:questionError}=
-    await sb.from('judge_question_view')
-      .select('*')
-      .eq('student_id',studentId)
-      .eq('status','active')
-      .limit(1)
-      .maybeSingle();
+  const {data:question,error:questionError}=await sb.from('judge_question_view').select('*')
+    .eq('student_id',studentId).eq('status','active').limit(1).maybeSingle();
 
   if(questionError){
-
-    console.error(
-      'Admin question lookup error:',
-      questionError
-    );
-
-    msg(
-      $('adminStudentMsg'),
-      'Student found, but question could not be loaded: '+
-      questionError.message
-    );
-
-    return;
+    console.error(questionError);
+    msg($('adminStudentMsg'),'Student found, but question could not be loaded: '+questionError.message);return;
   }
-
-  if(!question){
-
-    msg(
-      $('adminStudentMsg'),
-      'Student found, but there is no active question yet.',
-      true
-    );
-
-    return;
-  }
+  if(!question){msg($('adminStudentMsg'),'Student found, but there is no active question yet.',true);return;}
 
   currentSession=question;
-
   $('adminQuestionBox').innerHTML=`
-
-    <div>
-      <span class="pill">
-        Student: ${esc(question.student_id)}
-      </span>
-
-      <span class="pill">
-        Number: ${esc(question.selected_number)}
-      </span>
-    </div>
-
-    <p class="question">
-      Question:
-      ${esc(question.question_number)}
-      —
-      ${esc(question.title||'')}
-    </p>
-
-    <p>
-      <b>Surah / Ayah:</b>
-      ${esc(question.surah||'')}
-      ${question.ayah_start!=null
-        ?' '+esc(question.ayah_start)+'–'+esc(question.ayah_end)
-        :''
-      }
-    </p>
-
-    <p>
-      <b>Riwayah:</b>
-      ${esc(question.riwayah||'—')}
-    </p>
-
-    <p>
-      <b>Instructions:</b>
-      ${esc(question.instructions||'—')}
-    </p>
-
-    ${quranPassage()}
-
+    <div><span class="pill">Student: ${esc(question.student_id)}</span><span class="pill">Number: ${esc(question.selected_number)}</span></div>
+    <p class="question">Question: ${esc(question.question_number)} — ${esc(question.title||'')}</p>
+    <p><b>Surah / Ayah:</b> ${esc(question.surah||'—')}${question.ayah_start!=null?' '+esc(question.ayah_start)+'–'+esc(question.ayah_end):''}</p>
+    <p><b>Riwayah:</b> ${esc(question.riwayah||'—')}</p>
+    <p><b>Instructions:</b> ${esc(question.instructions||'—')}</p>
+    ${quranPassage(question)}
   `;
-
   $('adminQuestionCard').classList.remove('hidden');
-
   await adminLoadComments(studentId);
-
-  await adminLoadExistingScores(
-    studentId,
-    question
-  );
-
-  msg(
-    $('adminStudentMsg'),
-    'Student and current question loaded.',
-    true
-  );
+  await adminLoadExistingScores(studentId,question);
+  msg($('adminStudentMsg'),'Student and current question loaded.',true);
 }
 
-/* ADMIN — LOAD COMMENTS */
+/* ADMIN — COMMENTS */
 async function adminLoadComments(studentId){
-
   const {data,error}=await sb.from('judge_comments')
     .select('id,student_id,judge_id,comment,created_at')
-    .eq('student_id',studentId)
-    .order('created_at',{ascending:true});
+    .eq('student_id',studentId).order('created_at',{ascending:true});
 
   if(error){
-
-    console.error('Admin comments error:',error);
-
-    $('adminCommentsBox').innerHTML=
-      '<div class="status error">'+
-      esc(error.message)+
-      '</div>';
-
-    $('adminCommentsCard').classList.remove('hidden');
-
-    return;
+    console.error(error);
+    $('adminCommentsBox').innerHTML='<div class="status error">'+esc(error.message)+'</div>';
+    $('adminCommentsCard').classList.remove('hidden');return;
   }
 
   const comments=data||[];
-
-  const judgeNames={
-    3:'Judge 1',
-    4:'Judge 2',
-    5:'Judge 3',
-    6:'Judge 4'
-  };
-
-  if(!comments.length){
-
-    $('adminCommentsBox').innerHTML=
-      '<div class="muted">No judge comments saved yet.</div>';
-
-  }else{
-
-    $('adminCommentsBox').innerHTML=
-      comments.map(c=>`
-
-        <div class="comment-item">
-
-          <b>
-            ${esc(
-              judgeNames[Number(c.judge_id)]||
-              ('Judge '+c.judge_id)
-            )}
-          </b>
-
-          <div class="admin-comment">
-            ${esc(c.comment)}
-          </div>
-
-          <small class="comment-date">
-            ${esc(
-              new Date(c.created_at).toLocaleString()
-            )}
-          </small>
-
-        </div>
-
-      `).join('');
-
-  }
-
+  const judgeNames={3:'Judge 1',4:'Judge 2',5:'Judge 3',6:'Judge 4'};
+  $('adminCommentsBox').innerHTML=comments.length?comments.map(c=>`
+    <div class="comment-item"><b>${esc(judgeNames[Number(c.judge_id)]||('Judge '+c.judge_id))}</b>
+    <div class="admin-comment">${esc(c.comment)}</div>
+    <small class="comment-date">${esc(new Date(c.created_at).toLocaleString())}</small></div>`).join(''):'<div class="muted">No judge comments saved yet.</div>';
   $('adminCommentsCard').classList.remove('hidden');
 }
 
-/* ADMIN — LOAD EXISTING SCORES */
+/* ADMIN — EXISTING SCORES */
 async function adminLoadExistingScores(studentId,question){
-
-  const questionId=
-    question.question_id||
-    question.ques_id||
-    question.id;
-
+  const questionId=question.question_id||question.ques_id||question.id;
   if(!questionId){
-
-    console.warn(
-      'No question ID found in current question view.'
-    );
-
-    msg(
-      $('scoresMsg'),
-      'Question ID was not available. Scores cannot be safely linked yet.'
-    );
-
-    $('adminScoresCard').classList.remove('hidden');
-
-    return;
+    console.warn('No question ID found in current question view.');
+    msg($('scoresMsg'),'Question ID was not available. Scores cannot be safely linked yet.');
+    $('adminScoresCard').classList.remove('hidden');return;
   }
 
   const {data,error}=await sb.from('scores')
-    .select(
-      'id,student_id,question_id,score,comments,scored_at,judge_id'
-    )
-    .eq('student_id',studentId)
-    .eq('question_id',questionId);
+    .select('id,student_id,question_id,score,comments,scored_at,judge_id')
+    .eq('student_id',studentId).eq('question_id',questionId);
 
   if(error){
-
-    console.error(
-      'Existing score lookup error:',
-      error
-    );
-
-    msg(
-      $('scoresMsg'),
-      'Could not load existing scores: '+error.message
-    );
-
-    $('adminScoresCard').classList.remove('hidden');
-
-    return;
+    console.error(error);msg($('scoresMsg'),'Could not load existing scores: '+error.message);
+    $('adminScoresCard').classList.remove('hidden');return;
   }
 
-  $('score1').value='';
-  $('score2').value='';
-  $('score3').value='';
-  $('score4').value='';
-
+  ['score1','score2','score3','score4'].forEach(id=>$(id).value='');
   (data||[]).forEach(row=>{
-
     const judgeId=Number(row.judge_id);
-
-    if(judgeId===3){
-      $('score1').value=row.score;
-    }
-
-    if(judgeId===4){
-      $('score2').value=row.score;
-    }
-
-    if(judgeId===5){
-      $('score3').value=row.score;
-    }
-
-    if(judgeId===6){
-      $('score4').value=row.score;
-    }
-
+    if(judgeId===3)$('score1').value=row.score;
+    if(judgeId===4)$('score2').value=row.score;
+    if(judgeId===5)$('score3').value=row.score;
+    if(judgeId===6)$('score4').value=row.score;
   });
-
-  updateAdminTotal();
-
-  $('adminScoresCard').classList.remove('hidden');
-
-  $('scoresMsg').classList.add('hidden');
+  updateAdminTotal();$('adminScoresCard').classList.remove('hidden');$('scoresMsg').classList.add('hidden');
 }
 
-/* ADMIN — TOTAL AND AVERAGE */
+/* ADMIN — TOTAL */
 function updateAdminTotal(){
-
-  const rawValues=[
-    $('score1').value,
-    $('score2').value,
-    $('score3').value,
-    $('score4').value
-  ];
-
-  const values=rawValues.map(v=>Number(v)||0);
-
-  const total=values.reduce(
-    (a,b)=>a+b,
-    0
-  );
-
-  const allEntered=
-    rawValues.every(v=>v.trim()!=='');
-
-  const average=total/4;
-
-  $('adminTotal').innerHTML=
-    'Total: '+
-    total.toFixed(2).replace(/\.00$/,'')+
-    ' / 400<br>'+
-    'Average: '+
-    (
-      allEntered
-        ?average.toFixed(2).replace(/\.00$/,'')
-        :'—'
-    )+
-    ' / 100';
+  const raw=[$('score1').value,$('score2').value,$('score3').value,$('score4').value];
+  const values=raw.map(v=>Number(v)||0);
+  const total=values.reduce((a,b)=>a+b,0);
+  const allEntered=raw.every(v=>v.trim()!=='');
+  const fmt=n=>n.toFixed(2).replace(/\.00$/,'');
+  $('adminTotal').innerHTML='Total: '+fmt(total)+' / 400<br>Average: '+(allEntered?fmt(total/4):'—')+' / 100';
 }
 
-/* ADMIN — SAVE FOUR SCORES */
+/* ADMIN — SAVE SCORES */
 async function saveAdminScores(){
-
-  if(!currentStudent){
-
-    msg(
-      $('scoresMsg'),
-      'Load a student first.'
-    );
-
-    return;
-  }
-
-  if(!currentSession){
-
-    msg(
-      $('scoresMsg'),
-      'There is no active question for this student.'
-    );
-
-    return;
-  }
+  if(!currentStudent){msg($('scoresMsg'),'Load a student first.');return;}
+  if(!currentSession){msg($('scoresMsg'),'There is no active question for this student.');return;}
 
   const scores=[
-    {
-      judge_id:3,
-      value:$('score1').value
-    },
-    {
-      judge_id:4,
-      value:$('score2').value
-    },
-    {
-      judge_id:5,
-      value:$('score3').value
-    },
-    {
-      judge_id:6,
-      value:$('score4').value
-    }
+    {judge_id:3,value:$('score1').value},
+    {judge_id:4,value:$('score2').value},
+    {judge_id:5,value:$('score3').value},
+    {judge_id:6,value:$('score4').value}
   ];
 
-  /* VALIDATE ALL FOUR SCORES */
   for(const item of scores){
-
-    if(
-      item.value===''||
-      item.value===null
-    ){
-
-      msg(
-        $('scoresMsg'),
-        'Please enter a score for all four judges.'
-      );
-
-      return;
-    }
-
+    if(item.value===''){msg($('scoresMsg'),'Please enter a score for all four judges.');return;}
     const n=Number(item.value);
-
-    if(
-      !Number.isFinite(n)||
-      n<0||
-      n>100
-    ){
-
-      msg(
-        $('scoresMsg'),
-        'Each judge score must be between 0 and 100.'
-      );
-
-      return;
-    }
+    if(!Number.isFinite(n)||n<0||n>100){msg($('scoresMsg'),'Each judge score must be between 0 and 100.');return;}
   }
 
-  const questionId=
-    currentSession.question_id||
-    currentSession.ques_id||
-    currentSession.id;
+  const questionId=currentSession.question_id||currentSession.ques_id||currentSession.id;
+  if(!questionId){msg($('scoresMsg'),'Question ID is missing. No score was saved.');return;}
+  const studentId=currentStudent["student's_id"]||currentStudent.student_id;
+  if(!studentId){msg($('scoresMsg'),'Student ID is missing. No score was saved.');return;}
 
-  if(!questionId){
-
-    msg(
-      $('scoresMsg'),
-      'Question ID is missing. No score was saved.'
-    );
-
-    return;
-  }
-
-  const studentId=
-    currentStudent["student's_id"]||
-    currentStudent.student_id;
-
-  if(!studentId){
-
-    msg(
-      $('scoresMsg'),
-      'Student ID is missing. No score was saved.'
-    );
-
-    return;
-  }
-
-  $('saveScoresBtn').disabled=true;
-  $('saveScoresBtn').textContent='Saving…';
-
+  $('saveScoresBtn').disabled=true;$('saveScoresBtn').textContent='Saving…';
   try{
-
-    /*
-      IMPORTANT:
-      The database now has this unique constraint:
-
-      (student_id, question_id, judge_id)
-
-      Therefore upsert will UPDATE the existing row
-      instead of creating a duplicate.
-    */
-
     const rows=scores.map(item=>({
-
-      student_id:studentId,
-
-      question_id:questionId,
-
-      judge_id:item.judge_id,
-
-      score:Number(item.value),
-
-      scored_at:new Date().toISOString(),
-
-      comments:null
-
+      student_id:studentId,question_id:questionId,judge_id:item.judge_id,
+      score:Number(item.value),scored_at:new Date().toISOString(),comments:null
     }));
-
-    const {error}=await sb.from('scores')
-      .upsert(
-        rows,
-        {
-          onConflict:'student_id,question_id,judge_id'
-        }
-      );
-
-    if(error){
-      throw error;
-    }
-
-    msg(
-      $('scoresMsg'),
-      'All four judge scores saved successfully.',
-      true
-    );
-
+    const {error}=await sb.from('scores').upsert(rows,{onConflict:'student_id,question_id,judge_id'});
+    if(error)throw error;
+    msg($('scoresMsg'),'All four judge scores saved successfully.',true);
     updateAdminTotal();
-
   }catch(e){
-
-    console.error(
-      'Save scores error:',
-      e
-    );
-
-    msg(
-      $('scoresMsg'),
-      'Could not save scores: '+e.message
-    );
-
+    console.error(e);msg($('scoresMsg'),'Could not save scores: '+e.message);
   }finally{
-
-    $('saveScoresBtn').disabled=false;
-
-    $('saveScoresBtn').textContent=
-      '💾 Save All Four Scores';
-
+    $('saveScoresBtn').disabled=false;$('saveScoresBtn').textContent='💾 Save All Four Scores';
   }
 }
 
-/* REALTIME — JUDGE */
+/* REALTIME — ACTIVE JUDGE QUESTION */
 function startRealtime(){
-
-  if(realtimeChannel){
-    sb.removeChannel(realtimeChannel);
-  }
-
-  realtimeChannel=
-    sb.channel('competition-session-live')
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'competition_sessions'
-      },
-      ()=>{
-
-        if(
-          currentJudge&&
-          String(currentJudge['Role']).toLowerCase()==='judge'
-        ){
-
-          loadQuestion();
-
-        }
-
-      }
-    )
-
-    .subscribe();
+  if(realtimeChannel)sb.removeChannel(realtimeChannel);
+  realtimeChannel=sb.channel('competition-session-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'competition_sessions'},()=>{
+      if(currentJudge&&String(currentJudge['Role']).toLowerCase()==='judge')loadQuestion();
+    }).subscribe();
 }
 
-/* SCAN QR */
+/* PROCESS SCANNED QR */
 async function scanCode(code){
-
-  code=(code||'')
-    .trim()
-    .toUpperCase();
-
+  code=(code||'').trim().toUpperCase();
   if(!/^QIRAAT-\d+$/.test(code)){
-
-    msg(
-      $('scanMsg'),
-      'Invalid paper code. Use a code like QIRAAT-001.'
-    );
-
-    return false;
+    msg($('scanMsg'),'Invalid paper code. Use a code like QIRAAT-001.');return false;
   }
-
-  if(!studentConfirmed){
-
-    msg(
-      $('scanMsg'),
-      'Confirm the student before scanning.'
-    );
-
-    return false;
-  }
-
+  if(!studentConfirmed){msg($('scanMsg'),'Confirm the student before scanning.');return false;}
   const student=$('studentId').value.trim();
+  if(!student){msg($('scanMsg'),'Enter the student ID first.');return false;}
+  const selectedNumber=Number($('selectedNumber').value);
+  if(!selectedNumber){msg($('scanMsg'),'Select the question number first.');return false;}
 
-  if(!student){
-
-    msg(
-      $('scanMsg'),
-      'Enter the student ID first.'
-    );
-
-    return false;
-  }
-
-  const selectedNumber=
-    Number($('selectedNumber').value);
-
-  if(!selectedNumber){
-
-    msg(
-      $('scanMsg'),
-      'Select the question number first.'
-    );
-
-    return false;
-  }
-
-  msg(
-    $('scanMsg'),
-    'Processing '+code+'…',
-    true
-  );
-
-  const {data,error}=await sb.rpc(
-    'scan_competition_barcode',
-    {
-      p_student_id:student,
-      p_barcode:code
-    }
-  );
-
-  if(error){
-
-    msg(
-      $('scanMsg'),
-      'Database error: '+error.message
-    );
-
-    return false;
-  }
-
-  msg(
-    $('scanMsg'),
-    `Scanned ${code}. Question ${data} assigned.`,
-    true
-  );
-
-  await loadQuestion();
-
-  return true;
+  msg($('scanMsg'),'Processing '+code+'…',true);
+  const {data,error}=await sb.rpc('scan_competition_barcode',{p_student_id:student,p_barcode:code});
+  if(error){msg($('scanMsg'),'Database error: '+error.message);return false;}
+  msg($('scanMsg'),`Scanned ${code}. Question ${data} assigned.`,true);
+  await loadQuestion();return true;
 }
 
-/* START SCANNER */
+/* START QR SCANNER */
 async function startScanner(){
-
-  if(scanLocked) return;
-
+  if(scanLocked)return;
   scanLocked=false;
-
-  $('reader').classList.remove('hidden');
-  $('stopScanBtn').classList.remove('hidden');
-  $('scanBtn').disabled=true;
+  $('reader').classList.remove('hidden');$('stopScanBtn').classList.remove('hidden');$('scanBtn').disabled=true;
 
   try{
+    if(!window.Html5Qrcode)throw new Error('QR scanner library is still loading. Please wait a few seconds and try again.');
+    if(!window.isSecureContext)throw new Error('Camera requires HTTPS.');
+    const devices=await Html5Qrcode.getCameras();
+    if(!devices||!devices.length)throw new Error('No camera was found.');
+    const backCamera=devices.find(d=>/back|rear|environment/i.test(d.label))||devices[0];
+    scanner=new Html5Qrcode('reader');
 
-    if(!window.Html5Qrcode){
-
-      throw new Error(
-        'QR scanner library is still loading. Please wait a few seconds and try again.'
-      );
-
-    }
-
-    if(!window.isSecureContext){
-
-      throw new Error(
-        'Camera requires HTTPS.'
-      );
-
-    }
-
-    const devices=
-      await Html5Qrcode.getCameras();
-
-    if(
-      !devices||
-      !devices.length
-    ){
-
-      throw new Error(
-        'No camera was found.'
-      );
-
-    }
-
-    const backCamera=
-      devices.find(d=>
-        /back|rear|environment/i.test(d.label)
-      )||devices[0];
-
-    scanner=
-      new Html5Qrcode('reader');
-
-    await scanner.start(
-
-      backCamera.id,
-
-      {
-        fps:20,
-        qrbox:{
-          width:300,
-          height:300
-        },
-        aspectRatio:1.0
-      },
-
-      async(decodedText)=>{
-
-        if(scanLocked) return;
-
+    await scanner.start(backCamera.id,{fps:20,qrbox:{width:300,height:300},aspectRatio:1.0},
+      async decodedText=>{
+        if(scanLocked)return;
         scanLocked=true;
-
-        console.log(
-          'QR RESULT:',
-          decodedText
-        );
-
-        msg(
-          $('scanMsg'),
-          'QR detected: '+decodedText,
-          true
-        );
-
+        console.log('QR RESULT:',decodedText);
+        msg($('scanMsg'),'QR detected: '+decodedText,true);
         try{
-
-          const success=
-            await scanCode(decodedText);
-
-          if(success){
-
-            await stopScanner();
-
-          }else{
-
-            scanLocked=false;
-
-          }
-
+          const success=await scanCode(decodedText);
+          if(success)await stopScanner();
+          else scanLocked=false;
         }catch(e){
-
-          console.error(
-            'QR processing error:',
-            e
-          );
-
-          msg(
-            $('scanMsg'),
-            'Could not process QR code: '+
-            (e.message||e)
-          );
-
-          scanLocked=false;
-
+          console.error(e);msg($('scanMsg'),'Could not process QR code: '+(e.message||e));scanLocked=false;
         }
-
-      },
-
-      (errorMessage)=>{}
-
+      },()=>{}
     );
-
   }catch(e){
-
-    console.error(
-      'Scanner start error:',
-      e
-    );
-
-    msg(
-      $('scanMsg'),
-      'Camera could not start: '+
-      (e.message||e)
-    );
-
+    console.error('Scanner start error:',e);
+    msg($('scanMsg'),'Camera could not start: '+(e.message||e));
     await stopScanner();
-
   }
 }
 
-/* STOP SCANNER */
+/* STOP QR SCANNER */
 async function stopScanner(){
-
   scanLocked=true;
-
   if(scanner){
-
-    try{
-      await scanner.stop();
-    }catch(e){
-      console.warn(
-        'Scanner stop warning:',
-        e
-      );
-    }
-
-    try{
-      scanner.clear();
-    }catch(e){}
-
+    try{await scanner.stop();}catch(e){console.warn('Scanner stop warning:',e);}
+    try{scanner.clear();}catch(e){}
   }
-
   scanner=null;
-
-  $('reader').classList.add('hidden');
-  $('stopScanBtn').classList.add('hidden');
-  $('scanBtn').disabled=false;
-
+  $('reader').classList.add('hidden');$('stopScanBtn').classList.add('hidden');$('scanBtn').disabled=false;
   scanLocked=false;
-}
-
-/* BUTTONS */
-function initializeButtons(){
-
-  console.log(
-    'MMG Judge/Admin Panel loaded'
-  );
-
-  $('loginBtn').onclick=login;
-
-  $('findStudentBtn').onclick=findStudent;
-
-  $('confirmStudentBtn').onclick=()=>{
-
-    if(!currentStudent){
-
-      msg(
-        $('studentMsg'),
-        'Find a student first.'
-      );
-
-      return;
-    }
-
-    studentConfirmed=true;
-
-    $('studentCardDisplay')
-      .classList.add('confirmed');
-
-    $('studentConfirmedMsg')
-      .classList.remove('hidden');
-
-    $('questionSelectionCard')
-      .classList.remove('hidden');
-
-    $('scanMsg')
-      .classList.add('hidden');
-
-    $('numberMsg')
-      .classList.add('hidden');
-
-  };
-
-  $('selectNumberBtn').onclick=()=>{
-
-    if(!studentConfirmed){
-
-      msg(
-        $('numberMsg'),
-        'Confirm the student first.'
-      );
-
-      return;
-    }
-
-    const number=
-      Number($('selectedNumber').value);
-
-    if(!number||number<1){
-
-      msg(
-        $('numberMsg'),
-        'Enter a valid question number.'
-      );
-
-      return;
-    }
-
-    msg(
-      $('numberMsg'),
-      'Question number '+number+
-      ' selected. Judge 1 can now scan the corresponding QR code.',
-      true
-    );
-
-  };
-
-  $('scanBtn').onclick=startScanner;
-
-  $('stopScanBtn').onclick=stopScanner;
-
-  $('commentBtn').onclick=saveComment;
-
-  $('adminLoadBtn').onclick=adminLoadStudent;
-
-  $('saveScoresBtn').onclick=saveAdminScores;
-
-  $('score1').oninput=updateAdminTotal;
-  $('score2').oninput=updateAdminTotal;
-  $('score3').oninput=updateAdminTotal;
-  $('score4').oninput=updateAdminTotal;
-
-  $('logoutBtn').onclick=logout;
 }
 
 /* LOGIN */
 async function login(){
-
-  const email=
-    $('email').value.trim();
-
-  const password=
-    $('password').value;
-
-  if(!email||!password){
-
-    msg(
-      $('loginMsg'),
-      'Enter your email and password.'
-    );
-
-    return;
-  }
-
-  $('loginBtn').disabled=true;
-  $('loginBtn').textContent='Logging in…';
-
+  const email=$('email').value.trim(),password=$('password').value;
+  if(!email||!password){msg($('loginMsg'),'Enter your email and password.');return;}
+  $('loginBtn').disabled=true;$('loginBtn').textContent='Logging in…';
   try{
-
-    const {error}=
-      await sb.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if(error) throw error;
-
-    $('loginMsg').classList.add('hidden');
-
-    $('loginCard').classList.add('hidden');
-
-    $('app').classList.remove('hidden');
-
+    const {error}=await sb.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    $('loginMsg').classList.add('hidden');$('loginCard').classList.add('hidden');$('app').classList.remove('hidden');
     try{
-
       await loadJudge();
-
-      if(
-        currentJudge&&
-        String(currentJudge['Role']).toLowerCase()==='judge'
-      ){
-
-        await loadQuestion();
-
-        startRealtime();
-
-      }
-
-    }catch(e){
-
-      console.error(
-        'Panel loading error:',
-        e
-      );
-
-      msg(
-        $('roleStatus'),
-        e.message
-      );
-
-    }
-
+      if(currentJudge&&String(currentJudge['Role']).toLowerCase()==='judge'){await loadQuestion();startRealtime();}
+    }catch(e){console.error(e);msg($('roleStatus'),e.message);}
   }catch(e){
-
-    console.error(
-      'Login error:',
-      e
-    );
-
-    msg(
-      $('loginMsg'),
-      e.message
-    );
-
-    $('loginBtn').disabled=false;
-    $('loginBtn').textContent='Log in';
-
+    console.error(e);msg($('loginMsg'),e.message);
+    $('loginBtn').disabled=false;$('loginBtn').textContent='Log in';
   }
 }
 
 /* LOGOUT */
 async function logout(){
-
   await stopScanner();
-
-  if(realtimeChannel){
-    await sb.removeChannel(
-      realtimeChannel
-    );
-  }
-
-  await sb.auth.signOut();
-
-  location.reload();
+  if(realtimeChannel)await sb.removeChannel(realtimeChannel);
+  await sb.auth.signOut();location.reload();
 }
 
-/* PAGE START */
-document.addEventListener(
-  'DOMContentLoaded',
-  async()=>{
+/* BUTTONS */
+function initializeButtons(){
+  $('loginBtn').onclick=login;
+  $('findStudentBtn').onclick=findStudent;
 
-    initializeButtons();
+  $('confirmStudentBtn').onclick=()=>{
+    if(!currentStudent){msg($('studentMsg'),'Find a student first.');return;}
+    studentConfirmed=true;
+    $('studentCardDisplay').classList.add('confirmed');
+    $('studentConfirmedMsg').classList.remove('hidden');
+    $('questionSelectionCard').classList.remove('hidden');
+    $('scanMsg').classList.add('hidden');$('numberMsg').classList.add('hidden');
+  };
 
-    try{
+  $('selectNumberBtn').onclick=()=>{
+    if(!studentConfirmed){msg($('numberMsg'),'Confirm the student first.');return;}
+    const number=Number($('selectedNumber').value);
+    if(!Number.isInteger(number)||number<1){msg($('numberMsg'),'Enter a valid question number.');return;}
+    msg($('numberMsg'),'Question number '+number+' selected. Judge 1 can now scan the corresponding QR code.',true);
+  };
 
-      const {data:{session}}=
-        await sb.auth.getSession();
+  $('scanBtn').onclick=startScanner;
+  $('stopScanBtn').onclick=stopScanner;
+  $('commentBtn').onclick=saveComment;
+  $('adminLoadBtn').onclick=adminLoadStudent;
+  $('saveScoresBtn').onclick=saveAdminScores;
+  ['score1','score2','score3','score4'].forEach(id=>$(id).oninput=updateAdminTotal);
+  $('logoutBtn').onclick=logout;
+}
 
-      if(session){
-
-        $('loginCard').classList.add('hidden');
-
-        $('app').classList.remove('hidden');
-
-        try{
-
-          await loadJudge();
-
-          if(
-            currentJudge&&
-            String(currentJudge['Role']).toLowerCase()==='judge'
-          ){
-
-            await loadQuestion();
-
-            startRealtime();
-
-          }
-
-        }catch(e){
-
-          console.error(
-            'Auto-login error:',
-            e
-          );
-
-          msg(
-            $('roleStatus'),
-            e.message
-          );
-
-        }
-
-      }
-
-    }catch(e){
-
-      console.error(
-        'Session check error:',
-        e
-      );
-
+/* PAGE START / SESSION RESTORE */
+document.addEventListener('DOMContentLoaded',async()=>{
+  initializeButtons();
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(session){
+      $('loginCard').classList.add('hidden');$('app').classList.remove('hidden');
+      try{
+        await loadJudge();
+        if(currentJudge&&String(currentJudge['Role']).toLowerCase()==='judge'){await loadQuestion();startRealtime();}
+      }catch(e){console.error(e);msg($('roleStatus'),e.message);}
     }
-
-  }
-);
-
-</script></body>
+  }catch(e){console.error('Session check error:',e);}
+});
+</script>
+</body>
 </html>
