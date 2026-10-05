@@ -850,10 +850,43 @@ const QURAN_PAGE_9 =
  * HAFS — YUNUS 63–70
  *
  * Original Hafs Mushaf page.
- * This replaces typed Arabic text for this passage.
  */
 const HAFS_YUNUS_63_70 =
 'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/hafs_yunus_63_70_page219.png';
+
+
+/*
+ * HISHAM FROM IBN AMIR — SABA 15–22
+ *
+ * Original Hisham Qira'at Mushaf page.
+ */
+const HISHAM_SABA_15_22 =
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/subquestion_3_hisham_saba_15_22.jpg';
+
+
+/*
+ * IDRIS FROM KHALAF AL-ASHIR — AZ-ZUKHRUF 62–75
+ *
+ * The database contains ONE passage row:
+ * ayah_start = 62
+ * ayah_end   = 75
+ *
+ * The original passage occupies two uploaded pages.
+ */
+const KHALAF_ZUKHRUF_62_73 =
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/subquestion_4_khalaf_az_zukhruf_62_73.jpg';
+
+const KHALAF_ZUKHRUF_74_75 =
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/subquestion_4_khalaf_az_zukhruf_74_75.jpg';
+
+
+/*
+ * HAFS — AL-ALAQ 1–19
+ *
+ * Original Hafs Mushaf page.
+ */
+const HAFS_ALAQ_1_19 =
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/surah_alaq_hafs_page597.png';
 
 
 /* =========================================================
@@ -1045,8 +1078,176 @@ function quranPassage(data){
 
 
   /*
-   * Other passages still use the database text
-   * until their original Mushaf pages are added.
+   * SUBQUESTION 3
+   * Hisham from Ibn Amir
+   * Saba 15–22
+   *
+   * Original Hisham Mushaf page.
+   */
+
+  const isHishamSaba =
+    (
+      surah.includes('سبأ') ||
+      surah.toLowerCase().includes('saba')
+    ) &&
+    start === 15 &&
+    end === 22 &&
+    (
+      riwayah.includes('هشام') ||
+      riwayah.toLowerCase().includes('hisham')
+    );
+
+
+  if(isHishamSaba){
+
+    return `
+
+      <div>
+
+        <b>Passage:</b>
+
+        <div class="quran-pages">
+
+          <div class="quran-page-label">
+            Original Qur'an page — Hishām from Ibn ʿĀmir — Sabaʾ 15–22
+          </div>
+
+          <img
+            class="quran-page"
+            src="${HISHAM_SABA_15_22}"
+            alt="Original Hisham Qur'an page — Saba 15–22"
+            loading="lazy"
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * SUBQUESTION 4
+   * Idris from Khalaf al-Ashir
+   * Az-Zukhruf 62–75
+   *
+   * IMPORTANT:
+   * The database has ONE row from 62 to 75.
+   *
+   * We therefore match:
+   * start === 62
+   * end   === 75
+   *
+   * and display both original pages.
+   */
+
+  const isKhalafZukhruf =
+    (
+      surah.includes('الزخرف') ||
+      surah.toLowerCase().includes('az-zukhruf') ||
+      surah.toLowerCase().includes('zukhruf')
+    ) &&
+    start === 62 &&
+    end === 75;
+
+
+  if(isKhalafZukhruf){
+
+    return `
+
+      <div>
+
+        <b>Passage:</b>
+
+        <div class="quran-pages">
+
+          <div class="quran-page-label">
+            Original Qur'an pages — Idrīs from Khalaf al-ʿĀshir — Az-Zukhruf 62–75
+          </div>
+
+          <img
+            class="quran-page"
+            src="${KHALAF_ZUKHRUF_62_73}"
+            alt="Original Qur'an page — Az-Zukhruf 62–73"
+            loading="lazy"
+          >
+
+          <img
+            class="quran-page"
+            src="${KHALAF_ZUKHRUF_74_75}"
+            alt="Original Qur'an page — Az-Zukhruf 74–75"
+            loading="lazy"
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * SUBQUESTION 5
+   * Hafs
+   * Al-Alaq 1–19
+   *
+   * IMPORTANT:
+   * We match by Surah and ayah range only.
+   *
+   * We do NOT require the database riwayah field
+   * to contain "Hafs", because the stored riwayah
+   * label may be different.
+   */
+
+  const isHafsAlaq =
+    (
+      surah.includes('العلق') ||
+      surah.toLowerCase().includes('alaq') ||
+      surah.toLowerCase().includes('al-alaq')
+    ) &&
+    start === 1 &&
+    end === 19;
+
+
+  if(isHafsAlaq){
+
+    return `
+
+      <div>
+
+        <b>Passage:</b>
+
+        <div class="quran-pages">
+
+          <div class="quran-page-label">
+            Original Qur'an page — Hafs — Al-ʿAlaq 1–19
+          </div>
+
+          <img
+            class="quran-page"
+            src="${HAFS_ALAQ_1_19}"
+            alt="Original Hafs Qur'an page — Al-Alaq 1–19"
+            loading="lazy"
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * OTHER PASSAGES
+   *
+   * If a passage does not yet have an uploaded
+   * original Qur'an page, use the database text.
    */
 
   return `
