@@ -846,6 +846,16 @@ const QURAN_PAGE_9 =
 'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_009.png';
 
 
+/*
+ * HAFS — YUNUS 63–70
+ *
+ * Original Hafs Mushaf page.
+ * This replaces typed Arabic text for this passage.
+ */
+const HAFS_YUNUS_63_70 =
+'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/hafs_yunus_63_70_page219.png';
+
+
 /* =========================================================
    GLOBAL STATE
 ========================================================= */
@@ -923,6 +933,14 @@ function quranPassage(data){
     Number(data?.ayah_end);
 
 
+  /*
+   * SUBQUESTION 1
+   * Al-Baqarah 50–58
+   * Al-Duri 'an al-Kisa'i
+   *
+   * Original Qira'at Mushaf pages
+   */
+
   const isBaqarahDuri =
     (
       surah.includes('البقرة') ||
@@ -974,6 +992,62 @@ function quranPassage(data){
 
   }
 
+
+  /*
+   * SUBQUESTION 2
+   * Hafs
+   * Yunus 63–70
+   *
+   * Original Hafs Mushaf page image.
+   */
+
+  const isHafsYunus =
+    (
+      surah.includes('يونس') ||
+      surah.toLowerCase().includes('yunus')
+    ) &&
+    start === 63 &&
+    end === 70 &&
+    (
+      riwayah.toLowerCase().includes('hafs') ||
+      riwayah.includes('حفص')
+    );
+
+
+  if(isHafsYunus){
+
+    return `
+
+      <div>
+
+        <b>Passage:</b>
+
+        <div class="quran-pages">
+
+          <div class="quran-page-label">
+            Hafs — Yunus 63–70
+          </div>
+
+          <img
+            class="quran-page"
+            src="${HAFS_YUNUS_63_70}"
+            alt="Hafs — Yunus 63–70"
+            loading="lazy"
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * Other passages still use the database text
+   * until their original Mushaf pages are added.
+   */
 
   return `
 
@@ -1582,12 +1656,6 @@ async function changeSubquestion(direction){
     }
 
 
-    /*
-      IMPORTANT:
-      Do NOT rely only on currentSession.
-      Read the latest question directly.
-    */
-
     const fresh =
       await getLatestActiveQuestion();
 
@@ -1729,10 +1797,6 @@ async function changeSubquestion(direction){
     }
 
 
-    /*
-      CALL THE EXISTING SECURE RPC
-    */
-
     const {
       data:rpcData,
       error:rpcError
@@ -1763,11 +1827,6 @@ async function changeSubquestion(direction){
     if(rpcError)
       throw rpcError;
 
-
-    /*
-      Wait briefly for the database/view
-      to expose the new value.
-    */
 
     let verified=null;
 
@@ -1825,17 +1884,9 @@ async function changeSubquestion(direction){
     }
 
 
-    /*
-      Update current session.
-    */
-
     currentSession =
       verified;
 
-
-    /*
-      Rebuild the complete question display.
-    */
 
     await renderCurrentQuestion(
       verified
@@ -1851,11 +1902,6 @@ async function changeSubquestion(direction){
 
     }
 
-
-    /*
-      Also show success in the normal
-      scan/status area.
-    */
 
     msg(
       $('scanMsg'),
@@ -1900,13 +1946,6 @@ async function changeSubquestion(direction){
 
     subquestionBusy=false;
 
-
-    /*
-      Re-rendering normally creates the
-      correct enabled/disabled state.
-      If something failed before rendering,
-      refresh the question once.
-    */
 
     if(
       !currentSession ||
@@ -2169,12 +2208,6 @@ async function renderCurrentQuestion(data){
 
   `;
 
-
-  /*
-    IMPORTANT:
-    Attach listeners AFTER the HTML
-    containing the buttons exists.
-  */
 
   attachSubquestionButtons();
 
@@ -3303,11 +3336,6 @@ function startRealtime(){
             ===
             'judge'
           ){
-
-            /*
-              Small delay prevents realtime
-              from racing the RPC update.
-            */
 
             await new Promise(
               resolve =>
