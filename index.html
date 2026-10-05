@@ -10,15 +10,60 @@
 
 <style>
 *{box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#f6f7f9;margin:0;color:#18202a}
-.wrap{max-width:720px;margin:auto;padding:18px}
-.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 10px #0001}
-h1{font-size:22px;margin:0 0 4px}
-h2{margin-top:0}
-.muted{color:#697586;font-size:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.field{flex:1;min-width:180px}
-label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f6f7f9;
+  margin:0;
+  color:#18202a
+}
+
+.wrap{
+  max-width:720px;
+  margin:auto;
+  padding:18px
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:0 2px 10px #0001
+}
+
+h1{
+  font-size:22px;
+  margin:0 0 4px
+}
+
+h2{
+  margin-top:0
+}
+
+.muted{
+  color:#697586;
+  font-size:14px
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+
+.field{
+  flex:1;
+  min-width:180px
+}
+
+label{
+  display:block;
+  font-weight:700;
+  font-size:13px;
+  margin:10px 0 5px
+}
+
 input,textarea,button{
   width:100%;
   padding:12px;
@@ -26,7 +71,12 @@ input,textarea,button{
   border-radius:10px;
   font-size:16px
 }
-textarea{min-height:110px;resize:vertical}
+
+textarea{
+  min-height:110px;
+  resize:vertical
+}
+
 button{
   background:#111827;
   color:white;
@@ -35,15 +85,21 @@ button{
   cursor:pointer;
   margin-top:10px
 }
+
 button:disabled{
-  opacity:.6;
+  opacity:.55;
   cursor:not-allowed
 }
+
 .secondary{
   background:#e9edf2;
   color:#111827
 }
-.hidden{display:none!important}
+
+.hidden{
+  display:none!important
+}
+
 .pill{
   display:inline-block;
   padding:5px 9px;
@@ -53,7 +109,12 @@ button:disabled{
   font-weight:700;
   margin:2px
 }
-.question{font-size:18px;font-weight:700}
+
+.question{
+  font-size:18px;
+  font-weight:700
+}
+
 .passage{
   white-space:pre-wrap;
   line-height:1.8;
@@ -62,6 +123,7 @@ button:disabled{
   border-radius:10px;
   margin-top:8px
 }
+
 .quran-pages{
   max-height:650px;
   overflow-y:auto;
@@ -73,6 +135,7 @@ button:disabled{
   border:1px solid #e5e7eb;
   -webkit-overflow-scrolling:touch
 }
+
 .quran-page{
   display:block;
   width:100%;
@@ -81,7 +144,11 @@ button:disabled{
   border-radius:6px;
   background:#fff
 }
-.quran-page:last-child{margin-bottom:0}
+
+.quran-page:last-child{
+  margin-bottom:0
+}
+
 .quran-page-label{
   text-align:center;
   font-size:12px;
@@ -89,6 +156,7 @@ button:disabled{
   padding:5px 0 8px;
   font-weight:700
 }
+
 .status{
   padding:10px;
   border-radius:10px;
@@ -96,9 +164,20 @@ button:disabled{
   margin-top:10px;
   white-space:pre-wrap
 }
-.success{background:#ecfdf3}
-.error{background:#fef3f2;color:#b42318}
-#reader{margin-top:12px}
+
+.success{
+  background:#ecfdf3
+}
+
+.error{
+  background:#fef3f2;
+  color:#b42318
+}
+
+#reader{
+  margin-top:12px
+}
+
 .student-card{
   display:flex;
   gap:16px;
@@ -108,6 +187,7 @@ button:disabled{
   background:#f8fafc;
   border-radius:14px
 }
+
 .student-photo{
   width:90px;
   height:90px;
@@ -116,20 +196,27 @@ button:disabled{
   background:#e5e7eb;
   flex-shrink:0
 }
-.student-info{flex:1}
+
+.student-info{
+  flex:1
+}
+
 .student-name{
   font-size:20px;
   font-weight:700;
   margin-bottom:6px
 }
+
 .student-detail{
   font-size:14px;
   margin:4px 0
 }
+
 .confirmed{
   border:2px solid #16a34a;
   background:#f0fdf4
 }
+
 .comment-item{
   white-space:pre-wrap;
   line-height:1.6;
@@ -139,12 +226,14 @@ button:disabled{
   margin-top:8px;
   border:1px solid #e5e7eb
 }
+
 .comment-date{
   display:block;
   color:#697586;
   font-size:12px;
   margin-top:6px
 }
+
 .score-card{
   border:1px solid #e5e7eb;
   border-radius:12px;
@@ -152,15 +241,18 @@ button:disabled{
   margin-top:12px;
   background:#fafafa
 }
+
 .score-title{
   font-weight:700;
   font-size:17px;
   margin-bottom:8px
 }
+
 .score-input{
   font-size:20px;
   font-weight:700
 }
+
 .admin-comment{
   white-space:pre-wrap;
   line-height:1.6;
@@ -170,6 +262,7 @@ button:disabled{
   border:1px solid #e5e7eb;
   margin-top:8px
 }
+
 .total-box{
   font-size:20px;
   font-weight:700;
@@ -179,6 +272,9 @@ button:disabled{
   margin-top:12px;
   line-height:1.6
 }
+
+/* SUBQUESTION NAVIGATION */
+
 .subquestion-controls{
   margin-top:16px;
   padding:14px;
@@ -186,31 +282,63 @@ button:disabled{
   border:1px solid #dbe3ec;
   border-radius:12px
 }
+
 .subquestion-title{
   font-weight:700;
   margin-bottom:8px
 }
-.subquestion-buttons{
-  display:flex;
-  gap:10px
-}
-.subquestion-buttons button{
-  flex:1
-}
+
 .subquestion-current{
   text-align:center;
   font-weight:700;
-  padding:10px;
+  font-size:17px;
+  padding:12px;
   background:#fff;
   border-radius:10px;
   margin:8px 0
 }
+
+.subquestion-buttons{
+  display:flex;
+  gap:10px
+}
+
+.subquestion-buttons button{
+  flex:1;
+  margin-top:6px;
+  min-height:48px
+}
+
+.subquestion-status{
+  font-size:13px;
+  text-align:center;
+  margin-top:8px;
+  color:#697586
+}
+
 @media(max-width:480px){
-  .wrap{padding:10px}
-  .card{padding:14px}
-  .student-card{align-items:flex-start}
-  .student-photo{width:72px;height:72px}
-  .subquestion-buttons{gap:6px}
+
+  .wrap{
+    padding:10px
+  }
+
+  .card{
+    padding:14px
+  }
+
+  .student-card{
+    align-items:flex-start
+  }
+
+  .student-photo{
+    width:72px;
+    height:72px
+  }
+
+  .subquestion-buttons{
+    gap:6px
+  }
+
 }
 </style>
 </head>
@@ -219,36 +347,64 @@ button:disabled{
 
 <div class="wrap">
 
+<!-- LOGIN -->
+
 <div class="card" id="loginCard">
+
 <h1>Muslim Mercy Group</h1>
-<div class="muted">Judge Panel / Admin Panel</div>
 
-<label>Email</label>
-<input id="email" type="email" autocomplete="username">
-
-<label>Password</label>
-<input id="password" type="password" autocomplete="current-password">
-
-<button type="button" id="loginBtn">Log in</button>
-
-<div id="loginMsg" class="status hidden"></div>
+<div class="muted">
+Judge Panel / Admin Panel
 </div>
 
+<label>Email</label>
+
+<input
+  id="email"
+  type="email"
+  autocomplete="username"
+>
+
+<label>Password</label>
+
+<input
+  id="password"
+  type="password"
+  autocomplete="current-password"
+>
+
+<button type="button" id="loginBtn">
+Log in
+</button>
+
+<div id="loginMsg" class="status hidden"></div>
+
+</div>
+
+
+<!-- APP -->
 
 <div id="app" class="hidden">
 
 <div class="card">
+
 <h1>Muslim Mercy Group</h1>
-<div class="muted" id="judgeName">Loading user…</div>
+
+<div class="muted" id="judgeName">
+Loading user…
+</div>
+
 <div id="roleStatus" class="status"></div>
+
 </div>
 
 
-<!-- ADMIN PANEL -->
+<!-- ================= ADMIN PANEL ================= -->
 
 <div id="adminPanel" class="hidden">
 
 <div class="card">
+
 <h2>👑 Admin Score Entry</h2>
 
 <div class="muted">
@@ -257,24 +413,39 @@ The Admin enters the four judges' scores separately.
 </div>
 
 <label>Student ID</label>
-<input id="adminStudentId" placeholder="Example: Stu-001">
+
+<input
+  id="adminStudentId"
+  placeholder="Example: Stu-001"
+>
 
 <button type="button" id="adminLoadBtn">
 🔎 Load Student / Question
 </button>
 
 <div id="adminStudentMsg" class="status hidden"></div>
+
 </div>
 
 
 <div class="card hidden" id="adminStudentCard">
+
 <h2>👤 Student</h2>
 
 <div class="student-card">
-<img id="adminStudentPhoto" class="student-photo" src="" alt="Student photo">
+
+<img
+  id="adminStudentPhoto"
+  class="student-photo"
+  src=""
+  alt="Student photo"
+>
 
 <div class="student-info">
-<div id="adminStudentName" class="student-name">—</div>
+
+<div id="adminStudentName" class="student-name">
+—
+</div>
 
 <div class="student-detail">
 <b>Student ID:</b>
@@ -290,20 +461,28 @@ The Admin enters the four judges' scores separately.
 <b>Category:</b>
 <span id="adminStudentCategory">—</span>
 </div>
+
 </div>
 </div>
+
 </div>
 
 
 <div class="card hidden" id="adminQuestionCard">
+
 <h2>📖 Current Question</h2>
+
 <div id="adminQuestionBox">
-<div class="muted">No active question loaded.</div>
+<div class="muted">
+No active question loaded.
 </div>
+</div>
+
 </div>
 
 
 <div class="card hidden" id="adminCommentsCard">
+
 <h2>📝 Judges' Comments / Observations</h2>
 
 <div class="muted">
@@ -311,12 +490,16 @@ These are the observations saved by Judges 1–4.
 </div>
 
 <div id="adminCommentsBox">
-<div class="muted">No comments loaded.</div>
+<div class="muted">
+No comments loaded.
 </div>
+</div>
+
 </div>
 
 
 <div class="card hidden" id="adminScoresCard">
+
 <h2>📊 Judge Scores</h2>
 
 <div class="muted">
@@ -324,47 +507,114 @@ Each judge is scored separately out of 100.
 </div>
 
 <div class="score-card">
-<div class="score-title">Judge 1 — /100</div>
-<label>Score</label>
-<input id="score1" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100">
+
+<div class="score-title">
+Judge 1 — /100
 </div>
 
-<div class="score-card">
-<div class="score-title">Judge 2 — /100</div>
 <label>Score</label>
-<input id="score2" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100">
+
+<input
+  id="score1"
+  class="score-input"
+  type="number"
+  min="0"
+  max="100"
+  step="1"
+  placeholder="0–100"
+>
+
 </div>
 
-<div class="score-card">
-<div class="score-title">Judge 3 — /100</div>
-<label>Score</label>
-<input id="score3" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100">
-</div>
 
 <div class="score-card">
-<div class="score-title">Judge 4 — /100</div>
-<label>Score</label>
-<input id="score4" class="score-input" type="number" min="0" max="100" step="1" placeholder="0–100">
+
+<div class="score-title">
+Judge 2 — /100
 </div>
+
+<label>Score</label>
+
+<input
+  id="score2"
+  class="score-input"
+  type="number"
+  min="0"
+  max="100"
+  step="1"
+  placeholder="0–100"
+>
+
+</div>
+
+
+<div class="score-card">
+
+<div class="score-title">
+Judge 3 — /100
+</div>
+
+<label>Score</label>
+
+<input
+  id="score3"
+  class="score-input"
+  type="number"
+  min="0"
+  max="100"
+  step="1"
+  placeholder="0–100"
+>
+
+</div>
+
+
+<div class="score-card">
+
+<div class="score-title">
+Judge 4 — /100
+</div>
+
+<label>Score</label>
+
+<input
+  id="score4"
+  class="score-input"
+  type="number"
+  min="0"
+  max="100"
+  step="1"
+  placeholder="0–100"
+>
+
+</div>
+
 
 <div id="adminTotal" class="total-box">
+
 Total: 0 / 400<br>
 Average: — / 100
+
 </div>
+
 
 <button type="button" id="saveScoresBtn">
 💾 Save All Four Scores
 </button>
 
 <div id="scoresMsg" class="status hidden"></div>
-</div>
 
 </div>
 
+</div>
 
-<!-- JUDGE PANEL -->
+
+<!-- ================= JUDGE PANEL ================= -->
 
 <div id="judgePanel" class="hidden">
+
+
+<!-- STUDENT -->
 
 <div class="card" id="studentCard">
 
@@ -377,9 +627,17 @@ Enter the student's ID to identify the student before starting.
 <label>Student ID</label>
 
 <div class="row">
+
 <div class="field">
-<input id="studentId" value="Stu-001" placeholder="Example: Stu-001">
+
+<input
+  id="studentId"
+  value="Stu-001"
+  placeholder="Example: Stu-001"
+>
+
 </div>
+
 </div>
 
 <button type="button" id="findStudentBtn">
@@ -388,15 +646,23 @@ Enter the student's ID to identify the student before starting.
 
 <div id="studentMsg" class="status hidden"></div>
 
+
 <div id="studentDetails" class="hidden">
 
 <div class="student-card" id="studentCardDisplay">
 
-<img id="studentPhoto" class="student-photo" src="" alt="Student photo">
+<img
+  id="studentPhoto"
+  class="student-photo"
+  src=""
+  alt="Student photo"
+>
 
 <div class="student-info">
 
-<div id="studentName" class="student-name">—</div>
+<div id="studentName" class="student-name">
+—
+</div>
 
 <div class="student-detail">
 <b>Student ID:</b>
@@ -414,7 +680,9 @@ Enter the student's ID to identify the student before starting.
 </div>
 
 </div>
+
 </div>
+
 
 <button type="button" id="confirmStudentBtn">
 ✅ Confirm Student
@@ -422,12 +690,15 @@ Enter the student's ID to identify the student before starting.
 
 </div>
 
+
 <div id="studentConfirmedMsg" class="status success hidden">
 Student confirmed. The student may now choose a question number.
 </div>
 
 </div>
 
+
+<!-- QUESTION NUMBER -->
 
 <div class="card hidden" id="questionSelectionCard">
 
@@ -439,10 +710,12 @@ After the student chooses a number, Judge 1 scans the corresponding question pap
 
 <label>Selected Number</label>
 
-<input id="selectedNumber"
-       type="number"
-       min="1"
-       placeholder="Enter question number">
+<input
+  id="selectedNumber"
+  type="number"
+  min="1"
+  placeholder="Enter question number"
+>
 
 <button type="button" id="selectNumberBtn">
 ✅ Confirm Number
@@ -452,6 +725,8 @@ After the student chooses a number, Judge 1 scans the corresponding question pap
 
 </div>
 
+
+<!-- SCANNER -->
 
 <div class="card hidden" id="scanCard">
 
@@ -468,7 +743,11 @@ Example: QIRAAT-001
 
 <div id="reader" class="hidden"></div>
 
-<button type="button" id="stopScanBtn" class="secondary hidden">
+<button
+  type="button"
+  id="stopScanBtn"
+  class="secondary hidden"
+>
 Stop scanner
 </button>
 
@@ -477,16 +756,24 @@ Stop scanner
 </div>
 
 
+<!-- CURRENT QUESTION -->
+
 <div class="card">
 
 <h2>Current Question</h2>
 
 <div id="questionBox">
-<div class="muted">Waiting for an active question…</div>
+
+<div class="muted">
+Waiting for an active question…
 </div>
 
 </div>
 
+</div>
+
+
+<!-- COMMENTS -->
 
 <div class="card">
 
@@ -499,8 +786,10 @@ Add your observation for this student here.
 
 <label>Comment</label>
 
-<textarea id="comments"
-placeholder="Enter your observation or comment..."></textarea>
+<textarea
+  id="comments"
+  placeholder="Enter your observation or comment..."
+></textarea>
 
 <button type="button" id="commentBtn">
 Save Comment
@@ -515,7 +804,11 @@ Save Comment
 </div>
 
 
-<button type="button" id="logoutBtn" class="secondary">
+<button
+  type="button"
+  id="logoutBtn"
+  class="secondary"
+>
 Log out
 </button>
 
@@ -525,36 +818,59 @@ Log out
 
 <script>
 
-const SUPABASE_URL='https://nsalofqzqhivlaiqpfhe.supabase.co';
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-const SUPABASE_KEY='sb_publishable_8AhIurbjKxLbn4rwoQE3ww_7ffssjoX';
+const SUPABASE_URL =
+'https://nsalofqzqhivlaiqpfhe.supabase.co';
 
-const sb=supabase.createClient(
+const SUPABASE_KEY =
+'sb_publishable_8AhIurbjKxLbn4rwoQE3ww_7ffssjoX';
+
+const sb =
+supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
-const QURAN_PAGE_8=
+
+/* =========================================================
+   QURAN IMAGES
+========================================================= */
+
+const QURAN_PAGE_8 =
 'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_008.png';
 
-const QURAN_PAGE_9=
+const QURAN_PAGE_9 =
 'https://nsalofqzqhivlaiqpfhe.supabase.co/storage/v1/object/public/judge-panel/baqarah_page_009.png';
 
 
-let currentJudge=null;
-let currentSession=null;
-let currentStudent=null;
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
-let studentConfirmed=false;
-let realtimeChannel=null;
-let scanner=null;
-let scanLocked=false;
+let currentJudge = null;
+let currentSession = null;
+let currentStudent = null;
 
-let availableSubquestions=[];
-let subquestionBusy=false;
+let studentConfirmed = false;
+
+let realtimeChannel = null;
+let scanner = null;
+let scanLocked = false;
+
+let availableSubquestions = [];
+
+let subquestionBusy = false;
 
 
-const $=id=>document.getElementById(id);
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ =
+id => document.getElementById(id);
 
 
 function msg(el,text,ok=false){
@@ -563,7 +879,9 @@ function msg(el,text,ok=false){
 
   el.textContent=text;
 
-  el.className='status '+(ok?'success':'error');
+  el.className =
+    'status '+
+    (ok ? 'success' : 'error');
 
   el.classList.remove('hidden');
 }
@@ -571,44 +889,57 @@ function msg(el,text,ok=false){
 
 function esc(v){
 
-  return String(v??'').replace(
-    /[&<>'"]/g,
-    c=>({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      "'":'&#39;',
-      '"':'&quot;'
-    }[c])
-  );
+  return String(v ?? '')
+    .replace(
+      /[&<>'"]/g,
+      c => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        "'":'&#39;',
+        '"':'&quot;'
+      }[c])
+    );
 
 }
 
 
-/* QURAN PASSAGE */
+/* =========================================================
+   QURAN PASSAGE
+========================================================= */
 
 function quranPassage(data){
 
-  const surah=String(data?.surah||'').trim();
-  const riwayah=String(data?.riwayah||'').trim();
+  const surah =
+    String(data?.surah || '').trim();
 
-  const start=Number(data?.ayah_start);
-  const end=Number(data?.ayah_end);
+  const riwayah =
+    String(data?.riwayah || '').trim();
 
-  const isBaqarahDuri=
+  const start =
+    Number(data?.ayah_start);
+
+  const end =
+    Number(data?.ayah_end);
+
+
+  const isBaqarahDuri =
     (
       surah.includes('البقرة') ||
       surah.toLowerCase().includes('al-baqarah')
     ) &&
-    start===50 &&
-    end===58 &&
+    start === 50 &&
+    end === 58 &&
     riwayah.includes('الدوري') &&
     riwayah.includes('الكسائي');
+
 
   if(isBaqarahDuri){
 
     return `
+
       <div>
+
         <b>Passage:</b>
 
         <div class="quran-pages">
@@ -636,65 +967,96 @@ function quranPassage(data){
           >
 
         </div>
+
       </div>
+
     `;
+
   }
 
+
   return `
+
     <div>
+
       <b>Passage:</b>
 
       <div class="passage">
-        ${esc(data?.text||'—')}
+        ${esc(data?.text || '—')}
       </div>
+
     </div>
+
   `;
+
 }
 
 
-/* JUDGE 1 */
+/* =========================================================
+   JUDGE 1
+========================================================= */
 
 function isJudge1(){
 
-  return currentJudge &&
-    String(currentJudge['Role']).trim().toLowerCase()==='judge' &&
-    Number(currentJudge.id)===1;
+  return !!(
+    currentJudge &&
+    String(
+      currentJudge['Role'] || ''
+    ).trim().toLowerCase() === 'judge' &&
+    Number(currentJudge.id) === 1
+  );
 
 }
 
 
-/* LOAD USER / ROLE */
+/* =========================================================
+   LOAD USER
+========================================================= */
 
 async function loadJudge(){
 
   const {
     data:{user},
     error:userError
-  }=await sb.auth.getUser();
+  } =
+  await sb.auth.getUser();
+
 
   if(userError)
     throw new Error(
-      'Auth lookup failed: '+userError.message
+      'Auth lookup failed: '+
+      userError.message
     );
 
+
   if(!user)
-    throw new Error('No authenticated user found.');
+    throw new Error(
+      'No authenticated user found.'
+    );
 
 
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('Users')
-    .select('id,name,"Role",auth_user_id')
-    .eq('auth_user_id',user.id)
+    .select(
+      'id,name,"Role",auth_user_id'
+    )
+    .eq(
+      'auth_user_id',
+      user.id
+    )
     .maybeSingle();
 
 
   if(error)
     throw new Error(
-      'Users lookup failed: '+error.message
+      'Users lookup failed: '+
+      error.message
     );
+
 
   if(!data)
     throw new Error(
@@ -705,54 +1067,68 @@ async function loadJudge(){
   currentJudge=data;
 
 
-  $('judgeName').textContent=
-    (data.name||'User')+
+  $('judgeName').textContent =
+    (data.name || 'User')+
     ' • '+
-    (data['Role']||'');
+    (data['Role'] || '');
 
 
-  const role=
-    String(data['Role']||'')
+  const role =
+    String(data['Role'] || '')
       .trim()
       .toLowerCase();
 
 
-  const isAdmin=role==='admin';
-  const isJudge=role==='judge';
+  const isAdmin =
+    role === 'admin';
+
+  const isJudge =
+    role === 'judge';
 
 
   $('adminPanel')
     .classList
-    .toggle('hidden',!isAdmin);
+    .toggle(
+      'hidden',
+      !isAdmin
+    );
 
 
   $('judgePanel')
     .classList
-    .toggle('hidden',!isJudge);
+    .toggle(
+      'hidden',
+      !isJudge
+    );
 
 
   if(isAdmin){
 
-    $('roleStatus').textContent=
+    $('roleStatus').textContent =
       'Admin: score entry and judge observations enabled.';
 
   }
   else if(isJudge){
 
-    $('roleStatus').textContent=
+    $('roleStatus').textContent =
       isJudge1()
-      ? 'Judge 1: barcode scanning and subquestion navigation enabled.'
-      : 'Barcode scanning and subquestion navigation are controlled by Judge 1.';
+      ?
+      'Judge 1: barcode scanning and subquestion navigation enabled.'
+      :
+      'Barcode scanning and subquestion navigation are controlled by Judge 1.';
 
 
     $('scanCard')
       .classList
-      .toggle('hidden',!isJudge1());
+      .toggle(
+        'hidden',
+        !isJudge1()
+      );
 
   }
   else{
 
-    $('roleStatus').textContent=
+    $('roleStatus').textContent =
       'Unknown role. Please contact the administrator.';
 
   }
@@ -760,12 +1136,15 @@ async function loadJudge(){
 }
 
 
-/* FIND STUDENT */
+/* =========================================================
+   FIND STUDENT
+========================================================= */
 
 async function findStudent(){
 
-  const studentId=
+  const studentId =
     $('studentId').value.trim();
+
 
   if(!studentId){
 
@@ -778,9 +1157,17 @@ async function findStudent(){
   }
 
 
-  $('studentDetails').classList.add('hidden');
-  $('studentConfirmedMsg').classList.add('hidden');
-  $('questionSelectionCard').classList.add('hidden');
+  $('studentDetails')
+    .classList
+    .add('hidden');
+
+  $('studentConfirmedMsg')
+    .classList
+    .add('hidden');
+
+  $('questionSelectionCard')
+    .classList
+    .add('hidden');
 
   $('studentCardDisplay')
     .classList
@@ -799,7 +1186,8 @@ async function findStudent(){
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('Students')
     .select('*');
 
@@ -810,19 +1198,22 @@ async function findStudent(){
 
     msg(
       $('studentMsg'),
-      'Could not find student: '+error.message
+      'Could not find student: '+
+      error.message
     );
 
     return;
   }
 
 
-  const student=
-    (data||[]).find(
-      s=>
-        String(s["student's_id"]??'')
-          .trim()
-          .toLowerCase()
+  const student =
+    (data || []).find(
+      s =>
+        String(
+          s["student's_id"] ?? ''
+        )
+        .trim()
+        .toLowerCase()
         ===
         studentId.toLowerCase()
     );
@@ -832,7 +1223,8 @@ async function findStudent(){
 
     msg(
       $('studentMsg'),
-      'No student found with ID: '+studentId
+      'No student found with ID: '+
+      studentId
     );
 
     return;
@@ -842,25 +1234,30 @@ async function findStudent(){
   currentStudent=student;
 
 
-  $('studentName').textContent=
-    student.full_name||'Unnamed Student';
+  $('studentName').textContent =
+    student.full_name ||
+    'Unnamed Student';
 
 
-  $('studentIdDisplay').textContent=
-    student["student's_id"]||studentId;
+  $('studentIdDisplay').textContent =
+    student["student's_id"] ||
+    studentId;
 
 
-  $('studentMadrasa').textContent=
-    student.madrasa_type||'—';
+  $('studentMadrasa').textContent =
+    student.madrasa_type ||
+    '—';
 
 
   $('studentCategory').textContent='—';
 
 
   if(student.photo_url)
-    $('studentPhoto').src=student.photo_url;
+    $('studentPhoto').src =
+      student.photo_url;
   else
-    $('studentPhoto').removeAttribute('src');
+    $('studentPhoto')
+      .removeAttribute('src');
 
 
   $('studentDetails')
@@ -877,50 +1274,83 @@ async function findStudent(){
 }
 
 
-/* SUBQUESTION NUMBERS */
+/* =========================================================
+   GET SUBQUESTION NUMBERS
+========================================================= */
 
 async function getSubquestionNumbers(questionId){
+
+  if(!questionId)
+    return [];
+
 
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('question_passages')
     .select('subquestion_number')
-    .eq('question_id',questionId)
-    .order('subquestion_number',{
-      ascending:true
-    });
+    .eq(
+      'question_id',
+      questionId
+    )
+    .order(
+      'subquestion_number',
+      {
+        ascending:true
+      }
+    );
 
 
   if(error)
     throw error;
 
 
-  return [
-    ...new Set(
-      (data||[])
-        .map(r=>Number(r.subquestion_number))
-        .filter(
-          n=>Number.isInteger(n)&&n>0
-        )
-    )
-  ].sort((a,b)=>a-b);
+  const numbers =
+    [
+      ...new Set(
+        (data || [])
+          .map(
+            row =>
+              Number(
+                row.subquestion_number
+              )
+          )
+          .filter(
+            n =>
+              Number.isInteger(n) &&
+              n > 0
+          )
+      )
+    ]
+    .sort(
+      (a,b)=>a-b
+    );
+
+
+  console.log(
+    'SUBQUESTION NUMBERS FROM DATABASE:',
+    numbers
+  );
+
+
+  return numbers;
 
 }
 
 
-/*
-  SUBQUESTION MARKUP
+/* =========================================================
+   SUBQUESTION MARKUP
+========================================================= */
 
-  IMPORTANT:
-  The buttons now use direct onclick handlers.
-  This removes dependence on a second event-binding step.
-*/
+function subquestionMarkup(
+  data,
+  numbers,
+  admin=false
+){
 
-function subquestionMarkup(data,numbers,admin=false){
-
-  const current=
+  const current =
     Number(
       data.current_subquestion ||
       data.subquestion_number ||
@@ -929,24 +1359,45 @@ function subquestionMarkup(data,numbers,admin=false){
     );
 
 
-  const idx=numbers.indexOf(current);
-
-  const position=
-    idx<0 ? 0 : idx;
+  let position =
+    numbers.indexOf(current);
 
 
-  const label=
+  if(position < 0)
+    position=0;
+
+
+  const displayCurrent =
+    numbers[position] ||
+    current ||
+    1;
+
+
+  const label =
     numbers.length
-    ? `Subquestion ${position+1} of ${numbers.length} (No. ${current})`
-    : 'No subquestions configured';
+    ?
+    `Subquestion ${position+1} of ${numbers.length} — No. ${displayCurrent}`
+    :
+    'No subquestions configured';
 
 
   let controls='';
 
 
-  if(!admin && isJudge1() && numbers.length){
+  if(
+    !admin &&
+    isJudge1() &&
+    numbers.length
+  ){
 
-    controls=`
+    const atFirst =
+      position <= 0;
+
+    const atLast =
+      position >= numbers.length-1;
+
+
+    controls = `
 
       <div class="subquestion-buttons">
 
@@ -954,8 +1405,7 @@ function subquestionMarkup(data,numbers,admin=false){
           type="button"
           class="secondary"
           id="previousSubquestion"
-          onclick="changeSubquestion(-1)"
-          ${position<=0?'disabled':''}
+          ${atFirst ? 'disabled' : ''}
         >
           ← Previous
         </button>
@@ -964,12 +1414,18 @@ function subquestionMarkup(data,numbers,admin=false){
         <button
           type="button"
           id="nextSubquestion"
-          onclick="changeSubquestion(1)"
-          ${position>=numbers.length-1?'disabled':''}
+          ${atLast ? 'disabled' : ''}
         >
           Next →
         </button>
 
+      </div>
+
+      <div
+        id="subquestionActionStatus"
+        class="subquestion-status"
+      >
+        Judge 1 controls the active subquestion.
       </div>
 
     `;
@@ -993,11 +1449,15 @@ function subquestionMarkup(data,numbers,admin=false){
 
       ${
         admin
-        ? ''
-        : (
+        ?
+        ''
+        :
+        (
           !isJudge1()
-          ? '<div class="muted">Judge 1 controls the active subquestion.</div>'
-          : ''
+          ?
+          '<div class="muted">Judge 1 controls the active subquestion.</div>'
+          :
+          ''
         )
       }
 
@@ -1008,21 +1468,60 @@ function subquestionMarkup(data,numbers,admin=false){
 }
 
 
-/*
-  CHANGE SUBQUESTION
+/* =========================================================
+   READ LATEST ACTIVE SESSION
+========================================================= */
 
-  This version:
-  1. Confirms the button was clicked.
-  2. Reads the current active session again.
-  3. Gets the five configured subquestions.
-  4. Calls the RPC.
-  5. Reloads the question from Supabase.
-*/
+async function getLatestActiveQuestion(){
+
+  const studentId =
+    $('studentId').value.trim();
+
+
+  if(!studentId)
+    return null;
+
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('judge_question_view')
+    .select('*')
+    .eq(
+      'student_id',
+      studentId
+    )
+    .eq(
+      'status',
+      'active'
+    )
+    .limit(1)
+    .maybeSingle();
+
+
+  if(error)
+    throw error;
+
+
+  return data || null;
+
+}
+
+
+/* =========================================================
+   CHANGE SUBQUESTION
+========================================================= */
 
 async function changeSubquestion(direction){
 
   console.log(
-    'CHANGE SUBQUESTION CLICKED:',
+    '===================================='
+  );
+
+  console.log(
+    'CHANGE SUBQUESTION:',
     direction
   );
 
@@ -1041,187 +1540,336 @@ async function changeSubquestion(direction){
   if(subquestionBusy){
 
     console.log(
-      'Subquestion change already in progress.'
+      'Already changing subquestion.'
     );
 
     return;
   }
 
 
-  if(!currentSession){
-
-    msg(
-      $('scanMsg'),
-      'No active competition session is loaded.'
-    );
-
-    return;
-  }
+  subquestionBusy=true;
 
 
-  const sessionId=
-    currentSession.session_id ||
-    currentSession.id;
+  const nextButton =
+    $('nextSubquestion');
+
+  const previousButton =
+    $('previousSubquestion');
 
 
-  const questionId=
-    currentSession.question_id ||
-    currentSession.ques_id ||
-    currentSession.questionId;
+  if(nextButton)
+    nextButton.disabled=true;
+
+  if(previousButton)
+    previousButton.disabled=true;
 
 
-  console.log(
-    'Subquestion session:',
-    sessionId
-  );
-
-  console.log(
-    'Subquestion question:',
-    questionId
-  );
-
-
-  if(!sessionId || !questionId){
-
-    msg(
-      $('scanMsg'),
-      'Session or question ID is missing.'
-    );
-
-    return;
-  }
+  const localStatus =
+    $('subquestionActionStatus');
 
 
   try{
 
-    subquestionBusy=true;
+    if(localStatus){
+
+      localStatus.textContent =
+        direction > 0
+        ?
+        'Moving to the next subquestion…'
+        :
+        'Moving to the previous subquestion…';
+
+    }
 
 
-    const button=
-      direction>0
-      ? $('nextSubquestion')
-      : $('previousSubquestion');
+    /*
+      IMPORTANT:
+      Do NOT rely only on currentSession.
+      Read the latest question directly.
+    */
+
+    const fresh =
+      await getLatestActiveQuestion();
 
 
-    if(button)
-      button.disabled=true;
-
-
-    msg(
-      $('scanMsg'),
-      direction>0
-      ? 'Next subquestion selected. Updating…'
-      : 'Previous subquestion selected. Updating…',
-      true
+    console.log(
+      'FRESH QUESTION FROM VIEW:',
+      fresh
     );
 
 
-    const numbers=
+    if(!fresh)
+      throw new Error(
+        'There is no active question for this student.'
+      );
+
+
+    currentSession=fresh;
+
+
+    const sessionId =
+      fresh.session_id ||
+      fresh.id;
+
+
+    const questionId =
+      fresh.question_id;
+
+
+    console.log(
+      'SESSION ID:',
+      sessionId
+    );
+
+    console.log(
+      'QUESTION ID:',
+      questionId
+    );
+
+    console.log(
+      'CURRENT SUBQUESTION:',
+      fresh.current_subquestion
+    );
+
+
+    if(!sessionId)
+      throw new Error(
+        'Active session ID is missing.'
+      );
+
+
+    if(!questionId)
+      throw new Error(
+        'Question ID is missing.'
+      );
+
+
+    const numbers =
       await getSubquestionNumbers(
         questionId
       );
 
 
+    availableSubquestions =
+      numbers;
+
+
     console.log(
-      'Available subquestions:',
+      'AVAILABLE:',
       numbers
     );
 
 
-    if(!numbers.length)
+    if(numbers.length < 1)
       throw new Error(
-        'No subquestions are configured for this question.'
+        'No subquestions were found for this question.'
       );
 
 
-    const current=
+    const current =
       Number(
-        currentSession.current_subquestion ||
-        currentSession.subquestion_number ||
+        fresh.current_subquestion ||
+        fresh.subquestion_number ||
         numbers[0]
       );
 
 
-    let idx=
+    let index =
       numbers.indexOf(current);
 
 
-    if(idx<0)
-      idx=0;
+    if(index < 0){
+
+      console.warn(
+        'Current subquestion was not in list. Starting from first.'
+      );
+
+      index=0;
+
+    }
 
 
-    const next=
-      numbers[idx+direction];
+    const target =
+      numbers[index + direction];
 
 
     console.log(
-      'Current subquestion:',
+      'CURRENT:',
       current
     );
 
     console.log(
-      'Requested next subquestion:',
-      next
+      'TARGET:',
+      target
     );
 
 
-    if(!next){
+    if(target === undefined){
 
-      msg(
-        $('scanMsg'),
-        direction>0
-        ? 'This is already the last subquestion.'
-        : 'This is already the first subquestion.'
-      );
+      if(localStatus){
+
+        localStatus.textContent =
+          direction > 0
+          ?
+          'This is already the last subquestion.'
+          :
+          'This is already the first subquestion.';
+
+      }
 
       return;
     }
 
 
+    if(localStatus){
+
+      localStatus.textContent =
+        'Saving subquestion '+target+'…';
+
+    }
+
+
+    /*
+      CALL THE EXISTING SECURE RPC
+    */
+
     const {
       data:rpcData,
-      error
-    }=await sb.rpc(
+      error:rpcError
+    } =
+    await sb.rpc(
       'set_current_subquestion',
       {
-        p_session_id:sessionId,
-        p_subquestion:next
+        p_session_id:
+          sessionId,
+
+        p_subquestion:
+          target
       }
     );
 
 
     console.log(
-      'set_current_subquestion result:',
+      'RPC DATA:',
       rpcData
     );
 
-
-    if(error)
-      throw error;
-
-
-    msg(
-      $('scanMsg'),
-      'Subquestion changed to '+next+'. Loading…',
-      true
+    console.log(
+      'RPC ERROR:',
+      rpcError
     );
+
+
+    if(rpcError)
+      throw rpcError;
 
 
     /*
-      Reload directly from Supabase.
-      This ensures currentSession receives
-      the new current_subquestion value.
+      Wait briefly for the database/view
+      to expose the new value.
     */
 
-    await loadQuestion();
+    let verified=null;
 
+
+    for(
+      let attempt=0;
+      attempt<5;
+      attempt++
+    ){
+
+      await new Promise(
+        resolve =>
+          setTimeout(resolve,300)
+      );
+
+
+      verified =
+        await getLatestActiveQuestion();
+
+
+      console.log(
+        'VERIFY ATTEMPT',
+        attempt+1,
+        verified
+      );
+
+
+      if(
+        verified &&
+        Number(
+          verified.current_subquestion
+        ) === target
+      ){
+
+        break;
+
+      }
+
+    }
+
+
+    if(
+      !verified ||
+      Number(
+        verified.current_subquestion
+      ) !== target
+    ){
+
+      throw new Error(
+        'Supabase did not confirm subquestion '+
+        target+
+        ' after the update.'
+      );
+
+    }
+
+
+    /*
+      Update current session.
+    */
+
+    currentSession =
+      verified;
+
+
+    /*
+      Rebuild the complete question display.
+    */
+
+    await renderCurrentQuestion(
+      verified
+    );
+
+
+    if(localStatus){
+
+      localStatus.textContent =
+        'Subquestion '+
+        target+
+        ' is now active.';
+
+    }
+
+
+    /*
+      Also show success in the normal
+      scan/status area.
+    */
 
     msg(
       $('scanMsg'),
-      'Subquestion '+next+' is now active.',
+      'Subquestion '+
+      target+
+      ' is now active.',
       true
     );
 
+
+    console.log(
+      'SUBQUESTION CHANGE SUCCESS:',
+      target
+    );
 
   }
   catch(e){
@@ -1232,10 +1880,19 @@ async function changeSubquestion(direction){
     );
 
 
+    if(localStatus){
+
+      localStatus.textContent =
+        'Error: '+
+        (e?.message || String(e));
+
+    }
+
+
     msg(
       $('scanMsg'),
       'Could not change subquestion: '+
-      (e?.message||String(e))
+      (e?.message || String(e))
     );
 
   }
@@ -1243,70 +1900,131 @@ async function changeSubquestion(direction){
 
     subquestionBusy=false;
 
+
+    /*
+      Re-rendering normally creates the
+      correct enabled/disabled state.
+      If something failed before rendering,
+      refresh the question once.
+    */
+
+    if(
+      !currentSession ||
+      !$('nextSubquestion')
+    ){
+
+      try{
+        await loadQuestion();
+      }
+      catch(e){
+        console.error(
+          'Final refresh error:',
+          e
+        );
+      }
+
+    }
+
   }
 
 }
 
 
-/*
-  This function remains as a safety fallback.
-  The buttons themselves now have direct onclick handlers.
-*/
+/* =========================================================
+   ATTACH SUBQUESTION BUTTONS
+========================================================= */
 
 function attachSubquestionButtons(){
 
-  const prev=$('previousSubquestion');
-  const next=$('nextSubquestion');
+  const previous =
+    $('previousSubquestion');
+
+  const next =
+    $('nextSubquestion');
 
 
-  if(prev){
+  if(previous){
 
-    prev.onclick=()=>{
-      changeSubquestion(-1);
-    };
+    previous.addEventListener(
+      'click',
+      function(){
+
+        console.log(
+          'PREVIOUS BUTTON CLICKED'
+        );
+
+        changeSubquestion(-1);
+
+      }
+    );
 
   }
 
 
   if(next){
 
-    next.onclick=()=>{
-      changeSubquestion(1);
-    };
+    next.addEventListener(
+      'click',
+      function(){
+
+        console.log(
+          'NEXT BUTTON CLICKED'
+        );
+
+        changeSubquestion(1);
+
+      }
+    );
 
   }
+
+
+  console.log(
+    'SUBQUESTION BUTTONS ATTACHED:',
+    {
+      previous:!!previous,
+      next:!!next
+    }
+  );
 
 }
 
 
-/* BUILD SUBQUESTION CONTROLS */
+/* =========================================================
+   BUILD SUBQUESTION CONTROLS
+========================================================= */
 
 async function buildSubquestionControls(
   data,
   admin=false
 ){
 
-  const questionId=data.question_id;
+  const questionId =
+    data.question_id;
 
 
-  if(!questionId)
+  if(!questionId){
+
     return subquestionMarkup(
       data,
       [],
       admin
     );
 
+  }
+
 
   try{
 
-    const numbers=
+    const numbers =
       await getSubquestionNumbers(
         questionId
       );
 
 
     if(!admin)
-      availableSubquestions=numbers;
+      availableSubquestions =
+        numbers;
 
 
     return subquestionMarkup(
@@ -1325,10 +2043,15 @@ async function buildSubquestionControls(
 
 
     return `
+
       <div class="status error">
+
         Subquestion list could not be loaded:
+
         ${esc(e.message)}
+
       </div>
+
     `;
 
   }
@@ -1336,26 +2059,243 @@ async function buildSubquestionControls(
 }
 
 
-/* LOAD SAVED COMMENTS */
+/* =========================================================
+   RENDER CURRENT QUESTION
+========================================================= */
+
+async function renderCurrentQuestion(data){
+
+  if(!data){
+
+    $('questionBox').innerHTML =
+      '<div class="muted">No active question.</div>';
+
+    currentSession=null;
+
+    $('savedComments')
+      .classList
+      .add('hidden');
+
+    return;
+
+  }
+
+
+  currentSession=data;
+
+
+  console.log(
+    'RENDER CURRENT QUESTION:',
+    data
+  );
+
+
+  const controls =
+    await buildSubquestionControls(
+      data,
+      false
+    );
+
+
+  $('questionBox').innerHTML = `
+
+    <div>
+
+      <span class="pill">
+        Student:
+        ${esc(data.student_id)}
+      </span>
+
+      <span class="pill">
+        Number:
+        ${esc(data.selected_number)}
+      </span>
+
+    </div>
+
+
+    <p class="question">
+
+      Question:
+      ${esc(data.question_number)}
+      —
+      ${esc(data.title || '')}
+
+    </p>
+
+
+    <p>
+
+      <b>Surah / Ayah:</b>
+
+      ${esc(data.surah || '—')}
+
+      ${
+        data.ayah_start != null
+        ?
+        ' '+
+        esc(data.ayah_start)+
+        '–'+
+        esc(data.ayah_end)
+        :
+        ''
+      }
+
+    </p>
+
+
+    <p>
+
+      <b>Riwayah:</b>
+
+      ${esc(data.riwayah || '—')}
+
+    </p>
+
+
+    <p>
+
+      <b>Instructions:</b>
+
+      ${esc(data.instructions || '—')}
+
+    </p>
+
+
+    ${quranPassage(data)}
+
+
+    ${controls}
+
+  `;
+
+
+  /*
+    IMPORTANT:
+    Attach listeners AFTER the HTML
+    containing the buttons exists.
+  */
+
+  attachSubquestionButtons();
+
+
+  await loadSavedComments();
+
+}
+
+
+/* =========================================================
+   LOAD QUESTION
+========================================================= */
+
+async function loadQuestion(){
+
+  const student =
+    $('studentId').value.trim();
+
+
+  if(!student){
+
+    $('questionBox').innerHTML =
+      '<div class="muted">Enter a student ID.</div>';
+
+    currentSession=null;
+
+    $('savedComments')
+      .classList
+      .add('hidden');
+
+    return;
+
+  }
+
+
+  try{
+
+    const data =
+      await getLatestActiveQuestion();
+
+
+    if(!data){
+
+      $('questionBox').innerHTML =
+        '<div class="muted">No active question.</div>';
+
+      currentSession=null;
+
+      $('savedComments')
+        .classList
+        .add('hidden');
+
+      $('savedComments').innerHTML='';
+
+      return;
+
+    }
+
+
+    await renderCurrentQuestion(
+      data
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      'LOAD QUESTION ERROR:',
+      error
+    );
+
+
+    $('questionBox').innerHTML = `
+
+      <div class="status error">
+
+        ${esc(error.message)}
+
+      </div>
+
+    `;
+
+    currentSession=null;
+
+    $('savedComments')
+      .classList
+      .add('hidden');
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD SAVED COMMENTS
+========================================================= */
 
 async function loadSavedComments(){
 
-  const area=$('savedComments');
+  const area =
+    $('savedComments');
 
 
-  if(!currentSession || !currentJudge){
+  if(
+    !currentSession ||
+    !currentJudge
+  ){
 
     area.classList.add('hidden');
     area.innerHTML='';
 
     return;
+
   }
 
 
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('judge_comments')
     .select(
       'id,student_id,judge_id,comment,created_at'
@@ -1370,7 +2310,9 @@ async function loadSavedComments(){
     )
     .order(
       'created_at',
-      {ascending:false}
+      {
+        ascending:false
+      }
     );
 
 
@@ -1378,53 +2320,67 @@ async function loadSavedComments(){
 
     console.error(error);
 
-    area.textContent=
+    area.textContent =
       'Could not load saved comments: '+
       error.message;
 
-    area.className='status error';
+    area.className =
+      'status error';
 
     return;
+
   }
 
 
-  area.innerHTML=
+  area.innerHTML =
     '<b>Your saved comments</b>'+
     (
-      (data||[]).length
+      (data || []).length
       ?
-      data.map(
-        c=>`
-          <div class="comment-item">
+      data
+        .map(
+          c => `
 
-            ${esc(c.comment)}
+            <div class="comment-item">
 
-            <small class="comment-date">
-              ${esc(
-                new Date(
-                  c.created_at
-                ).toLocaleString()
-              )}
-            </small>
+              ${esc(c.comment)}
 
-          </div>
-        `
-      ).join('')
+              <small class="comment-date">
+
+                ${esc(
+                  new Date(
+                    c.created_at
+                  ).toLocaleString()
+                )}
+
+              </small>
+
+            </div>
+
+          `
+        )
+        .join('')
       :
       '<p class="muted">No saved comments yet.</p>'
     );
 
 
-  area.className='status';
+  area.className =
+    'status';
 
 }
 
 
-/* SAVE COMMENT */
+/* =========================================================
+   SAVE COMMENT
+========================================================= */
 
 async function saveComment(){
 
-  if(!currentSession || !currentJudge){
+  if(
+    !currentSession ||
+    !currentJudge
+  ){
 
     msg(
       $('commentMsg'),
@@ -1432,10 +2388,11 @@ async function saveComment(){
     );
 
     return;
+
   }
 
 
-  const comment=
+  const comment =
     $('comments').value.trim();
 
 
@@ -1447,11 +2404,14 @@ async function saveComment(){
     );
 
     return;
+
   }
 
 
   $('commentBtn').disabled=true;
-  $('commentBtn').textContent='Saving…';
+
+  $('commentBtn').textContent =
+    'Saving…';
 
 
   try{
@@ -1459,7 +2419,8 @@ async function saveComment(){
     const {
       data:{user},
       error:userError
-    }=await sb.auth.getUser();
+    } =
+    await sb.auth.getUser();
 
 
     if(userError)
@@ -1472,13 +2433,19 @@ async function saveComment(){
       );
 
 
-    const {error}=
+    const {error} =
       await sb
         .from('judge_comments')
         .insert({
-          student_id:currentSession.student_id,
-          judge_id:currentJudge.id,
-          auth_user_id:user.id,
+          student_id:
+            currentSession.student_id,
+
+          judge_id:
+            currentJudge.id,
+
+          auth_user_id:
+            user.id,
+
           comment
         });
 
@@ -1514,7 +2481,8 @@ async function saveComment(){
   finally{
 
     $('commentBtn').disabled=false;
-    $('commentBtn').textContent=
+
+    $('commentBtn').textContent =
       'Save Comment';
 
   }
@@ -1522,178 +2490,13 @@ async function saveComment(){
 }
 
 
-/* LOAD QUESTION */
-
-async function loadQuestion(){
-
-  const student=
-    $('studentId').value.trim();
-
-
-  if(!student){
-
-    $('questionBox').innerHTML=
-      '<div class="muted">Enter a student ID.</div>';
-
-    currentSession=null;
-
-    $('savedComments')
-      .classList
-      .add('hidden');
-
-    return;
-  }
-
-
-  const {
-    data,
-    error
-  }=await sb
-    .from('judge_question_view')
-    .select('*')
-    .eq(
-      'student_id',
-      student
-    )
-    .eq(
-      'status',
-      'active'
-    )
-    .limit(1)
-    .maybeSingle();
-
-
-  if(error){
-
-    console.error(error);
-
-    $('questionBox').innerHTML=
-      '<div class="status error">'+
-      esc(error.message)+
-      '</div>';
-
-    currentSession=null;
-
-    $('savedComments')
-      .classList
-      .add('hidden');
-
-    return;
-  }
-
-
-  if(!data){
-
-    $('questionBox').innerHTML=
-      '<div class="muted">No active question.</div>';
-
-    currentSession=null;
-
-    $('savedComments')
-      .classList
-      .add('hidden');
-
-    $('savedComments').innerHTML='';
-
-    return;
-  }
-
-
-  /*
-    This is the important part:
-    always replace currentSession with the
-    fresh row returned from the view.
-  */
-
-  currentSession=data;
-
-
-  console.log(
-    'ACTIVE SESSION:',
-    currentSession
-  );
-
-
-  const controls=
-    await buildSubquestionControls(
-      data,
-      false
-    );
-
-
-  $('questionBox').innerHTML=`
-
-    <div>
-
-      <span class="pill">
-        Student: ${esc(data.student_id)}
-      </span>
-
-      <span class="pill">
-        Number: ${esc(data.selected_number)}
-      </span>
-
-    </div>
-
-
-    <p class="question">
-      Question:
-      ${esc(data.question_number)}
-      —
-      ${esc(data.title||'')}
-    </p>
-
-
-    <p>
-      <b>Surah / Ayah:</b>
-      ${esc(data.surah||'—')}
-      ${
-        data.ayah_start!=null
-        ?
-        ' '+esc(data.ayah_start)+'–'+esc(data.ayah_end)
-        :
-        ''
-      }
-    </p>
-
-
-    <p>
-      <b>Riwayah:</b>
-      ${esc(data.riwayah||'—')}
-    </p>
-
-
-    <p>
-      <b>Instructions:</b>
-      ${esc(data.instructions||'—')}
-    </p>
-
-
-    ${quranPassage(data)}
-
-    ${controls}
-
-  `;
-
-
-  /*
-    Keep this as a safety fallback even though
-    the buttons have direct onclick handlers.
-  */
-
-  attachSubquestionButtons();
-
-
-  await loadSavedComments();
-
-}
-
-
-/* ADMIN LOAD STUDENT */
+/* =========================================================
+   ADMIN LOAD STUDENT
+========================================================= */
 
 async function adminLoadStudent(){
 
-  const studentId=
+  const studentId =
     $('adminStudentId').value.trim();
 
 
@@ -1705,13 +2508,25 @@ async function adminLoadStudent(){
     );
 
     return;
+
   }
 
 
-  $('adminStudentCard').classList.add('hidden');
-  $('adminQuestionCard').classList.add('hidden');
-  $('adminCommentsCard').classList.add('hidden');
-  $('adminScoresCard').classList.add('hidden');
+  $('adminStudentCard')
+    .classList
+    .add('hidden');
+
+  $('adminQuestionCard')
+    .classList
+    .add('hidden');
+
+  $('adminCommentsCard')
+    .classList
+    .add('hidden');
+
+  $('adminScoresCard')
+    .classList
+    .add('hidden');
 
 
   currentStudent=null;
@@ -1721,7 +2536,8 @@ async function adminLoadStudent(){
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('Students')
     .select('*');
 
@@ -1737,15 +2553,18 @@ async function adminLoadStudent(){
     );
 
     return;
+
   }
 
 
-  const student=
-    (data||[]).find(
-      s=>
-        String(s["student's_id"]??'')
-          .trim()
-          .toLowerCase()
+  const student =
+    (data || []).find(
+      s =>
+        String(
+          s["student's_id"] ?? ''
+        )
+        .trim()
+        .toLowerCase()
         ===
         studentId.toLowerCase()
     );
@@ -1760,31 +2579,34 @@ async function adminLoadStudent(){
     );
 
     return;
+
   }
 
 
   currentStudent=student;
 
 
-  $('adminStudentName').textContent=
-    student.full_name||
+  $('adminStudentName').textContent =
+    student.full_name ||
     'Unnamed Student';
 
 
-  $('adminStudentIdDisplay').textContent=
-    student["student's_id"]||
+  $('adminStudentIdDisplay').textContent =
+    student["student's_id"] ||
     studentId;
 
 
-  $('adminStudentMadrasa').textContent=
-    student.madrasa_type||'—';
+  $('adminStudentMadrasa').textContent =
+    student.madrasa_type ||
+    '—';
 
 
-  $('adminStudentCategory').textContent='—';
+  $('adminStudentCategory').textContent =
+    '—';
 
 
   if(student.photo_url)
-    $('adminStudentPhoto').src=
+    $('adminStudentPhoto').src =
       student.photo_url;
   else
     $('adminStudentPhoto')
@@ -1799,7 +2621,8 @@ async function adminLoadStudent(){
   const {
     data:question,
     error:questionError
-  }=await sb
+  } =
+  await sb
     .from('judge_question_view')
     .select('*')
     .eq(
@@ -1825,6 +2648,7 @@ async function adminLoadStudent(){
     );
 
     return;
+
   }
 
 
@@ -1837,64 +2661,82 @@ async function adminLoadStudent(){
     );
 
     return;
+
   }
 
 
   currentSession=question;
 
 
-  const controls=
+  const controls =
     await buildSubquestionControls(
       question,
       true
     );
 
 
-  $('adminQuestionBox').innerHTML=`
+  $('adminQuestionBox').innerHTML = `
 
     <div>
 
       <span class="pill">
-        Student: ${esc(question.student_id)}
+        Student:
+        ${esc(question.student_id)}
       </span>
 
       <span class="pill">
-        Number: ${esc(question.selected_number)}
+        Number:
+        ${esc(question.selected_number)}
       </span>
 
     </div>
 
 
     <p class="question">
+
       Question:
       ${esc(question.question_number)}
       —
-      ${esc(question.title||'')}
+      ${esc(question.title || '')}
+
     </p>
 
 
     <p>
+
       <b>Surah / Ayah:</b>
-      ${esc(question.surah||'—')}
+
+      ${esc(question.surah || '—')}
+
       ${
-        question.ayah_start!=null
+        question.ayah_start != null
         ?
-        ' '+esc(question.ayah_start)+'–'+esc(question.ayah_end)
+        ' '+
+        esc(question.ayah_start)+
+        '–'+
+        esc(question.ayah_end)
         :
         ''
       }
+
     </p>
 
 
     <p>
+
       <b>Riwayah:</b>
-      ${esc(question.riwayah||'—')}
+
+      ${esc(question.riwayah || '—')}
+
     </p>
 
 
     <p>
+
       <b>Instructions:</b>
-      ${esc(question.instructions||'—')}
+
+      ${esc(question.instructions || '—')}
+
     </p>
 
 
@@ -1910,7 +2752,10 @@ async function adminLoadStudent(){
     .remove('hidden');
 
 
-  await adminLoadComments(studentId);
+  await adminLoadComments(
+    studentId
+  );
+
 
   await adminLoadExistingScores(
     studentId,
@@ -1927,14 +2772,19 @@ async function adminLoadStudent(){
 }
 
 
-/* ADMIN COMMENTS */
+/* =========================================================
+   ADMIN COMMENTS
+========================================================= */
 
-async function adminLoadComments(studentId){
+async function adminLoadComments(
+  studentId
+){
 
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('judge_comments')
     .select(
       'id,student_id,judge_id,comment,created_at'
@@ -1945,7 +2795,9 @@ async function adminLoadComments(studentId){
     )
     .order(
       'created_at',
-      {ascending:true}
+      {
+        ascending:true
+      }
     );
 
 
@@ -1953,7 +2805,7 @@ async function adminLoadComments(studentId){
 
     console.error(error);
 
-    $('adminCommentsBox').innerHTML=
+    $('adminCommentsBox').innerHTML =
       '<div class="status error">'+
       esc(error.message)+
       '</div>';
@@ -1963,10 +2815,11 @@ async function adminLoadComments(studentId){
       .remove('hidden');
 
     return;
+
   }
 
 
-  const judgeNames={
+  const judgeNames = {
     3:'Judge 1',
     4:'Judge 2',
     5:'Judge 3',
@@ -1974,39 +2827,43 @@ async function adminLoadComments(studentId){
   };
 
 
-  $('adminCommentsBox').innerHTML=
-    (data||[]).length
+  $('adminCommentsBox').innerHTML =
+    (data || []).length
     ?
-    data.map(
-      c=>`
+    data
+      .map(
+        c => `
 
-        <div class="comment-item">
+          <div class="comment-item">
 
-          <b>
-            ${esc(
-              judgeNames[
-                Number(c.judge_id)
-              ]||
-              ('Judge '+c.judge_id)
-            )}
-          </b>
+            <b>
+              ${esc(
+                judgeNames[
+                  Number(c.judge_id)
+                ] ||
+                ('Judge '+c.judge_id)
+              )}
+            </b>
 
-          <div class="admin-comment">
-            ${esc(c.comment)}
+            <div class="admin-comment">
+              ${esc(c.comment)}
+            </div>
+
+            <small class="comment-date">
+
+              ${esc(
+                new Date(
+                  c.created_at
+                ).toLocaleString()
+              )}
+
+            </small>
+
           </div>
 
-          <small class="comment-date">
-            ${esc(
-              new Date(
-                c.created_at
-              ).toLocaleString()
-            )}
-          </small>
-
-        </div>
-
-      `
-    ).join('')
+        `
+      )
+      .join('')
     :
     '<div class="muted">No judge comments saved yet.</div>';
 
@@ -2018,16 +2875,18 @@ async function adminLoadComments(studentId){
 }
 
 
-/* ADMIN EXISTING SCORES */
+/* =========================================================
+   ADMIN EXISTING SCORES
+========================================================= */
 
 async function adminLoadExistingScores(
   studentId,
   question
 ){
 
-  const questionId=
-    question.question_id||
-    question.ques_id||
+  const questionId =
+    question.question_id ||
+    question.ques_id ||
     question.id;
 
 
@@ -2047,13 +2906,15 @@ async function adminLoadExistingScores(
       .remove('hidden');
 
     return;
+
   }
 
 
   const {
     data,
     error
-  }=await sb
+  } =
+  await sb
     .from('scores')
     .select(
       'id,student_id,question_id,score,comments,scored_at,judge_id'
@@ -2083,6 +2944,7 @@ async function adminLoadExistingScores(
       .remove('hidden');
 
     return;
+
   }
 
 
@@ -2091,29 +2953,37 @@ async function adminLoadExistingScores(
     'score2',
     'score3',
     'score4'
-  ].forEach(
-    id=>$(id).value=''
+  ]
+  .forEach(
+    id => $(id).value=''
   );
 
 
-  (data||[]).forEach(row=>{
+  (data || []).forEach(
+    row => {
 
-    const id=
-      Number(row.judge_id);
+      const id =
+        Number(row.judge_id);
 
-    if(id===3)
-      $('score1').value=row.score;
 
-    if(id===4)
-      $('score2').value=row.score;
+      if(id===3)
+        $('score1').value =
+          row.score;
 
-    if(id===5)
-      $('score3').value=row.score;
+      if(id===4)
+        $('score2').value =
+          row.score;
 
-    if(id===6)
-      $('score4').value=row.score;
+      if(id===5)
+        $('score3').value =
+          row.score;
 
-  });
+      if(id===6)
+        $('score4').value =
+          row.score;
+
+    }
+  );
 
 
   updateAdminTotal();
@@ -2131,11 +3001,13 @@ async function adminLoadExistingScores(
 }
 
 
-/* ADMIN TOTAL */
+/* =========================================================
+   ADMIN TOTAL
+========================================================= */
 
 function updateAdminTotal(){
 
-  const raw=[
+  const raw = [
     $('score1').value,
     $('score2').value,
     $('score3').value,
@@ -2143,47 +3015,55 @@ function updateAdminTotal(){
   ];
 
 
-  const values=
+  const values =
     raw.map(
-      v=>Number(v)||0
+      v => Number(v) || 0
     );
 
 
-  const total=
+  const total =
     values.reduce(
       (a,b)=>a+b,
       0
     );
 
 
-  const allEntered=
+  const allEntered =
     raw.every(
-      v=>v.trim()!==''
+      v => v.trim() !== ''
     );
 
 
-  const fmt=
-    n=>n
-      .toFixed(2)
-      .replace(/\.00$/,'');
+  const fmt =
+    n =>
+      n
+        .toFixed(2)
+        .replace(
+          /\.00$/,
+          ''
+        );
 
 
-  $('adminTotal').innerHTML=
+  $('adminTotal').innerHTML =
     'Total: '+
     fmt(total)+
     ' / 400<br>'+
     'Average: '+
     (
       allEntered
-      ? fmt(total/4)
-      : '—'
+      ?
+      fmt(total/4)
+      :
+      '—'
     )+
     ' / 100';
 
 }
 
 
-/* SAVE ADMIN SCORES */
+/* =========================================================
+   SAVE ADMIN SCORES
+========================================================= */
 
 async function saveAdminScores(){
 
@@ -2195,6 +3075,7 @@ async function saveAdminScores(){
     );
 
     return;
+
   }
 
 
@@ -2206,26 +3087,32 @@ async function saveAdminScores(){
     );
 
     return;
+
   }
 
 
-  const scores=[
+  const scores = [
+
     {
       judge_id:3,
       value:$('score1').value
     },
+
     {
       judge_id:4,
       value:$('score2').value
     },
+
     {
       judge_id:5,
       value:$('score3').value
     },
+
     {
       judge_id:6,
       value:$('score4').value
     }
+
   ];
 
 
@@ -2239,15 +3126,17 @@ async function saveAdminScores(){
       );
 
       return;
+
     }
 
 
-    const n=Number(item.value);
+    const n =
+      Number(item.value);
 
 
     if(
-      !Number.isFinite(n)||
-      n<0||
+      !Number.isFinite(n) ||
+      n<0 ||
       n>100
     ){
 
@@ -2257,14 +3146,15 @@ async function saveAdminScores(){
       );
 
       return;
+
     }
 
   }
 
 
-  const questionId=
-    currentSession.question_id||
-    currentSession.ques_id||
+  const questionId =
+    currentSession.question_id ||
+    currentSession.ques_id ||
     currentSession.id;
 
 
@@ -2276,11 +3166,12 @@ async function saveAdminScores(){
     );
 
     return;
+
   }
 
 
-  const studentId=
-    currentStudent["student's_id"]||
+  const studentId =
+    currentStudent["student's_id"] ||
     currentStudent.student_id;
 
 
@@ -2292,29 +3183,42 @@ async function saveAdminScores(){
     );
 
     return;
+
   }
 
 
   $('saveScoresBtn').disabled=true;
-  $('saveScoresBtn').textContent='Saving…';
+
+  $('saveScoresBtn').textContent =
+    'Saving…';
 
 
   try{
 
-    const rows=
+    const rows =
       scores.map(
-        item=>({
-          student_id:studentId,
-          question_id:questionId,
-          judge_id:item.judge_id,
-          score:Number(item.value),
-          scored_at:new Date().toISOString(),
+        item => ({
+          student_id:
+            studentId,
+
+          question_id:
+            questionId,
+
+          judge_id:
+            item.judge_id,
+
+          score:
+            Number(item.value),
+
+          scored_at:
+            new Date().toISOString(),
+
           comments:null
         })
       );
 
 
-    const {error}=
+    const {error} =
       await sb
         .from('scores')
         .upsert(
@@ -2355,7 +3259,7 @@ async function saveAdminScores(){
 
     $('saveScoresBtn').disabled=false;
 
-    $('saveScoresBtn').textContent=
+    $('saveScoresBtn').textContent =
       '💾 Save All Four Scores';
 
   }
@@ -2363,7 +3267,9 @@ async function saveAdminScores(){
 }
 
 
-/* REALTIME */
+/* =========================================================
+   REALTIME
+========================================================= */
 
 function startRealtime(){
 
@@ -2373,7 +3279,7 @@ function startRealtime(){
     );
 
 
-  realtimeChannel=
+  realtimeChannel =
     sb
       .channel(
         'competition-session-live'
@@ -2385,15 +3291,37 @@ function startRealtime(){
           schema:'public',
           table:'competition_sessions'
         },
-        ()=>{
+        async () => {
+
           if(
             currentJudge &&
             String(
-              currentJudge['Role']
-            ).trim().toLowerCase()==='judge'
+              currentJudge['Role'] || ''
+            )
+            .trim()
+            .toLowerCase()
+            ===
+            'judge'
           ){
-            loadQuestion();
+
+            /*
+              Small delay prevents realtime
+              from racing the RPC update.
+            */
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  250
+                )
+            );
+
+            if(!subquestionBusy)
+              await loadQuestion();
+
           }
+
         }
       )
       .subscribe();
@@ -2401,12 +3329,14 @@ function startRealtime(){
 }
 
 
-/* PROCESS QR */
+/* =========================================================
+   PROCESS QR
+========================================================= */
 
 async function scanCode(code){
 
-  code=
-    (code||'')
+  code =
+    (code || '')
       .trim()
       .toUpperCase();
 
@@ -2419,6 +3349,7 @@ async function scanCode(code){
     );
 
     return false;
+
   }
 
 
@@ -2430,10 +3361,11 @@ async function scanCode(code){
     );
 
     return false;
+
   }
 
 
-  const student=
+  const student =
     $('studentId').value.trim();
 
 
@@ -2445,10 +3377,11 @@ async function scanCode(code){
     );
 
     return false;
+
   }
 
 
-  const selectedNumber=
+  const selectedNumber =
     Number(
       $('selectedNumber').value
     );
@@ -2462,6 +3395,7 @@ async function scanCode(code){
     );
 
     return false;
+
   }
 
 
@@ -2475,11 +3409,15 @@ async function scanCode(code){
   const {
     data,
     error
-  }=await sb.rpc(
+  } =
+  await sb.rpc(
     'scan_competition_barcode',
     {
-      p_student_id:student,
-      p_barcode:code
+      p_student_id:
+        student,
+
+      p_barcode:
+        code
     }
   );
 
@@ -2488,10 +3426,12 @@ async function scanCode(code){
 
     msg(
       $('scanMsg'),
-      'Database error: '+error.message
+      'Database error: '+
+      error.message
     );
 
     return false;
+
   }
 
 
@@ -2510,7 +3450,9 @@ async function scanCode(code){
 }
 
 
-/* START SCANNER */
+/* =========================================================
+   START SCANNER
+========================================================= */
 
 async function startScanner(){
 
@@ -2525,11 +3467,9 @@ async function startScanner(){
     .classList
     .remove('hidden');
 
-
   $('stopScanBtn')
     .classList
     .remove('hidden');
-
 
   $('scanBtn').disabled=true;
 
@@ -2548,12 +3488,12 @@ async function startScanner(){
       );
 
 
-    const devices=
+    const devices =
       await Html5Qrcode.getCameras();
 
 
     if(
-      !devices||
+      !devices ||
       !devices.length
     )
       throw new Error(
@@ -2561,16 +3501,17 @@ async function startScanner(){
       );
 
 
-    const backCamera=
+    const backCamera =
       devices.find(
-        d=>/back|rear|environment/i.test(
-          d.label
-        )
-      )||
+        d =>
+          /back|rear|environment/i.test(
+            d.label
+          )
+      ) ||
       devices[0];
 
 
-    scanner=
+    scanner =
       new Html5Qrcode(
         'reader'
       );
@@ -2580,13 +3521,16 @@ async function startScanner(){
       backCamera.id,
       {
         fps:20,
+
         qrbox:{
           width:300,
           height:300
         },
+
         aspectRatio:1.0
       },
-      async decodedText=>{
+
+      async decodedText => {
 
         if(scanLocked)
           return;
@@ -2610,7 +3554,7 @@ async function startScanner(){
 
         try{
 
-          const success=
+          const success =
             await scanCode(
               decodedText
             );
@@ -2629,7 +3573,7 @@ async function startScanner(){
           msg(
             $('scanMsg'),
             'Could not process QR code: '+
-            (e.message||e)
+            (e.message || e)
           );
 
           scanLocked=false;
@@ -2637,7 +3581,9 @@ async function startScanner(){
         }
 
       },
-      ()=>{}
+
+      () => {}
+
     );
 
   }
@@ -2652,7 +3598,7 @@ async function startScanner(){
     msg(
       $('scanMsg'),
       'Camera could not start: '+
-      (e.message||e)
+      (e.message || e)
     );
 
 
@@ -2663,7 +3609,9 @@ async function startScanner(){
 }
 
 
-/* STOP SCANNER */
+/* =========================================================
+   STOP SCANNER
+========================================================= */
 
 async function stopScanner(){
 
@@ -2673,18 +3621,24 @@ async function stopScanner(){
   if(scanner){
 
     try{
+
       await scanner.stop();
+
     }
     catch(e){
+
       console.warn(
         'Scanner stop warning:',
         e
       );
+
     }
 
 
     try{
+
       scanner.clear();
+
     }
     catch(e){}
 
@@ -2712,18 +3666,20 @@ async function stopScanner(){
 }
 
 
-/* LOGIN */
+/* =========================================================
+   LOGIN
+========================================================= */
 
 async function login(){
 
-  const email=
+  const email =
     $('email').value.trim();
 
-  const password=
+  const password =
     $('password').value;
 
 
-  if(!email||!password){
+  if(!email || !password){
 
     msg(
       $('loginMsg'),
@@ -2731,16 +3687,19 @@ async function login(){
     );
 
     return;
+
   }
 
 
   $('loginBtn').disabled=true;
-  $('loginBtn').textContent='Logging in…';
+
+  $('loginBtn').textContent =
+    'Logging in…';
 
 
   try{
 
-    const {error}=
+    const {error} =
       await sb.auth.signInWithPassword({
         email,
         password
@@ -2774,8 +3733,12 @@ async function login(){
       if(
         currentJudge &&
         String(
-          currentJudge['Role']
-        ).trim().toLowerCase()==='judge'
+          currentJudge['Role'] || ''
+        )
+        .trim()
+        .toLowerCase()
+        ===
+        'judge'
       ){
 
         await loadQuestion();
@@ -2809,7 +3772,7 @@ async function login(){
 
     $('loginBtn').disabled=false;
 
-    $('loginBtn').textContent=
+    $('loginBtn').textContent =
       'Log in';
 
   }
@@ -2817,7 +3780,9 @@ async function login(){
 }
 
 
-/* LOGOUT */
+/* =========================================================
+   LOGOUT
+========================================================= */
 
 async function logout(){
 
@@ -2838,121 +3803,129 @@ async function logout(){
 }
 
 
-/* BUTTONS */
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 function initializeButtons(){
 
-  $('loginBtn').onclick=login;
+  $('loginBtn').onclick =
+    login;
 
 
-  $('findStudentBtn').onclick=
+  $('findStudentBtn').onclick =
     findStudent;
 
 
-  $('confirmStudentBtn').onclick=()=>{
+  $('confirmStudentBtn').onclick =
+    () => {
 
-    if(!currentStudent){
+      if(!currentStudent){
 
-      msg(
-        $('studentMsg'),
-        'Find a student first.'
-      );
+        msg(
+          $('studentMsg'),
+          'Find a student first.'
+        );
 
-      return;
-    }
+        return;
 
-
-    studentConfirmed=true;
-
-
-    $('studentCardDisplay')
-      .classList
-      .add('confirmed');
+      }
 
 
-    $('studentConfirmedMsg')
-      .classList
-      .remove('hidden');
+      studentConfirmed=true;
 
 
-    $('questionSelectionCard')
-      .classList
-      .remove('hidden');
+      $('studentCardDisplay')
+        .classList
+        .add('confirmed');
 
 
-    $('scanMsg')
-      .classList
-      .add('hidden');
+      $('studentConfirmedMsg')
+        .classList
+        .remove('hidden');
 
 
-    $('numberMsg')
-      .classList
-      .add('hidden');
-
-  };
+      $('questionSelectionCard')
+        .classList
+        .remove('hidden');
 
 
-  $('selectNumberBtn').onclick=()=>{
+      $('scanMsg')
+        .classList
+        .add('hidden');
 
-    if(!studentConfirmed){
+
+      $('numberMsg')
+        .classList
+        .add('hidden');
+
+    };
+
+
+  $('selectNumberBtn').onclick =
+    () => {
+
+      if(!studentConfirmed){
+
+        msg(
+          $('numberMsg'),
+          'Confirm the student first.'
+        );
+
+        return;
+
+      }
+
+
+      const number =
+        Number(
+          $('selectedNumber').value
+        );
+
+
+      if(
+        !Number.isInteger(number) ||
+        number < 1
+      ){
+
+        msg(
+          $('numberMsg'),
+          'Enter a valid question number.'
+        );
+
+        return;
+
+      }
+
 
       msg(
         $('numberMsg'),
-        'Confirm the student first.'
+        'Question number '+
+        number+
+        ' selected. Judge 1 can now scan the corresponding QR code.',
+        true
       );
 
-      return;
-    }
+    };
 
 
-    const number=
-      Number(
-        $('selectedNumber').value
-      );
-
-
-    if(
-      !Number.isInteger(number)||
-      number<1
-    ){
-
-      msg(
-        $('numberMsg'),
-        'Enter a valid question number.'
-      );
-
-      return;
-    }
-
-
-    msg(
-      $('numberMsg'),
-      'Question number '+
-      number+
-      ' selected. Judge 1 can now scan the corresponding QR code.',
-      true
-    );
-
-  };
-
-
-  $('scanBtn').onclick=
+  $('scanBtn').onclick =
     startScanner;
 
 
-  $('stopScanBtn').onclick=
+  $('stopScanBtn').onclick =
     stopScanner;
 
 
-  $('commentBtn').onclick=
+  $('commentBtn').onclick =
     saveComment;
 
 
-  $('adminLoadBtn').onclick=
+  $('adminLoadBtn').onclick =
     adminLoadStudent;
 
 
-  $('saveScoresBtn').onclick=
+  $('saveScoresBtn').onclick =
     saveAdminScores;
 
 
@@ -2961,25 +3934,30 @@ function initializeButtons(){
     'score2',
     'score3',
     'score4'
-  ].forEach(
-    id=>{
-      $(id).oninput=
+  ]
+  .forEach(
+    id => {
+
+      $(id).oninput =
         updateAdminTotal;
+
     }
   );
 
 
-  $('logoutBtn').onclick=
+  $('logoutBtn').onclick =
     logout;
 
 }
 
 
-/* PAGE START / SESSION RESTORE */
+/* =========================================================
+   PAGE START
+========================================================= */
 
 document.addEventListener(
   'DOMContentLoaded',
-  async()=>{
+  async () => {
 
     initializeButtons();
 
@@ -2988,7 +3966,8 @@ document.addEventListener(
 
       const {
         data:{session}
-      }=await sb.auth.getSession();
+      } =
+      await sb.auth.getSession();
 
 
       if(session){
@@ -3011,8 +3990,12 @@ document.addEventListener(
           if(
             currentJudge &&
             String(
-              currentJudge['Role']
-            ).trim().toLowerCase()==='judge'
+              currentJudge['Role'] || ''
+            )
+            .trim()
+            .toLowerCase()
+            ===
+            'judge'
           ){
 
             await loadQuestion();
