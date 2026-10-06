@@ -54,7 +54,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
     <div class="card">
       <h2>📝 Competition Registration — 2026 / 1448</h2>
       <p class="muted">One madrasa registration can include multiple participating students.</p>
-      <div class="status">Please enter accurate information. Registration submissions are reviewed by MMG administration.</div>
+      <div class="status">Please enter accurate information. Each successful registration is added immediately to the Registered Students list.</div>
       <div class="row">
         <div class="field"><label>Madrasa Name *</label><input id="regMadrasaName"></div>
         <div class="field"><label>Location</label><input id="regLocation"></div>
@@ -104,9 +104,17 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
     <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label>Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
   </section>
 
-  <section id="admin-registrations" class="admin-page hidden"><div class="card"><h2>Registration Management</h2><p class="muted">Review the annual 2026/1448 public submissions.</p><button onclick="loadRegistrations()">Refresh Registrations</button><div id="registrationsBox" class="status">Press Refresh Registrations.</div></div></section>
+  <section id="admin-registrations" class="admin-page hidden">
+  <div class="card">
+    <h2>👥 Registered Students — 2026 / 1448</h2>
+    <p class="muted">Students appear here automatically after registration. Maximum 3 students per category from each madrasa.</p>
+    <button onclick="loadRegistrations()">↻ Refresh Registered Students</button>
+    <div id="registrationSummary" class="grid" style="margin-top:14px"></div>
+  </div>
+  <div id="registeredStudentsBox"></div>
+</section>
 
-  <section id="admin-competition" class="admin-page hidden"><div class="card"><h2>2026 / 1448 Competition Information</h2><p class="muted">Publish information that appears on the public Competition page.</p><div class="row"><div class="field"><label>Title</label><input id="ciTitle" value="2026 / 1448 Qur'an Competition"></div><div class="field"><label>Subtitle</label><input id="ciSubtitle"></div></div><div class="row"><div class="field"><label>Introduction</label><textarea id="ciIntroduction"></textarea></div><div class="field"><label>Objectives</label><textarea id="ciObjectives"></textarea></div></div><div class="row"><div class="field"><label>Eligibility</label><textarea id="ciEligibility"></textarea></div><div class="field"><label>Registration Information</label><textarea id="ciRegistration"></textarea></div></div><div class="row"><div class="field"><label>Competition Dates</label><textarea id="ciDates"></textarea></div><div class="field"><label>Venue</label><textarea id="ciVenue"></textarea></div></div><div class="row"><div class="field"><label>Categories</label><textarea id="ciCategories">10 Juz
+<section id="admin-competition" class="admin-page hidden"><div class="card"><h2>2026 / 1448 Competition Information</h2><p class="muted">Publish information that appears on the public Competition page.</p><div class="row"><div class="field"><label>Title</label><input id="ciTitle" value="2026 / 1448 Qur'an Competition"></div><div class="field"><label>Subtitle</label><input id="ciSubtitle"></div></div><div class="row"><div class="field"><label>Introduction</label><textarea id="ciIntroduction"></textarea></div><div class="field"><label>Objectives</label><textarea id="ciObjectives"></textarea></div></div><div class="row"><div class="field"><label>Eligibility</label><textarea id="ciEligibility"></textarea></div><div class="field"><label>Registration Information</label><textarea id="ciRegistration"></textarea></div></div><div class="row"><div class="field"><label>Competition Dates</label><textarea id="ciDates"></textarea></div><div class="field"><label>Venue</label><textarea id="ciVenue"></textarea></div></div><div class="row"><div class="field"><label>Categories</label><textarea id="ciCategories">10 Juz
 20 Juz
 30 Juz
 Qiraat (As'hab Attawassut)
@@ -139,7 +147,7 @@ function toggleFullscreen(id){const el=$(id);if(!document.fullscreenElement){if(
 function addStudentRow(data={}){const box=$('studentRows');const id='student_'+Date.now()+'_'+Math.random().toString(36).slice(2);const d=document.createElement('div');d.className='student-card';d.dataset.id=id;d.innerHTML=`<h3>Student</h3><div class="row"><div class="field"><label>Full Name *</label><input class="s-name" value="${esc(data.full_name||'')}"></div><div class="field"><label>Gender</label><select class="s-gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth</label><input class="s-dob" type="date" value="${esc(data.date_of_birth||'')}"></div></div><div class="row"><div class="field"><label>Nationality</label><input class="s-nationality" value="${esc(data.nationality||'')}"></div><div class="field"><label>Student Photo</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp"><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" value="${esc(data.father_guardian_contact||'')}"></div></div><label>Competition Category *</label><select class="s-category"><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select><button class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;box.appendChild(d);d.querySelector('.s-gender').value=data.gender||'';d.querySelector('.s-category').value=data.competition_category||'';const fileInput=d.querySelector('.s-photo-file');const fileName=d.querySelector('.photo-file-name');fileInput.addEventListener('change',()=>{fileName.textContent=fileInput.files[0]?fileInput.files[0].name:'No photo selected'})}
 addStudentRow();
 async function uploadRegistrationPhoto(file,index){if(!file)return '';if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Student '+(index+1)+': please upload a JPG, PNG, or WEBP photo.');if(file.size>5*1024*1024)throw new Error('Student '+(index+1)+': photo must be 5 MB or smaller.');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=`public/${Date.now()}_${crypto.randomUUID()}.${ext}`;const {error}=await sb.storage.from('registration-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;const {data}=sb.storage.from('registration-photos').getPublicUrl(path);return data.publicUrl}
-async function submitRegistration(){const name=$('regMadrasaName').value.trim();const cards=[...document.querySelectorAll('.student-card')];if(!name){msg($('regMsg'),'Madrasa name is required.');return}if(!cards.length){msg($('regMsg'),'Add at least one student.');return}const students=[];for(const c of cards){const x={full_name:c.querySelector('.s-name').value.trim(),gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};if(!x.full_name||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please complete the required student fields.');return}students.push(x)}$('submitRegistration').disabled=true;msg($('regMsg'),'Uploading photos and submitting registration...',true);try{for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}const cleanStudents=students.map(({photo_file,...s})=>s);const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_name:$('regHeadteacher').value.trim(),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Pending'};const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});if(error)throw error;msg($('regMsg'),`Registration submitted successfully. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);$('studentRows').innerHTML='';addStudentRow();}catch(e){msg($('regMsg'),e.message||String(e))}finally{$('submitRegistration').disabled=false}}
+async function submitRegistration(){const name=$('regMadrasaName').value.trim();const cards=[...document.querySelectorAll('.student-card')];if(!name){msg($('regMsg'),'Madrasa name is required.');return}if(!cards.length){msg($('regMsg'),'Add at least one student.');return}const students=[];for(const c of cards){const x={full_name:c.querySelector('.s-name').value.trim(),gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};if(!x.full_name||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please complete the required student fields.');return}students.push(x)}$('submitRegistration').disabled=true;msg($('regMsg'),'Uploading photos and submitting registration...',true);try{for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}const cleanStudents=students.map(({photo_file,...s})=>s);const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_name:$('regHeadteacher').value.trim(),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});if(error)throw error;msg($('regMsg'),`Registration submitted successfully. Students are now registered. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);$('studentRows').innerHTML='';addStudentRow();}catch(e){msg($('regMsg'),e.message||String(e))}finally{$('submitRegistration').disabled=false}}
 async function loadCompetitionInfo(){const {data,error}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).eq('status','Published').maybeSingle();if(error){$('competitionInfo').innerHTML=`<div class="card status error">${esc(error.message)}</div>`;return}if(!data){$('competitionInfo').innerHTML='<div class="card status">The 2026/1448 competition information has not been published yet.</div>';return}$('pubTitle').textContent=data.title||'2026 / 1448 Competition';$('pubSubtitle').textContent=data.subtitle||'';const sections=[['Introduction',data.introduction],['Objectives',data.objectives],['Eligibility',data.eligibility],['Registration',data.registration_info],['Competition Dates',data.competition_dates],['Venue',data.venue],['Categories',data.categories],['Rules & Regulations',data.rules],['Prizes',data.prizes],['Announcements',data.announcements],['Frequently Asked Questions',data.faq],['Contact',data.contact_info]];$('competitionInfo').innerHTML=sections.filter(x=>x[1]).map(x=>`<div class="card"><h2>${esc(x[0])}</h2><div style="white-space:pre-wrap;line-height:1.7">${esc(x[1])}</div></div>`).join('');if(data.contact_info)$('publicContactInfo').textContent=data.contact_info}
 async function login(){const email=$('email').value.trim(),password=$('password').value;try{const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await openAuthenticatedApp()}catch(e){msg($('loginMsg'),e.message)}}
 async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('scores')}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?'Judge 1: barcode scanning enabled.':'Barcode scanning is disabled for this judge.';await loadJudgeQuestion();startRealtime()}}
@@ -160,8 +168,103 @@ async function adminLoadExistingScores(studentId,qid){if(!qid)return;const {data
 function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
 ['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updateAdminTotal()}));
 async function saveAdminScores(){if(!adminStudent||!currentSession){msg($('adminScoreMsg'),'Load a student with an active question first.');return}const vals=[Number($('scoreJ1').value),Number($('scoreJ2').value),Number($('scoreJ3').value),Number($('scoreJ4').value)];if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Each score must be between 0 and 100.');return}for(let i=0;i<4;i++){const judgeId=3+i;const {data:old}=await sb.from('scores').select('id').eq('student_id',adminStudent["student's_id"]).eq('question_id',currentSession.question_id).eq('judge_id',judgeId).maybeSingle();let error;if(old){({error}=await sb.from('scores').update({score:vals[i],scored_at:new Date().toISOString()}).eq('id',old.id))}else{({error}=await sb.from('scores').insert({student_id:adminStudent["student's_id"],question_id:currentSession.question_id,judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()}))}if(error){msg($('adminScoreMsg'),error.message);return}}msg($('adminScoreMsg'),'Scores saved successfully.',true)}
-async function updateRegistrationStatus(batchId,status){const {error:be}=await sb.from('competition_registration_batches').update({registration_status:status,reviewed_at:new Date().toISOString()}).eq('id',batchId);if(be){alert(be.message);return}const {error:se}=await sb.from('competition_registrations').update({registration_status:status}).eq('batch_id',batchId);if(se){alert(se.message);return}await loadRegistrations()}
-async function loadRegistrations(){const {data:b,error:be}=await sb.from('competition_registration_batches').select('*').eq('competition_year',YEAR).order('submitted_at',{ascending:false});if(be){$('registrationsBox').textContent=be.message;return}if(!b?.length){$('registrationsBox').textContent='No registrations yet.';return}let html='';for(const x of b){const {data:s}=await sb.from('competition_registrations').select('*').eq('batch_id',x.id);const status=String(x.registration_status||'Pending');html+=`<div class="feature"><b>MMG-${YEAR}-${String(x.id).padStart(6,'0')}</b><br><b>${esc(x.madrasa_name)}</b><br>${esc(x.madrasa_location||'')} • ${esc(x.madrasa_contact||'')}<br><b>Status: ${esc(status)}</b><div class="row"><button style="width:auto" onclick="updateRegistrationStatus(${x.id},'Approved')">✓ Approve</button><button style="width:auto" class="danger" onclick="updateRegistrationStatus(${x.id},'Rejected')">✕ Reject</button><button style="width:auto" class="secondary" onclick="updateRegistrationStatus(${x.id},'Pending')">↻ Pending</button></div><div>${(s||[]).map(st=>`<div class="student-card"><b>${esc(st.full_name)}</b> — ${esc(st.competition_category)}<br>Guardian: ${esc(st.father_guardian_contact||'')}<br>Status: ${esc(st.registration_status)}</div>`).join('')}</div></div>`}$('registrationsBox').innerHTML=html}
+async function loadRegistrations(){
+  const summary=$('registrationSummary');
+  const box=$('registeredStudentsBox');
+
+  if(summary) summary.innerHTML='<div class="status">Loading registered students...</div>';
+  if(box) box.innerHTML='';
+
+  const {data:b,error:be}=await sb.from('competition_registration_batches')
+    .select('*')
+    .eq('competition_year',YEAR)
+    .order('submitted_at',{ascending:false});
+
+  if(be){
+    if(summary) summary.innerHTML='<div class="status error">'+esc(be.message)+'</div>';
+    return;
+  }
+
+  const batches=b||[];
+  const batchIds=batches.map(x=>x.id);
+  let students=[];
+
+  if(batchIds.length){
+    const {data:s,error:se}=await sb.from('competition_registrations')
+      .select('*')
+      .in('batch_id',batchIds)
+      .order('submitted_at',{ascending:true});
+
+    if(se){
+      if(summary) summary.innerHTML='<div class="status error">'+esc(se.message)+'</div>';
+      return;
+    }
+    students=s||[];
+  }
+
+  const madrasaByBatch={};
+  batches.forEach(x=>madrasaByBatch[x.id]=x);
+  students.forEach(st=>st._madrasa=madrasaByBatch[st.batch_id]||{});
+
+  const categories=[
+    '10 Juz',
+    '20 Juz',
+    '30 Juz',
+    "Qiraat (As'hab Attawassut)",
+    'Tafsir'
+  ];
+
+  if(summary){
+    summary.innerHTML=categories.map(cat=>{
+      const count=students.filter(s=>s.competition_category===cat).length;
+      return `<div class="feature">
+        <h3>${esc(cat)}</h3>
+        <div style="font-size:28px;font-weight:800">${count}</div>
+        <div class="muted">Registered students</div>
+      </div>`;
+    }).join('');
+  }
+
+  if(!students.length){
+    if(box) box.innerHTML='<div class="card"><div class="status">No registered students yet.</div></div>';
+    return;
+  }
+
+  const categoryHtml=categories.map(cat=>{
+    const list=students.filter(s=>s.competition_category===cat);
+
+    const cards=list.map(st=>{
+      const code=st.student_code||'—';
+      const photo=st.photo_url
+        ? `<img src="${esc(st.photo_url)}" alt="Student photo" style="width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #ddd">`
+        : `<div style="width:72px;height:72px;border-radius:10px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:28px">👤</div>`;
+
+      return `<div class="student-card">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          ${photo}
+          <div style="flex:1">
+            <div style="font-size:18px;font-weight:800">${esc(code)}</div>
+            <div><b>${esc(st.full_name)}</b></div>
+            <div class="muted">${esc(st._madrasa.madrasa_name||'')}</div>
+            <div class="muted">${esc(st.gender||'')}${st.date_of_birth?' • '+esc(st.date_of_birth):''}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <b>Guardian:</b> ${esc(st.father_guardian_contact||'—')}<br>
+          <b>Nationality:</b> ${esc(st.nationality||'—')}
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="card">
+      <h2>${esc(cat)} <span class="muted">(${list.length})</span></h2>
+      ${list.length ? `<div class="grid">${cards}</div>` : '<div class="status">No students registered in this category.</div>'}
+    </div>`;
+  }).join('');
+
+  if(box) box.innerHTML=categoryHtml;
+}
+
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
 async function saveCompetitionInfo(){const payload={competition_year:YEAR,hijri_year:'1448',title:$('ciTitle').value.trim(),subtitle:$('ciSubtitle').value.trim(),introduction:$('ciIntroduction').value,objectives:$('ciObjectives').value,eligibility:$('ciEligibility').value,registration_info:$('ciRegistration').value,competition_dates:$('ciDates').value,venue:$('ciVenue').value,categories:$('ciCategories').value,rules:$('ciRules').value,prizes:$('ciPrizes').value,announcements:$('ciAnnouncements').value,faq:$('ciFaq').value,contact_info:$('ciContact').value,status:$('ciStatus').value,updated_at:new Date().toISOString()};const {error}=await sb.from('competition_public_info').upsert(payload,{onConflict:'competition_year'});if(error){msg($('ciMsg'),error.message);return}msg($('ciMsg'),'Competition information saved.',true)}
 async function logout(){await stopScanner();if(realtimeChannel)await sb.removeChannel(realtimeChannel);await sb.auth.signOut();location.reload()}
