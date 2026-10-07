@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -118,13 +118,35 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
 
 <div id="adminApp" class="hidden">
   <div class="card topbar"><div><h1>Admin Panel</h1><div id="adminName" class="muted">Administrator</div></div><button style="width:auto" class="secondary" onclick="logout()">Log out</button></div>
-  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('competition')">Competition Information</button></div>
+  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID</label><input id="adminStudentId" placeholder="MMG/26/001" autocomplete="off"><button onclick="adminLoadStudent()">Find Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
     <div class="card fullscreen-wrap" id="adminQuestionWrap"><div class="topbar"><h2>Current Question</h2><button style="width:auto" class="secondary" onclick="toggleFullscreen('adminQuestionWrap')">⛶ Full screen</button></div><div id="adminQuestionBox" class="muted">Load a student to see the active question.</div></div>
     <div class="card"><h2>Judges' Comments</h2><div id="adminComments" class="muted">Load a student.</div></div>
     <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label>Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
+  </section>
+
+  <section id="admin-judges" class="admin-page hidden">
+    <div class="card">
+      <h2>👥 Judges Management</h2>
+      <p class="muted">Up to 8 judges can participate. Only judges marked Active will be included in the competition.</p>
+      <div class="status">Existing Judge 1–4 accounts remain unchanged. New judge login accounts will be linked to a Users record before they can log in.</div>
+      <button onclick="loadAdminJudges()">↻ Refresh Judges</button>
+    </div>
+    <div class="card">
+      <h2>Add Judge</h2>
+      <p class="muted">For a new judge, first create/connect the login account in the Users table, then enter its Users ID here.</p>
+      <div class="row">
+        <div class="field"><label>Judge Name *</label><input id="newJudgeName" placeholder="Judge 5"></div>
+        <div class="field"><label>Judge Number *</label><input id="newJudgeNumber" type="number" min="1" max="8" placeholder="5"></div>
+        <div class="field"><label>Phone</label><input id="newJudgePhone" placeholder="07..." inputmode="tel"></div>
+        <div class="field"><label>Users ID *</label><input id="newJudgeUserId" type="number" min="1" placeholder="Users.id"></div>
+      </div>
+      <button onclick="addAdminJudge()">Add Judge</button>
+      <div id="adminJudgeMsg" class="status hidden"></div>
+    </div>
+    <div id="adminJudgesList"></div>
   </section>
 
   <section id="admin-registrations" class="admin-page hidden">
@@ -165,7 +187,7 @@ function msg(el,text,ok=false){el.textContent=text;el.className='status '+(ok?'s
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function showPublic(page){$('publicShell').classList.remove('hidden');$('loginShell').classList.add('hidden');$('judgeApp').classList.add('hidden');$('adminApp').classList.add('hidden');document.querySelectorAll('.public-page').forEach(x=>x.classList.add('hidden'));$('public-'+page).classList.remove('hidden');if(page==='competition')loadCompetitionInfo()}
 function showLogin(){$('publicShell').classList.add('hidden');$('loginShell').classList.remove('hidden');$('judgeApp').classList.add('hidden');$('adminApp').classList.add('hidden')}
-function showAdmin(page){document.querySelectorAll('.admin-page').forEach(x=>x.classList.add('hidden'));$('admin-'+page).classList.remove('hidden');if(page==='competition')loadAdminCompetition()}
+function showAdmin(page){document.querySelectorAll('.admin-page').forEach(x=>x.classList.add('hidden'));$('admin-'+page).classList.remove('hidden');if(page==='competition')loadAdminCompetition();if(page==='judges')loadAdminJudges()}
 function toggleFullscreen(id){const el=$(id);if(!document.fullscreenElement){if(el.requestFullscreen)el.requestFullscreen();}else{document.exitFullscreen()}}
 function addStudentRow(data={}){const box=$('studentRows');const id='student_'+Date.now()+'_'+Math.random().toString(36).slice(2);const d=document.createElement('div');d.className='student-card';d.dataset.id=id;d.innerHTML=`<h3>Student</h3><div class="row"><div class="field"><label>Full Name *</label><input class="s-name" value="${esc(data.full_name||'')}"></div><div class="field"><label>Gender</label><select class="s-gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth</label><input class="s-dob" type="date" value="${esc(data.date_of_birth||'')}"></div></div><div class="row"><div class="field"><label>Nationality</label><input class="s-nationality" value="${esc(data.nationality||'')}"></div><div class="field"><label>Student Photo</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp"><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" value="${esc(data.father_guardian_contact||'')}"></div></div><label>Competition Category *</label><select class="s-category"><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select><button class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;box.appendChild(d);d.querySelector('.s-gender').value=data.gender||'';d.querySelector('.s-category').value=data.competition_category||'';const fileInput=d.querySelector('.s-photo-file');const fileName=d.querySelector('.photo-file-name');fileInput.addEventListener('change',()=>{fileName.textContent=fileInput.files[0]?fileInput.files[0].name:'No photo selected'})}
 addStudentRow();
@@ -429,6 +451,51 @@ async function loadRegistrations(){
   }).join('');
 
   if(box) box.innerHTML=categoryHtml;
+}
+
+async function loadAdminJudges(){
+  const {data,error}=await sb.from('judges').select('Id,created at,name,judge number,phone,user id,is_active').order('judge number',{ascending:true});
+  if(error){$('adminJudgesList').innerHTML=`<div class="card status error">${esc(error.message)}</div>`;return}
+  const list=data||[];
+  if(!list.length){$('adminJudgesList').innerHTML='<div class="card status">No judges found.</div>';return}
+  $('adminJudgesList').innerHTML=list.map(j=>`
+    <div class="card">
+      <div class="topbar">
+        <div>
+          <div style="font-size:20px;font-weight:800">Judge ${esc(j['judge number'])} — ${esc(j.name||'')}</div>
+          <div class="muted">Phone: ${esc(j.phone||'—')} • Users ID: ${esc(j['user id']??'Not linked')} • DB ID: ${esc(j.Id)}</div>
+        </div>
+        <div><span class="pill">${j.is_active?'Active':'Inactive'}</span></div>
+      </div>
+      <button class="${j.is_active?'secondary':'success'}" onclick="setJudgeActive(${Number(j.Id)},${!j.is_active})">${j.is_active?'Deactivate':'Activate'} Judge ${esc(j['judge number'])}</button>
+    </div>`).join('');
+}
+
+async function setJudgeActive(id,active){
+  const {error}=await sb.from('judges').update({is_active:active}).eq('Id',id);
+  if(error){msg($('adminJudgeMsg'),error.message);return}
+  msg($('adminJudgeMsg'),`Judge ${active?'activated':'deactivated'} successfully.`,true);
+  await loadAdminJudges();
+}
+
+async function addAdminJudge(){
+  const name=$('newJudgeName').value.trim();
+  const number=Number($('newJudgeNumber').value);
+  const phone=$('newJudgePhone').value.trim();
+  const userId=Number($('newJudgeUserId').value);
+  if(!name||!Number.isInteger(number)||number<1||number>8||!Number.isInteger(userId)||userId<1){msg($('adminJudgeMsg'),'Enter a name, Judge number 1–8, and a valid Users ID.');return}
+  const {data:existing,error:checkError}=await sb.from('judges').select('Id').eq('judge number',number).maybeSingle();
+  if(checkError){msg($('adminJudgeMsg'),checkError.message);return}
+  if(existing){msg($('adminJudgeMsg'),`Judge number ${number} already exists.`);return}
+  const {data:user,error:userError}=await sb.from('Users').select('id,name,"Role"').eq('id',userId).maybeSingle();
+  if(userError){msg($('adminJudgeMsg'),userError.message);return}
+  if(!user){msg($('adminJudgeMsg'),'Users ID not found. Create/connect the judge login first.');return}
+  if(String(user['Role']).toLowerCase()!=='judge'){msg($('adminJudgeMsg'),'That Users record is not a Judge account.');return}
+  const {error}=await sb.from('judges').insert({name, 'judge number':number, phone:phone||null, 'user id':userId, is_active:false});
+  if(error){msg($('adminJudgeMsg'),error.message);return}
+  msg($('adminJudgeMsg'),`Judge ${number} added successfully. It is inactive until you activate it.`,true);
+  $('newJudgeName').value='';$('newJudgeNumber').value='';$('newJudgePhone').value='';$('newJudgeUserId').value='';
+  await loadAdminJudges();
 }
 
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
