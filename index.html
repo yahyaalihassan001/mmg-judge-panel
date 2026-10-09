@@ -29,7 +29,7 @@
   document.addEventListener('DOMContentLoaded',function(){
     ready=true; var b=panel();
     if(b){b.replaceChildren();var t=document.createElement('div');t.textContent='MMG diagnostic active. Tap a normal page button. If it fails, this box will show the JavaScript error.';b.appendChild(t);var c=document.createElement('button');c.type='button';c.textContent='Hide diagnostics';c.style.cssText='display:block;width:auto;margin:8px 0 0;padding:7px 10px;background:#344054;color:white;border:0;border-radius:6px;';c.onclick=function(){b.style.display='none'};b.appendChild(c)}
-    setTimeout(function(){if(typeof window.showPublic!=='function')report('Main app script did not define showPublic; check whether the main script loaded.');},1500);
+    setTimeout(function(){if(typeof window.showPublic!=='function' && !lastError)report('Main app script did not define showPublic; no earlier JavaScript error was captured.');},1500);
   });
   document.addEventListener('click',function(e){
     var el=e.target&&e.target.closest?e.target.closest('button,a,[role="button"]'):null;
