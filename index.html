@@ -9,6 +9,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#18202a}.wrap{max-width:1050px;margin:auto;padding:16px}.hidden{display:none!important}.card{background:#fff;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 3px 14px #0001}h1,h2,h3{margin-top:0}.muted{color:#667085;font-size:14px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.nav button{width:auto;flex:1;min-width:130px}.hero{padding:28px;text-align:center;background:linear-gradient(135deg,#111827,#374151);color:#fff}.hero .muted{color:#d1d5db}.hero h1{font-size:30px}.arabic{font-size:25px;direction:rtl}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.feature{border:1px solid #e4e7ec;border-radius:14px;padding:16px}.feature h3{margin-bottom:6px}.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:180px}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,textarea,select,button{width:100%;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}textarea{min-height:110px;resize:vertical}button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;margin-top:10px}button:disabled{opacity:.5}.secondary{background:#e9edf2;color:#111827}.danger{background:#b42318}.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}.success{background:#ecfdf3}.error{background:#fef3f2;color:#b42318}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700;margin:2px}.student-card{border:1px solid #e2e7ec;border-radius:14px;padding:14px;margin-top:12px}.photo-upload-link{display:inline-block;width:auto;padding:10px 14px;border-radius:10px;background:#111827;color:#fff;font-weight:700;cursor:pointer;margin-top:2px}.photo-file-name{margin-top:7px;word-break:break-all}.student-card h3{margin-bottom:8px}.remove{background:#fef3f2;color:#b42318}.question-title{font-size:21px;font-weight:800}.question-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.s
 ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12px;padding:12px;cursor:pointer}.sub-item.active{border-color:#111827;background:#f8fafc}.sub-item strong{display:block;margin-bottom:4px}.subnav{display:flex;gap:8px;align-items:center;margin-top:15px}.subnav button{width:auto;flex:1;margin-top:0}.subnum{font-weight:800;text-align:center;min-width:120px}.quran-pages{margin-top:12px}.quran-page-label{font-weight:700;margin:12px 0 7px}.quran-page{display:block;width:100%;height:auto;border-radius:10px;border:1px solid #ddd}.progress{height:8px;background:#e9edf2;border-radius:99px;overflow:hidden;margin-top:12px}.progress-bar{height:100%;background:#111827;width:20%}#reader{margin-top:12px}.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.score-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.big{font-size:28px;font-weight:800}.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.small{font-size:13px}.fullscreen-wrap:fullscreen{background:#fff;padding:20px;overflow:auto}.fullscreen-wrap:-webkit-full-screen{background:#fff;padding:20px;overflow:auto}.footer{text-align:center;color:#667085;padding:20px}.announcement{border-left:4px solid #111827;padding-left:12px;margin:10px 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e4e7ec;text-align:left}th{background:#f8fafc}
+.category-button{width:100%;text-align:left;background:#fff;color:#18202a;border:1px solid #d0d5dd;border-radius:14px;padding:16px;margin:0;box-shadow:0 2px 8px #00000008}.category-button.active{border:2px solid #111827;background:#f8fafc}.category-button .category-name{font-weight:800;font-size:16px}.category-button .category-count{font-size:24px;font-weight:800;margin-top:7px}.category-button .muted{display:block;margin-top:4px}.stage-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.table-action{width:auto;min-width:125px;margin:0;padding:9px 12px;font-size:14px}.table-action.remove-final{background:#b42318}.limit-note{font-size:13px;color:#667085;margin:8px 0}.registration-table td{vertical-align:top}.registration-table td small{display:block;color:#667085;margin-top:3px}.empty-table{padding:14px;background:#f8fafc;border-radius:10px;color:#667085}
 </style>
 </head>
 <body>
@@ -128,14 +129,14 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
   </section>
 
   <section id="admin-registrations" class="admin-page hidden">
-  <div class="card">
-    <h2>👥 Registered Students — 2026 / 1448</h2>
-    <p class="muted">Students appear here automatically after registration. Maximum 3 students per category from each madrasa.</p>
-    <button onclick="loadRegistrations()">↻ Refresh Registered Students</button>
-    <div id="registrationSummary" class="grid" style="margin-top:14px"></div>
-  </div>
-  <div id="registeredStudentsBox"></div>
-</section>
+    <div class="card">
+      <h2>👥 Competition Registrations — 2026 / 1448</h2>
+      <p class="muted">All registered students appear in Preliminary Participants. Select qualified students for the final; their original registration records remain unchanged.</p>
+      <button onclick="loadRegistrations()">↻ Refresh Registrations</button>
+      <div id="registrationSummary" class="grid" style="margin-top:14px"></div>
+    </div>
+    <div id="registeredStudentsBox"></div>
+  </section>
 
 
 <section id="admin-judges" class="admin-page hidden">
@@ -481,101 +482,134 @@ async function adminLoadExistingScores(studentId,qid){if(!qid)return;const {data
 function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
 ['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updateAdminTotal()}));
 async function saveAdminScores(){if(!adminStudent||!currentSession){msg($('adminScoreMsg'),'Load a student with an active question first.');return}const vals=[Number($('scoreJ1').value),Number($('scoreJ2').value),Number($('scoreJ3').value),Number($('scoreJ4').value)];if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Each score must be between 0 and 100.');return}for(let i=0;i<4;i++){const judgeId=3+i;const {data:old}=await sb.from('scores').select('id').eq('student_id',adminStudent["student's_id"]).eq('question_id',currentSession.question_id).eq('judge_id',judgeId).maybeSingle();let error;if(old){({error}=await sb.from('scores').update({score:vals[i],scored_at:new Date().toISOString()}).eq('id',old.id))}else{({error}=await sb.from('scores').insert({student_id:adminStudent["student's_id"],question_id:currentSession.question_id,judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()}))}if(error){msg($('adminScoreMsg'),error.message);return}}msg($('adminScoreMsg'),'Scores saved successfully.',true)}
+const MMG_CATEGORIES=[
+  '10 Juz',
+  '20 Juz',
+  '30 Juz',
+  "Qiraat (As'hab Attawassut)",
+  'Tafsir'
+];
+const MMG_FINAL_LIMITS={'10 Juz':15,'20 Juz':15,'30 Juz':20};
+let mmgRegistrationCache={students:[],selectedCategory:'10 Juz'};
+
 async function loadRegistrations(){
   const summary=$('registrationSummary');
   const box=$('registeredStudentsBox');
-
   if(summary) summary.innerHTML='<div class="status">Loading registered students...</div>';
   if(box) box.innerHTML='';
 
   const {data:b,error:be}=await sb.from('competition_registration_batches')
-    .select('*')
-    .eq('competition_year',YEAR)
-    .order('submitted_at',{ascending:false});
-
-  if(be){
-    if(summary) summary.innerHTML='<div class="status error">'+esc(be.message)+'</div>';
-    return;
-  }
+    .select('*').eq('competition_year',YEAR).order('submitted_at',{ascending:false});
+  if(be){if(summary)summary.innerHTML='<div class="status error">'+esc(be.message)+'</div>';return}
 
   const batches=b||[];
   const batchIds=batches.map(x=>x.id);
   let students=[];
-
   if(batchIds.length){
     const {data:s,error:se}=await sb.from('competition_registrations')
-      .select('*')
-      .in('batch_id',batchIds)
-      .order('submitted_at',{ascending:true});
-
-    if(se){
-      if(summary) summary.innerHTML='<div class="status error">'+esc(se.message)+'</div>';
-      return;
-    }
+      .select('*').in('batch_id',batchIds).order('submitted_at',{ascending:true});
+    if(se){if(summary)summary.innerHTML='<div class="status error">'+esc(se.message)+'</div>';return}
     students=s||[];
   }
-
   const madrasaByBatch={};
   batches.forEach(x=>madrasaByBatch[x.id]=x);
-  students.forEach(st=>st._madrasa=madrasaByBatch[st.batch_id]||{});
+  students.forEach(st=>{
+    st._madrasa=madrasaByBatch[st.batch_id]||{};
+    if(!st.competition_stage)st.competition_stage='Preliminary';
+  });
+  mmgRegistrationCache.students=students;
+  if(!MMG_CATEGORIES.includes(mmgRegistrationCache.selectedCategory))mmgRegistrationCache.selectedCategory=MMG_CATEGORIES[0];
+  renderRegistrationManager();
+}
 
-  const categories=[
-    '10 Juz',
-    '20 Juz',
-    '30 Juz',
-    "Qiraat (As'hab Attawassut)",
-    'Tafsir'
-  ];
-
+function renderRegistrationManager(){
+  const summary=$('registrationSummary');
+  const box=$('registeredStudentsBox');
+  const students=mmgRegistrationCache.students||[];
+  const selected=mmgRegistrationCache.selectedCategory||MMG_CATEGORIES[0];
   if(summary){
-    summary.innerHTML=categories.map(cat=>{
-      const count=students.filter(s=>s.competition_category===cat).length;
-      return `<div class="feature">
-        <h3>${esc(cat)}</h3>
-        <div style="font-size:28px;font-weight:800">${count}</div>
-        <div class="muted">Registered students</div>
-      </div>`;
+    summary.innerHTML=MMG_CATEGORIES.map(cat=>{
+      const all=students.filter(s=>s.competition_category===cat);
+      const finalists=all.filter(s=>s.competition_stage==='Final').length;
+      const limit=MMG_FINAL_LIMITS[cat];
+      const isActive=selected===cat;
+      return `<button class="category-button ${isActive?'active':''}" onclick="selectRegistrationCategory(${JSON.stringify(cat)})" aria-pressed="${isActive}">
+        <span class="category-name">${esc(cat)}</span>
+        <span class="category-count">${all.length}</span>
+        <span class="muted">Preliminary/registered • ${finalists} finalist${finalists===1?'':'s'}${limit?` • Final limit ${limit}`:' • Final limit not set'}</span>
+      </button>`;
     }).join('');
   }
-
   if(!students.length){
-    if(box) box.innerHTML='<div class="card"><div class="status">No registered students yet.</div></div>';
+    if(box)box.innerHTML='<div class="card"><div class="status">No registered students yet.</div></div>';
     return;
   }
+  const categoryStudents=students.filter(s=>s.competition_category===selected);
+  const preliminary=categoryStudents.filter(s=>s.competition_stage!=='Final');
+  const finalists=categoryStudents.filter(s=>s.competition_stage==='Final');
+  const limit=MMG_FINAL_LIMITS[selected];
+  const limitText=limit?`${finalists.length} of ${limit} finalist places used.`:`No finalist limit has been configured for ${esc(selected)}.`;
 
-  const categoryHtml=categories.map(cat=>{
-    const list=students.filter(s=>s.competition_category===cat);
+  const row=(st,isFinal)=>{
+    const id=Number(st.id);
+    const code=st.student_code||'—';
+    const madrasa=st._madrasa||{};
+    const name=st.full_name||'—';
+    const category=st.competition_category||selected;
+    let action='';
+    if(isFinal){
+      action=`<button class="table-action remove-final" onclick="setRegistrationStage(${id},'Preliminary')">Return to Preliminary</button>`;
+    }else{
+      const limitReached=Boolean(limit)&&finalists.length>=limit;
+      action=`<button class="table-action" ${limitReached?'disabled title="Finalist limit reached"':''} onclick="setRegistrationStage(${id},'Final')">Select for Final</button>`;
+    }
+    return `<tr>
+      <td><b>${esc(code)}</b></td>
+      <td>${esc(name)}<small>${esc(st.gender||'')}${st.date_of_birth?' • '+esc(st.date_of_birth):''}</small></td>
+      <td>${esc(madrasa.madrasa_name||'—')}<small>${esc(madrasa.madrasa_location||'')}</small></td>
+      <td>${esc(madrasa.madrasa_contact||'—')}</td>
+      <td>${esc(st.father_guardian_contact||'—')}</td>
+      <td>${esc(category)}</td>
+      <td>${action}</td>
+    </tr>`;
+  };
+  const table=(list,isFinal)=>list.length?`<div class="table-wrap"><table class="registration-table"><thead><tr><th>Student ID</th><th>Student Name</th><th>Madrasa</th><th>Madrasa Contact</th><th>Parent / Guardian Contact</th><th>Category</th><th>Action</th></tr></thead><tbody>${list.map(st=>row(st,isFinal)).join('')}</tbody></table></div>`:`<div class="empty-table">${isFinal?'No finalists selected in this category yet.':'No preliminary participants in this category.'}</div>`;
 
-    const cards=list.map(st=>{
-      const code=st.student_code||'—';
-      const photo=st.photo_url
-        ? `<img src="${esc(st.photo_url)}" alt="Student photo" style="width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #ddd">`
-        : `<div style="width:72px;height:72px;border-radius:10px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:28px">👤</div>`;
-
-      return `<div class="student-card">
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          ${photo}
-          <div style="flex:1">
-            <div style="font-size:18px;font-weight:800">${esc(code)}</div>
-            <div><b>${esc(st.full_name)}</b></div>
-            <div class="muted">${esc(st._madrasa.madrasa_name||'')}</div>
-            <div class="muted">${esc(st.gender||'')}${st.date_of_birth?' • '+esc(st.date_of_birth):''}</div>
-          </div>
-        </div>
-        <div style="margin-top:10px">
-          <b>Guardian:</b> ${esc(st.father_guardian_contact||'—')}<br>
-          <b>Nationality:</b> ${esc(st.nationality||'—')}
-        </div>
-      </div>`;
-    }).join('');
-
-    return `<div class="card">
-      <h2>${esc(cat)} <span class="muted">(${list.length})</span></h2>
-      ${list.length ? `<div class="grid">${cards}</div>` : '<div class="status">No students registered in this category.</div>'}
+  if(box)box.innerHTML=`
+    <div class="card">
+      <div class="stage-heading"><div><h2>${esc(selected)}</h2><div class="muted">${categoryStudents.length} registered participant${categoryStudents.length===1?'':'s'} in this category</div></div><span class="pill">${finalists.length} Finalist${finalists.length===1?'':'s'}</span></div>
+      <div class="limit-note">${limitText}</div>
+    </div>
+    <div class="card">
+      <div class="stage-heading"><div><h2>🟦 Preliminary Participants</h2><div class="muted">All registered students in ${esc(selected)} who have not been moved to the final.</div></div><span class="pill">${preliminary.length} students</span></div>
+      ${table(preliminary,false)}
+    </div>
+    <div class="card">
+      <div class="stage-heading"><div><h2>🏆 Final Competition / Finalists</h2><div class="muted">Students selected by Admin after the preliminary round.</div></div><span class="pill">${finalists.length}${limit?` / ${limit}`:''} students</span></div>
+      ${table(finalists,true)}
     </div>`;
-  }).join('');
+}
 
-  if(box) box.innerHTML=categoryHtml;
+function selectRegistrationCategory(category){
+  if(!MMG_CATEGORIES.includes(category))return;
+  mmgRegistrationCache.selectedCategory=category;
+  renderRegistrationManager();
+}
+
+async function setRegistrationStage(registrationId,newStage){
+  if(!['Preliminary','Final'].includes(newStage))return;
+  const student=mmgRegistrationCache.students.find(s=>Number(s.id)===Number(registrationId));
+  if(!student){alert('Student registration was not found. Refresh and try again.');return}
+  const category=student.competition_category;
+  const limit=MMG_FINAL_LIMITS[category];
+  if(newStage==='Final'&&limit){
+    const currentCount=mmgRegistrationCache.students.filter(s=>s.competition_category===category&&s.competition_stage==='Final'&&Number(s.id)!==Number(registrationId)).length;
+    if(currentCount>=limit){alert(`The ${category} final is limited to ${limit} students. Remove a finalist before selecting another.`);return}
+  }
+  const {error}=await sb.from('competition_registrations').update({competition_stage:newStage}).eq('id',registrationId);
+  if(error){alert('Could not update competition stage: '+error.message);return}
+  student.competition_stage=newStage;
+  renderRegistrationManager();
 }
 
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
