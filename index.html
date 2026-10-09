@@ -104,7 +104,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
   <div id="questionScanArea" class="hidden">
     <hr>
     <h2>Scan Question Paper</h2>
-    <div class="muted">Only Judge 1 can scan. Example: QIRAAT-001</div>
+    <div class="muted">Only the designated scanning judge can scan a question paper. Example: QIRAAT-001</div>
     <button id="scanBtn" onclick="startScanner()">📷 Scan Barcode</button>
     <div id="reader" class="hidden"></div>
     <button id="stopScanBtn" class="secondary hidden" onclick="stopScanner()">Stop scanner</button>
@@ -125,7 +125,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID</label><input id="adminStudentId" placeholder="MMG/26/001" autocomplete="off"><button onclick="adminLoadStudent()">Find Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
     <div class="card fullscreen-wrap" id="adminQuestionWrap"><div class="topbar"><h2>Current Question</h2><button style="width:auto" class="secondary" onclick="toggleFullscreen('adminQuestionWrap')">⛶ Full screen</button></div><div id="adminQuestionBox" class="muted">Load a student to see the active question.</div></div>
     <div class="card"><h2>Judges' Comments</h2><div id="adminComments" class="muted">Load a student.</div></div>
-    <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label>Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label>Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
+    <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label id="scoreLabelJ1">Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ2">Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ3">Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ4">Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
   </section>
 
   <section id="admin-registrations" class="admin-page hidden">
@@ -150,22 +150,18 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
     <h2>Add Judge</h2>
     <div class="row">
       <div class="field">
-        <label>Judge Name *</label>
-        <input id="newJudgeName" placeholder="Judge 5">
-      </div>
-      <div class="field">
         <label>Judge Number *</label>
         <input id="newJudgeNumber" type="number" min="1" max="8" placeholder="5">
+      </div>
+      <div class="field">
+        <label>Judge's Full Name *</label>
+        <input id="newJudgeName" placeholder="Enter judge's full name" autocomplete="name">
       </div>
     </div>
     <div class="row">
       <div class="field">
-        <label>Phone</label>
-        <input id="newJudgePhone" placeholder="0712 345 678">
-      </div>
-      <div class="field">
         <label>Email *</label>
-        <input id="newJudgeEmail" type="email" placeholder="judge5@example.com" autocomplete="off">
+        <input id="newJudgeEmail" type="email" placeholder="judge@example.com" autocomplete="off">
       </div>
     </div>
     <button id="addJudgeBtn" onclick="addJudge()">➕ Add Judge</button>
@@ -224,6 +220,18 @@ async function uploadRegistrationPhoto(file,index){if(!file)return '';if(!['imag
 async function submitRegistration(){const name=$('regMadrasaName').value.trim();const cards=[...document.querySelectorAll('.student-card')];if(!name){msg($('regMsg'),'Madrasa name is required.');return}if(!cards.length){msg($('regMsg'),'Add at least one student.');return}const students=[];for(const c of cards){const x={full_name:c.querySelector('.s-name').value.trim(),gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};if(!x.full_name||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please complete the required student fields.');return}students.push(x)}const categoryCounts={};for(const student of students){categoryCounts[student.competition_category]=(categoryCounts[student.competition_category]||0)+1}const overLimit=Object.entries(categoryCounts).find(([category,count])=>count>3);if(overLimit){msg($('regMsg'),`A madrasa can register a maximum of 3 students in each category. You have entered ${overLimit[1]} students for ${overLimit[0]}.`);return}$('submitRegistration').disabled=true;msg($('regMsg'),'Uploading photos and submitting registration...',true);try{for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}const cleanStudents=students.map(({photo_file,...s})=>s);const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_name:$('regHeadteacher').value.trim(),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});if(error)throw error;msg($('regMsg'),`Registration submitted successfully. Students 
 are now registered. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);$('studentRows').innerHTML='';addStudentRow();}catch(e){msg($('regMsg'),e.message||String(e))}finally{$('submitRegistration').disabled=false}}
 
+async function loadScoreJudgeNames(){
+  try{
+    const {data,error}=await sb.from('judges').select('id,name,judge_number').order('judge_number',{ascending:true});
+    if(error)throw error;
+    const slots={1:'scoreLabelJ1',2:'scoreLabelJ2',3:'scoreLabelJ3',4:'scoreLabelJ4'};
+    (data||[]).forEach(j=>{
+      const labelId=slots[Number(j.judge_number)];
+      if(labelId && $(labelId)) $(labelId).textContent=(j.name||`Judge ${j.judge_number}`);
+    });
+  }catch(e){ console.warn('Could not load judge names for score labels:',e.message||e); }
+}
+
 async function loadAdminJudges(){
   const box=$('adminJudgesList');
   box.innerHTML='<div class="muted">Loading judges…</div>';
@@ -241,8 +249,8 @@ async function loadAdminJudges(){
       return `<div class="feature" style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
           <div>
-            <div style="font-size:18px;font-weight:800">Judge ${esc(j.judge_number)} — ${esc(j.name||'')}</div>
-            <div class="muted">Phone: ${esc(j.phone||'—')} • User ID: ${esc(String(j.user_id||'—'))}</div>
+            <div style="font-size:18px;font-weight:800">${esc(j.name||`Judge ${j.judge_number}`)}</div>
+            <div class="muted">Assigned position: Judge ${esc(j.judge_number)} • User ID: ${esc(String(j.user_id||'—'))}</div>
             <div class="muted">Status: <b>${active?'Active':'Inactive'}</b></div>
           </div>
           <button style="width:auto" class="${active?'secondary':''}" onclick="toggleJudge(${Number(j.id)},${active})">${active?'Deactivate':'Activate'}</button>
@@ -257,7 +265,6 @@ async function loadAdminJudges(){
 async function addJudge(){
   const name=$('newJudgeName').value.trim();
   const judge_number=Number($('newJudgeNumber').value);
-  const phone=$('newJudgePhone').value.trim();
   const email=$('newJudgeEmail').value.trim().toLowerCase();
 
   if(!name||!judge_number||!email){
@@ -284,7 +291,7 @@ async function addJudge(){
         'Authorization':`Bearer ${session.access_token}`,
         'apikey':SUPABASE_KEY
       },
-      body:JSON.stringify({name,judge_number,phone,email})
+      body:JSON.stringify({name,judge_number,phone:'',email})
     });
 
     const body=await res.json().catch(()=>({}));
@@ -292,7 +299,6 @@ async function addJudge(){
 
     $('newJudgeName').value='';
     $('newJudgeNumber').value='';
-    $('newJudgePhone').value='';
     $('newJudgeEmail').value='';
 
     $('newJudgeCredentials').classList.remove('hidden');
@@ -322,7 +328,7 @@ async function toggleJudge(id,current){
 
 async function loadCompetitionInfo(){const {data,error}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).eq('status','Published').maybeSingle();if(error){$('competitionInfo').innerHTML=`<div class="card status error">${esc(error.message)}</div>`;return}if(!data){$('competitionInfo').innerHTML='<div class="card status">The 2026/1448 competition information has not been published yet.</div>';return}$('pubTitle').textContent=data.title||'2026 / 1448 Competition';$('pubSubtitle').textContent=data.subtitle||'';const sections=[['Introduction',data.introduction],['Objectives',data.objectives],['Eligibility',data.eligibility],['Registration',data.registration_info],['Competition Dates',data.competition_dates],['Venue',data.venue],['Categories',data.categories],['Rules & Regulations',data.rules],['Prizes',data.prizes],['Announcements',data.announcements],['Frequently Asked Questions',data.faq],['Contact',data.contact_info]];$('competitionInfo').innerHTML=sections.filter(x=>x[1]).map(x=>`<div class="card"><h2>${esc(x[0])}</h2><div style="white-space:pre-wrap;line-height:1.7">${esc(x[1])}</div></div>`).join('');if(data.contact_info)$('publicContactInfo').textContent=data.contact_info}
 async function login(){const email=$('email').value.trim(),password=$('password').value;try{const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await openAuthenticatedApp()}catch(e){msg($('loginMsg'),e.message)}}
-async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('scores')}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?'Judge 1: barcode scanning enabled.':'Barcode scanning is disabled for this judge.';await loadJudgeQuestion();startRealtime()}}
+async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('scores');loadScoreJudgeNames()}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?`${data.name||'This judge'}: barcode scanning enabled.`:`${data.name||'This judge'}: barcode scanning is disabled for this judge.`;await loadJudgeQuestion();startRealtime()}}
 async function findRegisteredStudent(studentCode){
   const code=(studentCode||'').trim().toUpperCase();
   if(!code)return null;
