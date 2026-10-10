@@ -3,42 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>
-/* MMG temporary on-screen diagnostics: keep this first so it can report early failures. */
-(function(){
-  var ready=false, lastError='';
-  function panel(){
-    var b=document.getElementById('mmgDiagnostic');
-    if(!b && document.body){
-      b=document.createElement('div'); b.id='mmgDiagnostic';
-      b.style.cssText='position:fixed;z-index:2147483647;left:8px;right:8px;bottom:8px;background:#fff3cd;color:#7a271a;border:2px solid #b54708;padding:10px 12px;border-radius:10px;font:14px Arial,sans-serif;max-height:35vh;overflow:auto;box-shadow:0 2px 15px #0005;';
-      var close=document.createElement('button'); close.type='button'; close.textContent='Hide diagnostics';
-      close.style.cssText='display:block;width:auto;margin:8px 0 0;padding:7px 10px;background:#7a271a;color:white;border:0;border-radius:6px;';
-      close.onclick=function(){b.style.display='none'};
-      b.appendChild(document.createTextNode('MMG diagnostics starting… ')); b.appendChild(close); document.body.appendChild(b);
-    }
-    return b;
-  }
-  function report(message){
-    lastError=String(message||'Unknown JavaScript error');
-    function put(){var b=panel(); if(b){b.style.display='block';b.replaceChildren();var t=document.createElement('div');t.textContent='MMG diagnostic: '+lastError;b.appendChild(t);var c=document.createElement('button');c.type='button';c.textContent='Hide diagnostics';c.style.cssText='display:block;width:auto;margin:8px 0 0;padding:7px 10px;background:#7a271a;color:white;border:0;border-radius:6px;';c.onclick=function(){b.style.display='none'};b.appendChild(c)}}
-    if(document.body)put();else document.addEventListener('DOMContentLoaded',put,{once:true});
-  }
-  window.addEventListener('error',function(e){report((e.message||'Script failed')+' | '+(e.filename||'')+':'+(e.lineno||''))});
-  window.addEventListener('unhandledrejection',function(e){var r=e.reason;report('Promise rejection: '+(r&&r.message?r.message:String(r))) });
-  document.addEventListener('DOMContentLoaded',function(){
-    ready=true; var b=panel();
-    if(b){b.replaceChildren();var t=document.createElement('div');t.textContent='MMG diagnostic active. Tap a normal page button. If it fails, this box will show the JavaScript error.';b.appendChild(t);var c=document.createElement('button');c.type='button';c.textContent='Hide diagnostics';c.style.cssText='display:block;width:auto;margin:8px 0 0;padding:7px 10px;background:#344054;color:white;border:0;border-radius:6px;';c.onclick=function(){b.style.display='none'};b.appendChild(c)}
-    setTimeout(function(){if(typeof window.showPublic!=='function' && !lastError)report('Main app script did not define showPublic; no earlier JavaScript error was captured.');},1500);
-  });
-  document.addEventListener('click',function(e){
-    var el=e.target&&e.target.closest?e.target.closest('button,a,[role="button"]'):null;
-    if(!el || el.id==='mmgDiagnostic' || el.closest('#mmgDiagnostic'))return;
-    var inline=el.getAttribute('onclick');
-    if(inline && !lastError){setTimeout(function(){if(typeof window.showPublic!=='function')report('Button was tapped, but main functions are unavailable. Inline action: '+inline);},100)}
-  },true);
-})();
-</script>
 <title>Muslim Mercy Group — 2026/1448 Qur'an Competition</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/html5-qrcode" defer></script>
@@ -251,8 +215,8 @@ function showAdmin(page){
 function openPhotoModal(src){$('expandedStudentPhoto').src=src;$('photoModal').classList.remove('hidden')}function closePhotoModal(e){if(e)e.stopPropagation();$('photoModal').classList.add('hidden');$('expandedStudentPhoto').src=''}
 function toggleFullscreen(id){const el=$(id);if(!document.fullscreenElement){if(el.requestFullscreen)el.requestFullscreen();}else{document.exitFullscreen()}}
 function changeRegistrationType(){const independent=$('regType').value==='independent';$('madrasaFields').classList.toggle('hidden',independent);$('independentNotice').classList.toggle('hidden',!independent);['regMadrasaName','regLocation','regHeadteacherFirst','regHeadteacherMiddle','regHeadteacherLast','regEmail','regContact'].forEach(id=>{$(id).required=!independent});if(independent){$('regMadrasaName').value='Independent';$('regLocation').value='Independent';$('regHeadteacherFirst').value='Independent';$('regHeadteacherMiddle').value='Student';$('regHeadteacherLast').value='Registration';$('regEmail').value='independent@mmg.local';$('regContact').value='N/A'}else{['regMadrasaName','regLocation','regHeadteacherFirst','regHeadteacherMiddle','regHeadteacherLast','regEmail','regContact'].forEach(id=>{if(['regMadrasaName','regLocation','regHeadteacherFirst','regHeadteacherMiddle','regHeadteacherLast','regEmail','regContact'].includes(id)&&['regMadrasaName','regLocation','regHeadteacherFirst','regHeadteacherMiddle','regHeadteacherLast','regEmail','regContact'].indexOf(id)>=0&&['Independent','Student','Registration','independent@mmg.local','N/A'].includes($(id).value))$(id).value=''})}}
-function addStudentRow(data={}){const box=$('studentRows');const id='student_'+Date.now()+'_'+Math.random().toString(36).slice(2);const d=document.createElement('div');d.className='student-card';d.dataset.id=id;d.innerHTML=`<h3>Student</h3><div class="row"><div class="field"><label>First Name *</label><input class="s-first" required value="${esc(data.first_name||'')}"></div><div class="field"><label>Middle Name *</label><input class="s-middle" required value="${esc(data.middle_name||'')}"></div><div class="field"><label>Last Name *</label><input class="s-last" required value="${esc(data.last_name||'')}"></div></div><div class="row"><div class="field"><label>Gender *</label><select class="s-gender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input class="s-dob" type="date" required value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality *</label><select class="s-nationality" required><option value="">Select nationality</option><option>Kenyan</option><option>Ugandan</option><option>Tanzanian</option><option>Somali</option><option>Ethiopian</option><option>South Sudanese</option><option>Other</option></select></div></div><div class="row"><div class="field passport-wrap hidden"><label>Passport Number *</label><input class="s-passport" required value="${esc(data.passport_number||'')}"></div><div class="field"><label>Student Photo *</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp" required><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" required value="${esc(data.father_guardian_contact||'')}"></div></div><label>Competition Category *</label><select class="s-category" required><option value="">Select category</option><option>10 Juz</option><opti
-on>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select><button type="button" class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;box.appendChild(d);d.querySelector('.s-gender').value=data.gender||'';d.querySelector('.s-category').value=data.competition_category||'';d.querySelector('.s-nationality').value=data.nationality||'';const nat=d.querySelector('.s-nationality'),pass=d.querySelector('.passport-wrap'),passport=d.querySelector('.s-passport');function updatePassport(){const nonKenyan=nat.value&&nat.value.toLowerCase()!=='kenyan';pass.classList.toggle('hidden',!nonKenyan);passport.required=!!nonKenyan;if(!nonKenyan)passport.value=''}nat.addEventListener('change',updatePassport);updatePassport();const fileInput=d.querySelector('.s-photo-file');const fileName=d.querySelector('.photo-file-name');fileInput.addEventListener('change',()=>{fileName.textContent=fileInput.files[0]?fileInput.files[0].name:'No photo selected'});}
+function addStudentRow(data={}){const box=$('studentRows');const id='student_'+Date.now()+'_'+Math.random().toString(36).slice(2);const d=document.createElement('div');d.className='student-card';d.dataset.id=id;d.innerHTML=`<h3>Student</h3><div class="row"><div class="field"><label>First Name *</label><input class="s-first" required value="${esc(data.first_name||'')}"></div><div class="field"><label>Middle Name *</label><input class="s-middle" required value="${esc(data.middle_name||'')}"></div><div class="field"><label>Last Name *</label><input class="s-last" required value="${esc(data.last_name||'')}"></div></div><div class="row"><div class="field"><label>Gender *</label><select class="s-gender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input class="s-dob" type="date" required value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality *</label><select class="s-nationality" required><option value="">Select nationality</option><option>Kenyan</option><option>Ugandan</option><option>Tanzanian</option><option>Somali</option><option>Ethiopian</option><option>South Sudanese</option><option>Other</option></select></div></div><div class="row"><div class="field passport-wrap hidden"><label>Passport Number *</label><input class="s-passport" required value="${esc(data.passport_number||'')}"></div><div class="field"><label>Student Photo *</label><label class="photo-upload-link" for="${id}_photo">
+📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp" required><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" required value="${esc(data.father_guardian_contact||'')}"></div></div><label>Competition Category *</label><select class="s-category" required><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select><button type="button" class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;box.appendChild(d);d.querySelector('.s-gender').value=data.gender||'';d.querySelector('.s-category').value=data.competition_category||'';d.querySelector('.s-nationality').value=data.nationality||'';const nat=d.querySelector('.s-nationality'),pass=d.querySelector('.passport-wrap'),passport=d.querySelector('.s-passport');function updatePassport(){const nonKenyan=nat.value&&nat.value.toLowerCase()!=='kenyan';pass.classList.toggle('hidden',!nonKenyan);passport.required=!!nonKenyan;if(!nonKenyan)passport.value=''}nat.addEventListener('change',updatePassport);updatePassport();const fileInput=d.querySelector('.s-photo-file');const fileName=d.querySelector('.photo-file-name');fileInput.addEventListener('change',()=>{fileName.textContent=fileInput.files[0]?fileInput.files[0].name:'No photo selected'});}
 addStudentRow();
 function joinNames(a,b,c){return [a,b,c].map(x=>String(x||'').trim()).filter(Boolean).join(' ')}
 async function uploadRegistrationPhoto(file,index){if(!file)throw new Error('Student '+(index+1)+': photo is required.');if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Student '+(index+1)+': please upload a JPG, PNG, or WEBP photo.');if(file.size>5*1024*1024)throw new Error('Student '+(index+1)+': photo must be 5 MB or smaller.');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=`public/${Date.now()}_${crypto.randomUUID()}.${ext}`;const {error}=await sb.storage.from('registration-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;const {data}=sb.storage.from('registration-photos').getPublicUrl(path);return data.publicUrl}
@@ -704,6 +668,69 @@ async function setRegistrationStage(registrationId,newStage){
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
 async function saveCompetitionInfo(){const payload={competition_year:YEAR,hijri_year:'1448',title:$('ciTitle').value.trim(),subtitle:$('ciSubtitle').value.trim(),introduction:$('ciIntroduction').value,objectives:$('ciObjectives').value,eligibility:$('ciEligibility').value,registration_info:$('ciRegistration').value,competition_dates:$('ciDates').value,venue:$('ciVenue').value,categories:$('ciCategories').value,rules:$('ciRules').value,prizes:$('ciPrizes').value,announcements:$('ciAnnouncements').value,faq:$('ciFaq').value,contact_info:$('ciContact').value,status:$('ciStatus').value,updated_at:new Date().toISOString()};const {error}=await sb.from('competition_public_info').upsert(payload,{onConflict:'competition_year'});if(error){msg($('ciMsg'),error.message);return}msg($('ciMsg'),'Competition information saved.',true)}
 async function logout(){await stopScanner();if(realtimeChannel)await sb.removeChannel(realtimeChannel);await sb.auth.signOut();location.reload()}
+
+// MMG compatibility bridge: make functions available to inline HTML event handlers.
+// This is harmless in a classic script and also fixes scope changes caused by wrappers/modules.
+Object.assign(window, {
+  $: $,
+  msg: msg,
+  esc: esc,
+  showPublic: showPublic,
+  showLogin: showLogin,
+  showAdmin: showAdmin,
+  openPhotoModal: openPhotoModal,
+  closePhotoModal: closePhotoModal,
+  toggleFullscreen: toggleFullscreen,
+  changeRegistrationType: changeRegistrationType,
+  addStudentRow: addStudentRow,
+  updatePassport: updatePassport,
+  joinNames: joinNames,
+  uploadRegistrationPhoto: uploadRegistrationPhoto,
+  submitRegistration: submitRegistration,
+  loadScoreJudgeNames: loadScoreJudgeNames,
+  loadAdminJudges: loadAdminJudges,
+  addJudge: addJudge,
+  toggleJudge: toggleJudge,
+  loadCompetitionInfo: loadCompetitionInfo,
+  login: login,
+  openAuthenticatedApp: openAuthenticatedApp,
+  findRegisteredStudent: findRegisteredStudent,
+  findJudgeStudent: findJudgeStudent,
+  confirmJudgeStudent: confirmJudgeStudent,
+  loadJudgeQuestion: loadJudgeQuestion,
+  imagePassage: imagePassage,
+  renderJudgeQuestion: renderJudgeQuestion,
+  changeSub: changeSub,
+  startRealtime: startRealtime,
+  startScanner: startScanner,
+  throwMsg: throwMsg,
+  stopScanner: stopScanner,
+  scanCode: scanCode,
+  saveComment: saveComment,
+  loadSavedComments: loadSavedComments,
+  adminLoadStudent: adminLoadStudent,
+  adminLoadComments: adminLoadComments,
+  adminLoadExistingScores: adminLoadExistingScores,
+  updateAdminTotal: updateAdminTotal,
+  saveAdminScores: saveAdminScores,
+  loadRegistrations: loadRegistrations,
+  renderRegistrationManager: renderRegistrationManager,
+  deleteRegisteredStudent: deleteRegisteredStudent,
+  setAttendance: setAttendance,
+  printRegisteredList: printRegisteredList,
+  shareRegisteredList: shareRegisteredList,
+  showManualStudentForm: showManualStudentForm,
+  saveManualStudent: saveManualStudent,
+  selectRegistrationCategory: selectRegistrationCategory,
+  openRegistrationStage: openRegistrationStage,
+  backToRegistrationCategories: backToRegistrationCategories,
+  backToRegistrationStages: backToRegistrationStages,
+  setRegistrationStage: setRegistrationStage,
+  loadAdminCompetition: loadAdminCompetition,
+  saveCompetitionInfo: saveCompetitionInfo,
+  logout: logout
+});
+
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session){try{await openAuthenticatedApp()}catch(e){console.error(e);await sb.auth.signOut()}}else{showPublic('home');loadCompetitionInfo()}})();
 </script>
 </body>
