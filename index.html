@@ -126,7 +126,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
   <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
-    <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID</label><input id="adminStudentId" placeholder="MMG/26/001" autocomplete="off"><button onclick="adminLoadStudent()">Find Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
+    <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
     <div class="card fullscreen-wrap" id="adminQuestionWrap"><div class="topbar"><h2>Current Question</h2><button style="width:auto" class="secondary" onclick="toggleFullscreen('adminQuestionWrap')">⛶ Full screen</button></div><div id="adminQuestionBox" class="muted">Load a student to see the active question.</div></div>
     <div class="card"><h2>Judges' Comments</h2><div id="adminComments" class="muted">Load a student.</div></div>
     <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label id="scoreLabelJ1">Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ2">Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ3">Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ4">Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
@@ -391,68 +391,67 @@ async function toggleJudge(id,current){
 async function loadCompetitionInfo(){const {data,error}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).eq('status','Published').maybeSingle();if(error){$('competitionInfo').innerHTML=`<div class="card status error">${esc(error.message)}</div>`;return}if(!data){$('competitionInfo').innerHTML='<div class="card status">The 2026/1448 competition information has not been published yet.</div>';return}$('pubTitle').textContent=data.title||'2026 / 1448 Competition';$('pubSubtitle').textContent=data.subtitle||'';const sections=[['Introduction',data.introduction],['Objectives',data.objectives],['Eligibility',data.eligibility],['Registration',data.registration_info],['Competition Dates',data.competition_dates],['Venue',data.venue],['Categories',data.categories],['Rules & Regulations',data.rules],['Prizes',data.prizes],['Announcements',data.announcements],['Frequently Asked Questions',data.faq],['Contact',data.contact_info]];$('competitionInfo').innerHTML=sections.filter(x=>x[1]).map(x=>`<div class="card"><h2>${esc(x[0])}</h2><div style="white-space:pre-wrap;line-height:1.7">${esc(x[1])}</div></div>`).join('');if(data.contact_info)$('publicContactInfo').textContent=data.contact_info}
 async function login(){const email=$('email').value.trim(),password=$('password').value;try{const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await openAuthenticatedApp()}catch(e){msg($('loginMsg'),e.message)}}
 async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('scores');loadScoreJudgeNames()}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?`${data.name||'This judge'}: barcode scanning enabled.`:`${data.name||'This judge'}: barcode scanning is disabled for this judge.`;await loadJudgeQuestion();startRealtime()}}
+async function searchRegisteredStudents(searchTerm){
+  const term=(searchTerm||'').trim();
+  if(!term)return [];
+  const fields='id,student_code,full_name,gender,date_of_birth,nationality,photo_url,father_guardian_contact,competition_category,batch_id';
+  // IDs are matched exactly; names use a case-insensitive partial match.
+  if(/^MMG[/-]/i.test(term) || /^\d+$/.test(term)){
+    const {data,error}=await sb.from('competition_registrations').select(fields).ilike('student_code',term).limit(20);
+    if(error)throw error;
+    return data||[];
+  }
+  const {data,error}=await sb.from('competition_registrations').select(fields).ilike('full_name',`%${term.replace(/[%_]/g,'\\$&')}%`).order('full_name').limit(20);
+  if(error)throw error;
+  return data||[];
+}
 async function findRegisteredStudent(studentCode){
   const code=(studentCode||'').trim().toUpperCase();
   if(!code)return null;
-
   const {data,error}=await sb.from('competition_registrations')
     .select('id,student_code,full_name,gender,date_of_birth,nationality,photo_url,father_guardian_contact,competition_category,batch_id')
-    .eq('student_code',code)
-    .maybeSingle();
-
+    .eq('student_code',code).maybeSingle();
   if(error)throw error;
   return data||null;
 }
-
-async function findJudgeStudent(){
-  const code=$('studentId').value.trim().toUpperCase();
-  if(!code){
-    msg($('judgeStudentMsg'),'Enter the Student ID, for example MMG/26/001.');
-    $('judgeStudentCard').classList.add('hidden');
-    $('questionScanArea').classList.add('hidden');
-    return;
-  }
-
-  try{
-    const student=await findRegisteredStudent(code);
-    if(!student){
-      msg($('judgeStudentMsg'),'Student not found. Check the Student ID.');
-      $('judgeStudentCard').classList.add('hidden');
-      $('questionScanArea').classList.add('hidden');
-      return;
-    }
-
-    $('studentId').value=student.student_code;
-    $('judgeStudentCard').classList.remove('hidden');
-
-    const photo=student.photo_url
-      ? `<img src="${esc(student.photo_url)}" alt="Student photo" style="width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid #ddd">`
-      : `<div style="width:90px;height:90px;border-radius:12px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:34px">👤</div>`;
-
-    $('judgeStudentCard').innerHTML=`
-      <div style="display:flex;gap:14px;align-items:flex-start">
-        ${photo}
-        <div>
-          <div class="small">Student ID</div>
-          <div style="font-size:20px;font-weight:800">${esc(student.student_code)}</div>
-          <div><b>${esc(student.full_name)}</b></div>
-          <div class="muted">Category: ${esc(student.competition_category)}</div>
-          <div class="muted">Gender: ${esc(student.gender||'—')} • Nationality: ${esc(student.nationality||'—')}</div>
-        </div>
-      </div>
-      <div style="margin-top:10px">
-        <b>Student found.</b> Confirm this student before scanning the question paper.
-      </div>`;
-
-    msg($('judgeStudentMsg'),'Student found successfully.',true);
-    $('questionScanArea').classList.remove('hidden');
-  }catch(e){
-    msg($('judgeStudentMsg'),e.message||String(e));
-    $('judgeStudentCard').classList.add('hidden');
-    $('questionScanArea').classList.add('hidden');
-  }
+let pendingJudgeStudent=null,pendingAdminStudent=null;
+function renderStudentSearchResults(targetId,students,onSelect){
+  const target=$(targetId);
+  if(!students.length){target.innerHTML='<div class="status error">No matching students found. Check the spelling or Student ID.</div>';return;}
+  target.innerHTML='<div class="muted">Select the correct student:</div>'+students.map((st,i)=>`<button type="button" class="secondary" style="text-align:left;margin-top:8px" data-result-index="${i}"><b>${esc(st.full_name||'Unnamed student')}</b><br><span class="small">${esc(st.student_code||'No ID')} • ${esc(st.competition_category||'No category')}</span></button>`).join('');
+  target.querySelectorAll('[data-result-index]').forEach(btn=>btn.addEventListener('click',()=>onSelect(students[Number(btn.dataset.resultIndex)])));
 }
 
+async function findJudgeStudent(){
+  const term=$('studentId').value.trim();
+  $('questionScanArea').classList.add('hidden');
+  $('judgeStudentCard').classList.add('hidden');
+  pendingJudgeStudent=null;
+  if(!term){msg($('judgeStudentMsg'),'Enter a Student ID or student name.');return;}
+  try{
+    const students=await searchRegisteredStudents(term);
+    if(!students.length){msg($('judgeStudentMsg'),'No matching student found.');return;}
+    if(students.length===1){showJudgeStudentCandidate(students[0]);return;}
+    msg($('judgeStudentMsg'),`Found ${students.length} possible matches. Select the correct student below.`,true);
+    $('judgeStudentCard').classList.remove('hidden');
+    renderStudentSearchResults('judgeStudentCard',students,showJudgeStudentCandidate);
+  }catch(e){msg($('judgeStudentMsg'),e.message||String(e));}
+}
+function showJudgeStudentCandidate(student){
+  pendingJudgeStudent=student;
+  $('questionScanArea').classList.add('hidden');
+  $('judgeStudentCard').classList.remove('hidden');
+  const photo=student.photo_url?`<img src="${esc(student.photo_url)}" alt="Student photo" style="width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid #ddd">`:`<div style="width:90px;height:90px;border-radius:12px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:34px">👤</div>`;
+  $('judgeStudentCard').innerHTML=`<div style="display:flex;gap:14px;align-items:flex-start">${photo}<div><div class="small">Student ID</div><div style="font-size:20px;font-weight:800">${esc(student.student_code||'—')}</div><div><b>${esc(student.full_name||'—')}</b></div><div class="muted">Category: ${esc(student.competition_category||'—')}</div><div class="muted">Gender: ${esc(student.gender||'—')} • Nationality: ${esc(student.nationality||'—')}</div></div></div><button type="button" onclick="confirmJudgeStudent()">Confirm Student</button>`;
+  msg($('judgeStudentMsg'),'Review the details, then confirm the student before scanning.',true);
+}
+function confirmJudgeStudent(){
+  if(!pendingJudgeStudent){msg($('judgeStudentMsg'),'Search and select a student first.');return;}
+  $('studentId').value=pendingJudgeStudent.student_code;
+  msg($('judgeStudentMsg'),'Student confirmed. You may now scan the question paper.',true);
+  $('questionScanArea').classList.remove('hidden');
+  pendingJudgeStudent=null;
+}
 async function loadJudgeQuestion(){const student=$('studentId').value.trim();if(!student)return;const {data,error}=await sb.from('judge_question_view').select('*').eq('student_id',student).eq('status','active').limit(1).maybeSingle();if(error){$('questionBox').innerHTML=`<div class="status error">${esc(error.message)}</div>`;return}if(!data){currentSession=null;passages=[];$('questionBox').innerHTML='<div class="muted">No active question.</div>';return}currentSession=data;const {data:p,error:pe}=await sb.from('question_passages').select('*').eq('question_id',data.question_id).order('subquestion_number',{ascending:true});if(pe){$('questionBox').innerHTML=`<div class="status error">${esc(pe.message)}</div>`;return}passages=p||[];localSubquestion=Number(data.current_subquestion||1)||1;renderJudgeQuestion()}
 function imagePassage(p){const s=String(p.surah||'').toLowerCase(),r=String(p.riwayah||'').toLowerCase(),a=Number(p.ayah_start),b=Number(p.ayah_end);if((s.includes('البقرة')||s.includes('baqarah'))&&a===50&&b===58)return `<div class="quran-pages"><b>Original Qur’an pages — Dūrī from al-Kisāʾī</b><img class="quran-page" src="${QURAN_PAGE_8}"><img class="quran-page" src="${QURAN_PAGE_9}"></div>`;if((s.includes('يونس')||s.includes('yunus'))&&a===63&&b===70)return `<div class="quran-pages"><b>Original Qur’an page — Hafs — Yūnus 63–70</b><img class="quran-page" src="${HAFS_YUNUS_63_70}"></div>`;if((s.includes('سبأ')||s.includes('saba'))&&a===15&&b===22)return `<div class="quran-pages"><b>Original Qur’an page — Hishām from Ibn ʿĀmir — Sabaʾ 15–22</b><img class="quran-page" src="${HISHAM_SABA_15_22}"></div>`;if((s.includes('الزخرف')||s.includes('zukhruf'))&&a===62&&b===75)return `<div class="quran-pages"><b>Original Qur’an pages — Idrīs from Khalaf al-ʿĀshir — Az-Zukhruf 62–75</b><img class="quran-page" src="${KHALAF_ZUKHRUF_62_73}"><img class="quran-page" src="${KHALAF_ZUKHRUF_74_75}"></div>`;if((s.includes('العلق')||s.includes('alaq'))&&a===1&&b===19)return `<div class="quran-pages"><b>Original Qur’an page — Hafs — Al-ʿAlaq 1–19</b><img class="quran-page" src="${HAFS_ALAQ_1_19}"></div>`;return `<div class="status">${esc(p.text||'—')}</div>`}
 function renderJudgeQuestion(){if(!currentSession)return;const total=passages.length||1;if(localSubquestion>total)localSubquestion=total;const p=passages[localSubquestion-1];$('questionHeader').innerHTML=`<div class="question-title">Question ${esc(currentSession.question_number)} — ${esc(currentSession.title||'')}</div><div class="question-meta"><span class="pill">Student: ${esc(currentSession.student_id)}</span><span class="pill">Selected number: ${esc(currentSession.selected_number)}</span></div><div class="progress"><div class="progress-bar" style="width:${Math.round(localSubquestion/total*100)}%"></div></div>`;$('questionBox').innerHTML=p?`<div class="question-meta"><span class="pill">Subquestion ${localSubquestion} of ${total}</span><span class="pill">${esc(p.riwayah||'')}</span></div><p><b>Surah / Ayah:</b> ${esc(p.surah||'—')} ${esc(p.ayah_start||'')}–${esc(p.ayah_end||'')}</p><p><b>Riwayah:</b> ${esc(p.riwayah||'—')}</p><p><b>Instructions:</b> ${esc(currentSession.instructions||'—')}</p><div><b>Qur’an passage:</b>${imagePassage(p)}</div><div class="subnav"><button id="prev" class="secondary" ${localSubquestion<=1?'disabled':''}>← Previous</button><div class="subnum">${localSubquestion} / ${total}</div><button id="next" ${localSubquestion>=total?'disabled':''}>Next →</button></div>`:'<div class="muted">No subquestion found.</div>';if($('prev'))$('prev').onclick=()=>changeSub(localSubquestion-1);if($('next'))$('next').onclick=()=>changeSub(localSubquestion+1);$('subquestionListCard').classList.toggle('hidden',!passages.length);$('subquestionList').innerHTML=passages.map((x,i)=>`<div class="sub-item ${i+1===localSubquestion?'active':''}" onclick="changeSub(${i+1})"><strong>Subquestion ${i+1}</strong><span class="small">${esc(x.riwayah||'')} — ${esc(x.surah||'')} ${esc(x.ayah_start||'')}–${esc(x.ayah_end||'')}</span></div>`).join('')}
@@ -487,53 +486,33 @@ async function scanCode(code){
 async function saveComment(){if(!currentSession){msg($('commentMsg'),'No active question.');return}const text=$('comments').value.trim();if(!text){msg($('commentMsg'),'Enter a comment.');return}const {data:{user}}=await sb.auth.getUser();const {error}=await sb.from('judge_comments').insert({student_id:currentSession.student_id,judge_id:currentJudge.id,auth_user_id:user.id,comment:text,created_at:new Date().toISOString()});if(error){msg($('commentMsg'),error.message);return}msg($('commentMsg'),'Comment saved successfully.',true);$('comments').value='';loadSavedComments()}
 async function loadSavedComments(){if(!currentSession)return;const {data,error}=await sb.from('judge_comments').select('comment,created_at').eq('student_id',currentSession.student_id).eq('judge_id',currentJudge.id).order('created_at',{ascending:false}).limit(10);if(error)return;$('savedComments').innerHTML=(data||[]).map(x=>`<div class="feature"><b>${esc(x.created_at)}</b><br>${esc(x.comment)}</div>`).join('')}
 async function adminLoadStudent(){
-  const id=$('adminStudentId').value.trim().toUpperCase();
-
-  if(!id){
-    msg($('adminStudentMsg'),'Enter the Student ID, for example MMG/26/001.');
-    return;
-  }
-
-  let data;
+  const term=$('adminStudentId').value.trim();
+  pendingAdminStudent=null;adminStudent=null;
+  $('adminStudentCard').classList.add('hidden');
+  if(!term){msg($('adminStudentMsg'),'Enter a Student ID or student name.');return;}
   try{
-    data=await findRegisteredStudent(id);
-  }catch(e){
-    msg($('adminStudentMsg'),e.message||String(e));
-    return;
-  }
-
-  if(!data){
-    msg($('adminStudentMsg'),'Student not found.');
-    $('adminStudentCard').classList.add('hidden');
-    return;
-  }
-
-  adminStudent=data;
-  msg($('adminStudentMsg'),'Student found.',true);
+    const students=await searchRegisteredStudents(term);
+    if(!students.length){msg($('adminStudentMsg'),'No matching student found.');return;}
+    if(students.length===1){showAdminStudentCandidate(students[0]);return;}
+    msg($('adminStudentMsg'),`Found ${students.length} possible matches. Select the correct student below.`,true);
+    $('adminStudentCard').classList.remove('hidden');
+    renderStudentSearchResults('adminStudentCard',students,showAdminStudentCandidate);
+  }catch(e){msg($('adminStudentMsg'),e.message||String(e));}
+}
+function showAdminStudentCandidate(data){
+  pendingAdminStudent=data;
   $('adminStudentCard').classList.remove('hidden');
-
-  const photo=data.photo_url
-    ? `<img src="${esc(data.photo_url)}" alt="Student photo" style="width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid #ddd">`
-    : '';
-
-  $('adminStudentCard').innerHTML=`
-    <div style="display:flex;gap:14px;align-items:center">
-      ${photo}
-      <div>
-        <div style="font-size:20px;font-weight:800">${esc(data.student_code)}</div>
-        <b>${esc(data.full_name)}</b><br>
-        Category: ${esc(data.competition_category)}<br>
-        Gender: ${esc(data.gender||'—')} • Nationality: ${esc(data.nationality||'—')}
-      </div>
-    </div>`;
-
-  const {data:q}=await sb.from('judge_question_view')
-    .select('*')
-    .eq('student_id',id)
-    .eq('status','active')
-    .limit(1)
-    .maybeSingle();
-
+  const photo=data.photo_url?`<img src="${esc(data.photo_url)}" alt="Student photo" style="width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid #ddd">`:`<div style="width:90px;height:90px;border-radius:12px;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:34px">👤</div>`;
+  $('adminStudentCard').innerHTML=`<div style="display:flex;gap:14px;align-items:center">${photo}<div><div style="font-size:20px;font-weight:800">${esc(data.student_code||'—')}</div><b>${esc(data.full_name||'—')}</b><br>Category: ${esc(data.competition_category||'—')}<br>Gender: ${esc(data.gender||'—')} • Nationality: ${esc(data.nationality||'—')}</div></div><button type="button" onclick="confirmAdminStudent()">Confirm Student</button>`;
+  msg($('adminStudentMsg'),'Review the details, then confirm the student before proceeding to scores.',true);
+}
+async function confirmAdminStudent(){
+  if(!pendingAdminStudent){msg($('adminStudentMsg'),'Search and select a student first.');return;}
+  const data=pendingAdminStudent;
+  adminStudent=data;
+  const id=data.student_code;
+  msg($('adminStudentMsg'),'Student confirmed.',true);
+  const {data:q}=await sb.from('judge_question_view').select('*').eq('student_id',id).eq('status','active').limit(1).maybeSingle();
   if(q){
     $('adminQuestionBox').innerHTML=`<b>Question ${esc(q.question_number)}</b> — ${esc(q.title||'')}<br>Student: ${esc(id)}<br>Riwayah: ${esc(q.riwayah||'')}<br>${esc(q.surah||'')} ${esc(q.ayah_start||'')}–${esc(q.ayah_end||'')}`;
     currentSession=q;
@@ -541,11 +520,10 @@ async function adminLoadStudent(){
     $('adminQuestionBox').textContent='No active question.';
     currentSession=null;
   }
-
   await adminLoadComments(id);
   await adminLoadExistingScores(id,q?.question_id);
+  pendingAdminStudent=null;
 }
-
 async function adminLoadComments(id){const {data,error}=await sb.from('judge_comments').select('judge_id,comment,created_at').eq('student_id',id).order('created_at',{ascending:false});if(error){$('adminComments').textContent=error.message;return}$('adminComments').innerHTML=(data||[]).map(x=>`<div class="feature"><b>Judge ${({3:1,4:2,5:3,6:4}[x.judge_id]||x.judge_id)}</b><br>${esc(x.comment)}<div class="small">${esc(x.created_at)}</div></div>`).join('')||'No comments.'}
 async function adminLoadExistingScores(studentId,qid){if(!qid)return;const {data}=await sb.from('scores').select('judge_id,score').eq('student_id',studentId).eq('question_id',qid);$('scoreJ1').value='';$('scoreJ2').value='';$('scoreJ3').value='';$('scoreJ4').value='';(data||[]).forEach(x=>{const m={3:'scoreJ1',4:'scoreJ2',5:'scoreJ3',6:'scoreJ4'}[x.judge_id];if(m)$(m).value=x.score});updateAdminTotal()}
 function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
