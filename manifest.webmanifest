@@ -1,26 +1,16 @@
 {
-"name": "Muslim Mercy Group Qur’an Competition",
-"short_name": "MMG Competition",
-"description": "Official Muslim Mercy Group Qur’an Competition portal for registration, administration, judges, and results.",
-"lang": "en",
-"start_url": "./?app=pwa-test",
-"scope": "./",
-"display": "standalone",
-"orientation": "any",
-"background_color": "#ffffff",
-"theme_color": "#172b8e",
-"icons": [
-{
-"src": "./mmg-192.png",
-"sizes": "192x192",
-"type": "image/png",
-"purpose": "any maskable"
-},
-{
-"src": "./mmg-512.png",
-"sizes": "512x512",
-"type": "image/png",
-"purpose": "any maskable"
-}
-]
+  "name": "Muslim Mercy Group Qur’an Competition",
+  "short_name": "MMG Competition",
+  "description": "Official Muslim Mercy Group Qur’an Competition portal for registration, administration, judges, and results.",
+  "lang": "en",
+  "start_url": "./?app=pwa-test",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#172b8e",
+  "icons": [
+    {"src": "./mmg-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "./mmg-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
 }
