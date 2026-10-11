@@ -55,8 +55,11 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
   <section id="public-registration" class="public-page hidden">
     <div class="card">
       <h2>📝 Competition Registration — 2026 / 1448</h2>
-      <p class="muted">One madrasa registration can include multiple participating students.</p>
+      <p class="muted">Register students from a madrasa or register an independent student without madrasa details.</p>
       <div class="status">Please enter accurate information. Each successful registration is added immediately to the Registered Students list.</div>
+      <label for="regType">Registration Type *</label>
+      <select id="regType" onchange="toggleRegistrationType()" required><option value="Madrasa">Madrasa</option><option value="Independent">Independent</option></select>
+      <div id="madrasaDetails">
       <div class="row">
         <div class="field"><label>Madrasa Name *</label><input id="regMadrasaName" required></div>
         <div class="field"><label>Location *</label><input id="regLocation" required></div>
@@ -68,6 +71,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
         <div class="field"><label for="regHeadteacherFirst">Headteacher First Name *</label><input id="regHeadteacherFirst" autocomplete="given-name" required></div>
         <div class="field"><label for="regHeadteacherMiddle">Middle Name *</label><input id="regHeadteacherMiddle" autocomplete="additional-name" required></div>
         <div class="field"><label for="regHeadteacherLast">Last Name *</label><input id="regHeadteacherLast" autocomplete="family-name" required></div>
+      </div>
       </div>
     </div>
 
@@ -138,6 +142,18 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
       <p class="muted">All registered students appear in Preliminary Participants. Select qualified students for the final; their original registration records remain unchanged.</p>
       <button onclick="loadRegistrations()">↻ Refresh Registrations</button>
       <div id="registrationSummary" class="grid" style="margin-top:14px"></div>
+      <div class="feature" style="margin-top:16px">
+        <h3>➕ Manually Add a Student</h3>
+        <p class="muted">For a student added by Admin. Choose Madrasa or Independent and complete the required details.</p>
+        <div class="row"><div class="field"><label>Registration Type *</label><select id="adminAddType" onchange="toggleAdminAddType()"><option value="Madrasa">Madrasa</option><option value="Independent">Independent</option></select></div><div id="adminAddMadrasaNameField" class="field"><label>Madrasa Name *</label><input id="adminAddMadrasa" required></div></div>
+        <div id="adminAddMadrasaFields" class="row"><div class="field"><label>Location *</label><input id="adminAddLocation" required></div><div class="field"><label>Madrasa Contact *</label><input id="adminAddContact" required></div></div>
+        <div id="adminAddHeadteacherFields" class="name-fields"><div class="field"><label>Headteacher First Name *</label><input id="adminAddHeadFirst" required></div><div class="field"><label>Middle Name *</label><input id="adminAddHeadMiddle" required></div><div class="field"><label>Last Name *</label><input id="adminAddHeadLast" required></div></div>
+        <div class="name-fields"><div class="field"><label>Student First Name *</label><input id="adminAddFirst" required></div><div class="field"><label>Middle Name *</label><input id="adminAddMiddle" required></div><div class="field"><label>Last Name *</label><input id="adminAddLast" required></div></div>
+        <div class="row"><div class="field"><label>Gender *</label><select id="adminAddGender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input id="adminAddDob" type="date" required></div><div class="field"><label>Nationality *</label><input id="adminAddNationality" oninput="toggleAdminPassportField()" required></div></div>
+        <div id="adminAddPassportWrap" class="row hidden"><div class="field"><label>Passport Number *</label><input id="adminAddPassport"></div></div>
+        <div class="row"><div class="field"><label>Father / Guardian Contact *</label><input id="adminAddGuardian" required></div><div class="field"><label>Competition Category *</label><select id="adminAddCategory" required><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select></div><div class="field"><label>Student Photo *</label><input id="adminAddPhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div></div>
+        <button type="button" id="adminAddSubmit" onclick="adminAddStudent()">Add Student</button><div id="adminAddMsg" class="status hidden"></div>
+      </div>
     </div>
     <div id="registeredStudentsBox"></div>
   </section>
@@ -231,6 +247,25 @@ function closeStudentPhoto(event){
   $('photoLightboxImage').src='';
 }
 function toggleFullscreen(id){const el=$(id);if(!document.fullscreenElement){if(el.requestFullscreen)el.requestFullscreen();}else{document.exitFullscreen()}}
+function isKenyanNationality(value){return /^(kenyan|kenya)$/i.test(String(value||'').trim())}
+function togglePassportField(input){
+  const card=input.closest('.student-card');
+  if(!card)return;
+  const wrap=card.querySelector('.s-passport-wrap'),field=card.querySelector('.s-passport');
+  const required=!!input.value.trim()&&!isKenyanNationality(input.value);
+  wrap.classList.toggle('hidden',!required);
+  field.required=required;
+  if(!required)field.value='';
+}
+function toggleRegistrationType(){
+  const independent=$('regType').value==='Independent';
+  const details=$('madrasaDetails');
+  details.classList.toggle('hidden',independent);
+  ['regMadrasaName','regLocation','regContact','regHeadteacherFirst','regHeadteacherMiddle','regHeadteacherLast'].forEach(id=>{
+    const el=$(id);el.required=!independent;
+    if(independent)el.value='';
+  });
+}
 function addStudentRow(data={}){
   const box=$('studentRows');
   const id='student_'+Date.now()+'_'+Math.random().toString(36).slice(2);
@@ -245,7 +280,8 @@ function addStudentRow(data={}){
       <div class="field"><label>Middle Name *</label><input class="s-middle" value="${esc(middle)}" autocomplete="additional-name" required></div>
       <div class="field"><label>Last Name *</label><input class="s-last" value="${esc(last)}" autocomplete="family-name" required></div>
     </div>
-    <div class="row"><div class="field"><label>Gender *</label><select class="s-gender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input class="s-dob" type="date" required value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality *</label><input class="s-nationality" required value="${esc(data.nationality||'')}"></div></div>
+    <div class="row"><div class="field"><label>Gender *</label><select class="s-gender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input class="s-dob" type="date" required value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality *</label><input class="s-nationality" required value="${esc(data.nationality||'')}" oninput="togglePassportField(this)"></div></div>
+    <div class="row s-passport-wrap hidden"><div class="field"><label>Passport Number *</label><input class="s-passport" value="${esc(data.passport_number||'')}" autocomplete="off"></div></div>
     <div class="row"><div class="field"><label>Student Photo *</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp" required><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" value="${esc(data.father_guardian_contact||'')}"></div></div>
     <label>Competition Category *</label><select class="s-category"><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select>
     <button type="button" class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;
@@ -254,39 +290,42 @@ function addStudentRow(data={}){
   d.querySelector('.s-category').value=data.competition_category||'';
   const fileInput=d.querySelector('.s-photo-file'),fileName=d.querySelector('.photo-file-name');
   fileInput.addEventListener('change',()=>{fileName.textContent=fileInput.files[0]?fileInput.files[0].name:'No photo selected'});
+  togglePassportField(d.querySelector('.s-nationality'));
 }
-addStudentRow();
+addStudentRow();toggleRegistrationType();
 async function uploadRegistrationPhoto(file,index){if(!file)return '';if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Student '+(index+1)+': please upload a JPG, PNG, or WEBP photo.');if(file.size>5*1024*1024)throw new Error('Student '+(index+1)+': photo must be 5 MB or smaller.');const ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';const path=`public/${Date.now()}_${crypto.randomUUID()}.${ext}`;const {error}=await sb.storage.from('registration-photos').upload(path,file,{contentType:file.type,upsert:false});if(error)throw error;const {data}=sb.storage.from('registration-photos').getPublicUrl(path);return data.publicUrl}
 async function submitRegistration(){
-  const name=$('regMadrasaName').value.trim();
+  const registrationType=$('regType').value;
+  const independent=registrationType==='Independent';
+  const name=independent?'Independent':$('regMadrasaName').value.trim();
   const cards=[...document.querySelectorAll('.student-card')];
-  if(!name){msg($('regMsg'),'Madrasa name is required.');return}
-  if(!$('regLocation').value.trim()){msg($('regMsg'),'Madrasa location is required.');return}
-  if(!$('regContact').value.trim()){msg($('regMsg'),'Madrasa contact is required.');return}
+  if(!independent&&(!name||!$('regLocation').value.trim()||!$('regContact').value.trim())){msg($('regMsg'),'Madrasa name, location, and contact are required for Madrasa registration.');return}
   if(!cards.length){msg($('regMsg'),'Add at least one student.');return}
-  const headFirst=$('regHeadteacherFirst').value.trim();
-  const headMiddle=$('regHeadteacherMiddle').value.trim();
-  const headLast=$('regHeadteacherLast').value.trim();
-  if(!headFirst||!headMiddle||!headLast){msg($('regMsg'),'Please enter the headteacher first name, middle name, and last name.');return}
+  const headFirst=independent?'':$('regHeadteacherFirst').value.trim();
+  const headMiddle=independent?'':$('regHeadteacherMiddle').value.trim();
+  const headLast=independent?'':$('regHeadteacherLast').value.trim();
+  if(!independent&&(!headFirst||!headMiddle||!headLast)){msg($('regMsg'),'Please enter the headteacher first name, middle name, and last name.');return}
   const students=[];
   for(const c of cards){
     const first=c.querySelector('.s-first').value.trim();
     const middle=c.querySelector('.s-middle').value.trim();
     const last=c.querySelector('.s-last').value.trim();
     const full_name=joinNames(first,middle,last);
-    const x={first_name:first,middle_name:middle,last_name:last,full_name,gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};
-    if(!first||!middle||!last||!x.gender||!x.date_of_birth||!x.nationality||!x.photo_file||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please complete every required student field: all three names, gender, date of birth, nationality, photo, guardian contact, and competition category.');return}
+    const x={first_name:first,middle_name:middle,last_name:last,full_name,gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),passport_number:c.querySelector('.s-passport').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};
+    if(!first||!middle||!last||!x.gender||!x.date_of_birth||!x.nationality||!x.photo_file||!x.father_guardian_contact||!x.competition_category||(!isKenyanNationality(x.nationality)&&!x.passport_number)){msg($('regMsg'),'Complete all required student fields. Non-Kenyan students must also provide a passport number.');return}
     students.push(x);
   }
   const categoryCounts={};
-  for(const student of students)categoryCounts[student.competition_category]=(categoryCounts[student.competition_category]||0)+1;
-  const overLimit=Object.entries(categoryCounts).find(([category,count])=>count>3);
-  if(overLimit){msg($('regMsg'),`A madrasa can register a maximum of 3 students in each category. You have entered ${overLimit[1]} students for ${overLimit[0]}.`);return}
+  if(!independent){
+    for(const student of students)categoryCounts[student.competition_category]=(categoryCounts[student.competition_category]||0)+1;
+    const overLimit=Object.entries(categoryCounts).find(([category,count])=>count>3);
+    if(overLimit){msg($('regMsg'),`A madrasa can register a maximum of 3 students in each category. You have entered ${overLimit[1]} students for ${overLimit[0]}.`);return}
+  }
   $('submitRegistration').disabled=true;msg($('regMsg'),'Uploading photos and submitting registration...',true);
   try{
     for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}
     const cleanStudents=students.map(({photo_file,...s})=>s);
-    const headteacherFirst=$('regHeadteacherFirst').value.trim();const headteacherMiddle=$('regHeadteacherMiddle').value.trim();const headteacherLast=$('regHeadteacherLast').value.trim();const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_first_name:headteacherFirst,headteacher_middle_name:headteacherMiddle,headteacher_last_name:headteacherLast,headteacher_name:joinNames(headteacherFirst,headteacherMiddle,headteacherLast),madrasa_email:'',madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};
+    const headteacherFirst=$('regHeadteacherFirst').value.trim();const headteacherMiddle=$('regHeadteacherMiddle').value.trim();const headteacherLast=$('regHeadteacherLast').value.trim();const batch={competition_year:YEAR,registration_type:registrationType,madrasa_name:name,madrasa_location:independent?'Independent':$('regLocation').value.trim(),headteacher_first_name:headteacherFirst,headteacher_middle_name:headteacherMiddle,headteacher_last_name:headteacherLast,headteacher_name:independent?'Independent':joinNames(headteacherFirst,headteacherMiddle,headteacherLast),madrasa_email:'',madrasa_contact:independent?'N/A':$('regContact').value.trim(),registration_status:'Registered'};
     const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});
     if(error)throw error;
     msg($('regMsg'),`Registration submitted successfully. Students are now registered. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);
@@ -550,6 +589,51 @@ const MMG_CATEGORIES=[
 ];
 const MMG_FINAL_LIMITS={'10 Juz':15,'20 Juz':15,'30 Juz':20};
 let mmgRegistrationCache={students:[],selectedCategory:null,selectedStage:null,view:'categories'};
+
+function toggleAdminAddType(){
+  const independent=$('adminAddType').value==='Independent';
+  $('adminAddMadrasaNameField').classList.toggle('hidden',independent);
+  $('adminAddMadrasaFields').classList.toggle('hidden',independent);
+  $('adminAddHeadteacherFields').classList.toggle('hidden',independent);
+  ['adminAddMadrasa','adminAddLocation','adminAddContact','adminAddHeadFirst','adminAddHeadMiddle','adminAddHeadLast'].forEach(id=>{
+    $(id).required=!independent;
+    if(independent)$(id).value='';
+  });
+  if(independent)$('adminAddMadrasa').value='Independent';
+}
+function toggleAdminPassportField(){
+  const required=!!$('adminAddNationality').value.trim()&&!isKenyanNationality($('adminAddNationality').value);
+  $('adminAddPassportWrap').classList.toggle('hidden',!required);
+  $('adminAddPassport').required=required;
+  if(!required)$('adminAddPassport').value='';
+}
+async function adminAddStudent(){
+  const independent=$('adminAddType').value==='Independent';
+  const type=independent?'Independent':'Madrasa';
+  const first=$('adminAddFirst').value.trim(),middle=$('adminAddMiddle').value.trim(),last=$('adminAddLast').value.trim();
+  const nationality=$('adminAddNationality').value.trim();
+  const photo=$('adminAddPhoto').files[0];
+  if(!first||!middle||!last||!$('adminAddGender').value||!$('adminAddDob').value||!nationality||!$('adminAddGuardian').value.trim()||!$('adminAddCategory').value||!photo||(!isKenyanNationality(nationality)&&!$('adminAddPassport').value.trim())){
+    msg($('adminAddMsg'),'Complete all required fields. Non-Kenyan students must provide a passport number.');return;
+  }
+  if(!independent&&(!$('adminAddMadrasa').value.trim()||!$('adminAddLocation').value.trim()||!$('adminAddContact').value.trim()||!$('adminAddHeadFirst').value.trim()||!$('adminAddHeadMiddle').value.trim()||!$('adminAddHeadLast').value.trim())){
+    msg($('adminAddMsg'),'Complete all required madrasa and headteacher details.');return;
+  }
+  $('adminAddSubmit').disabled=true;
+  try{
+    msg($('adminAddMsg'),'Uploading student photo and adding registration...',true);
+    const photo_url=await uploadRegistrationPhoto(photo,0);
+    const student={first_name:first,middle_name:middle,last_name:last,full_name:joinNames(first,middle,last),gender:$('adminAddGender').value,date_of_birth:$('adminAddDob').value,nationality,passport_number:isKenyanNationality(nationality)?null:$('adminAddPassport').value.trim(),photo_url,father_guardian_contact:$('adminAddGuardian').value.trim(),competition_category:$('adminAddCategory').value};
+    const batch={competition_year:YEAR,registration_type:type,madrasa_name:independent?'Independent':$('adminAddMadrasa').value.trim(),madrasa_location:independent?'Independent':$('adminAddLocation').value.trim(),headteacher_name:independent?'Independent':joinNames($('adminAddHeadFirst').value,$('adminAddHeadMiddle').value,$('adminAddHeadLast').value),madrasa_email:'',madrasa_contact:independent?'N/A':$('adminAddContact').value.trim(),registration_status:'Registered'};
+    const {data,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:[student]});
+    if(error)throw error;
+    msg($('adminAddMsg'),'Student added successfully. Registration batch saved.',true);
+    ['adminAddFirst','adminAddMiddle','adminAddLast','adminAddDob','adminAddNationality','adminAddPassport','adminAddGuardian'].forEach(id=>$(id).value='');
+    $('adminAddGender').value='';$('adminAddCategory').value='';$('adminAddPhoto').value='';
+    await loadRegistrations();
+  }catch(e){msg($('adminAddMsg'),'Could not add student: '+(e.message||String(e)));}
+  finally{$('adminAddSubmit').disabled=false}
+}
 
 async function loadRegistrations(){
   const summary=$('registrationSummary');
