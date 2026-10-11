@@ -601,9 +601,9 @@ function renderRegistrationManager(){
   const row=st=>{
     const id=Number(st.id);
     const madrasa=st._madrasa||{};
-    const action=isFinal
+    const action=`<div class="admin-action-row">${isFinal
       ? `<button type="button" class="table-action remove-final" onclick="setRegistrationStage(${id},'Preliminary')">Return to Preliminary</button>`
-      : `<button type="button" class="table-action" ${limit&&finalistCount>=limit?'disabled title="Finalist limit reached"':''} onclick="setRegistrationStage(${id},'Final')">Select for Final</button>`;
+      : `<button type="button" class="table-action" ${limit&&finalistCount>=limit?'disabled title="Finalist limit reached"':''} onclick="setRegistrationStage(${id},'Final')">Select for Final</button>`}<button type="button" class="table-action danger" onclick="deleteRegisteredStudent(${id})">Remove</button></div>`;
     return `<tr>
       <td><b>${esc(st.student_code||'—')}</b></td>
       <td>${esc(st.full_name||'—')}<small>${esc(st.gender||'')}${st.date_of_birth?' • '+esc(st.date_of_birth):''}</small></td>
@@ -626,6 +626,15 @@ function renderRegistrationManager(){
       ${isFinal?`<div class="limit-note">${limit?`Final limit: ${limit} students.`:'No finalist limit has been configured for this category.'}</div>`:'<p class="muted no-print">Select qualified students for the final using the action button in each row.</p>'}
       ${table}
     </div>`;
+}
+
+async function deleteRegisteredStudent(id){
+  const st=(mmgRegistrationCache.students||[]).find(x=>Number(x.id)===Number(id));
+  if(!st)return;
+  if(!confirm(`Remove ${st.full_name||st.student_code||'this student'} (${st.student_code||'no ID'}) from the registered list? This cannot be undone.`))return;
+  const {error}=await sb.from('competition_registrations').delete().eq('id',id);
+  if(error){alert('Could not remove student: '+error.message);return;}
+  await loadRegistrations();
 }
 
 function selectRegistrationCategory(category){
