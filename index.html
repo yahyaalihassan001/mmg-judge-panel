@@ -24,6 +24,45 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
 @keyframes sectionIn{from{opacity:.75;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.wrap{padding:8px}.section-screen{min-height:calc(100dvh - 16px)}.section-back{width:100%;justify-content:flex-start}}
 
+
+
+/* MMG official blue, yellow and white theme */
+:root{--mmg-blue:#163e78;--mmg-blue-deep:#102c55;--mmg-blue-soft:#eaf1fb;--mmg-yellow:#f4c430;--mmg-yellow-soft:#fff7d6;--mmg-white:#ffffff;--mmg-ink:#182538;--mmg-muted:#63738a;--mmg-border:#d8e2f0}
+body{background:#f2f6fc;color:var(--mmg-ink)}
+.wrap{max-width:1120px}
+.card{border:1px solid var(--mmg-border);border-radius:18px;box-shadow:0 5px 18px rgba(22,62,120,.07)}
+.hero{background:linear-gradient(135deg,var(--mmg-blue-deep),var(--mmg-blue));border-bottom:5px solid var(--mmg-yellow);color:#fff}
+.hero .muted{color:#e1eaf8}
+.arabic{color:var(--mmg-yellow);font-weight:800}
+h1,h2,h3{color:inherit}
+#publicShell h2,#adminApp h2,#judgeApp h2,#loginShell h1{color:var(--mmg-blue)}
+button{background:var(--mmg-blue);color:#fff;border-radius:11px;transition:background .15s ease,transform .15s ease}
+button:hover{background:var(--mmg-blue-deep)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(244,196,48,.75);outline-offset:2px}
+button.secondary,.section-back{background:var(--mmg-blue-soft);color:var(--mmg-blue);border:1px solid #c8d8ef}
+button.secondary:hover,.section-back:hover{background:#dce8fa}
+.nav button{border:1px solid rgba(255,255,255,.15)}
+#publicNav button:last-child{background:var(--mmg-yellow);color:var(--mmg-blue-deep)}
+#publicNav button:last-child:hover{background:#e7b51b}
+.feature{border:1px solid var(--mmg-border);background:linear-gradient(180deg,#fff,#f9fbff)}
+.feature h3{color:var(--mmg-blue)}
+.feature button{border-bottom:3px solid var(--mmg-yellow)}
+.status{background:#edf3fc;color:var(--mmg-blue-deep);border-left:4px solid #9bb9e7}
+.success{background:#e8f8ef;color:#17603a;border-left-color:#36a269}
+.error{background:#fff0ef;color:#9f241b;border-left-color:#d92d20}
+.pill{background:var(--mmg-blue-soft);color:var(--mmg-blue)}
+.student-card,.sub-item{border-color:var(--mmg-border)}
+.sub-item.active,.category-button.active{border-color:var(--mmg-blue);background:var(--mmg-blue-soft)}
+.category-button{border-color:var(--mmg-border);box-shadow:0 2px 8px rgba(22,62,120,.06)}
+.category-button.active{border:2px solid var(--mmg-blue);box-shadow:inset 0 0 0 2px var(--mmg-yellow)}
+.progress{background:#dce6f4}.progress-bar{background:var(--mmg-yellow)}
+th{background:var(--mmg-blue-soft);color:var(--mmg-blue-deep)}
+td,th{border-bottom-color:var(--mmg-border)}
+.section-back{font-weight:800}
+.photo-upload-link{background:var(--mmg-blue)}
+.footer{color:var(--mmg-muted)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
