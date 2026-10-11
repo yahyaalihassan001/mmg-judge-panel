@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -140,7 +140,7 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
 
 <div id="adminApp" class="hidden">
   <div class="card topbar"><div><h1>Admin Panel</h1><div id="adminName" class="muted">Administrator</div></div><button style="width:auto" class="secondary" onclick="logout()">Log out</button></div>
-  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
+  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')">➕ Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
@@ -259,8 +259,18 @@ function showAdmin(page){
   let dashboard=$('adminDashboard');
   if(!dashboard){
     dashboard=document.createElement('div');dashboard.id='adminDashboard';dashboard.className='card hidden';
-    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('registrations')">Registrations & Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
+    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('registrations')">Registrations</button><button type="button" onclick="showAdmin('add-student')">➕ Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
     const nav=app.querySelector(':scope > .nav');nav.insertAdjacentElement('afterend',dashboard);
+  }
+  // Keep the existing Add Student form and its IDs/functions, but give it its own full-page section.
+  let addSection=$('admin-add-student');
+  if(!addSection){
+    addSection=document.createElement('section');addSection.id='admin-add-student';addSection.className='admin-page hidden';
+    addSection.innerHTML='<div class="card"><h2>➕ Add Student</h2><p class="muted">Register a student directly from the Admin Panel. Choose Madrasa or Independent.</p></div>';
+    const registrations=$('admin-registrations');
+    const form=$('adminAddSubmit')?.closest('.feature');
+    if(form){addSection.appendChild(form);}
+    app.appendChild(addSection);
   }
   document.querySelectorAll('.admin-page').forEach(x=>x.classList.add('hidden'));
   if(!page||page==='dashboard'){
@@ -272,6 +282,7 @@ function showAdmin(page){
   addSectionBack(section,'← Back to Admin Dashboard',()=>showAdmin('dashboard'));
   if(page==='competition')loadAdminCompetition();
   if(page==='registrations')loadRegistrations();
+  if(page==='add-student'){toggleAdminAddType();toggleAdminPassportField();}
   if(page==='judges')loadAdminJudges();
 }
 function openStudentPhoto(url,name){
