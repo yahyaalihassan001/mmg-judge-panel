@@ -575,19 +575,11 @@ async function loadRegistrations(){
   students.forEach(st=>{
     st._madrasa=madrasaByBatch[st.batch_id]||{};
     if(!st.competition_stage)st.competition_stage='Preliminary';
-    st._attendance={Preliminary:false,Final:false};
+    st._attendance={
+      Preliminary: !!st.preliminaries_attended,
+      Final: !!st.final_attended
+    };
   });
-  if(students.length){
-    const ids=students.map(st=>st.id);
-    const {data:attendance,error:attendanceError}=await sb.from('competition_attendance')
-      .select('registration_id,competition_stage,attended').in('registration_id',ids);
-    if(attendanceError){
-      if(summary)summary.innerHTML='<div class="status error">Registration loaded, but attendance could not be loaded. Create the attendance table and policies in Supabase first: '+esc(attendanceError.message)+'</div>';
-    }else{
-      const byId=new Map(students.map(st=>[String(st.id),st]));
-      (attendance||[]).forEach(a=>{const st=byId.get(String(a.registration_id));if(st&&a.competition_stage)st._attendance[a.competition_stage]=!!a.attended;});
-    }
-  }
   mmgRegistrationCache.students=students;
   if(!MMG_CATEGORIES.includes(mmgRegistrationCache.selectedCategory))mmgRegistrationCache.selectedCategory=MMG_CATEGORIES[0];
   renderRegistrationManager();
@@ -809,19 +801,26 @@ async function shareRegistrationList(){
 
 async function toggleStudentAttendance(registrationId,stage,attended){
   if(!['Preliminary','Final'].includes(stage))return;
-  const student=(mmgRegistrationCache.students||[]).find(st=>Number(st.id)===Number(registrationId));
+  const student=(mmgRegistrationCache.students||[]).find(st=>String(st.id)===String(registrationId));
   if(!student){alert('Student not found. Refresh registrations and try again.');return;}
-  if(stage==='Final'&&student.competition_stage!=='Final'){alert('Only selected finalists can be marked for final attendance.');return;}
+  if(stage==='Final'&&student.competition_stage!=='Final'){
+    alert('Only selected finalists can be marked for final attendance.');
+    return;
+  }
+  // Inline HTML handlers pass true/false as booleans, not strings.
+  const isPresent=(attended===true || attended==='true');
+  const column=stage==='Preliminary'?'preliminaries_attended':'final_attended';
   try{
-    const {data:{user}}=await sb.auth.getUser();
-    const payload={registration_id:Number(registrationId),competition_stage:stage,attended:attended==='true',marked_by:user?.id||null,marked_at:new Date().toISOString()};
-    const {error}=await sb.from('competition_attendance').upsert(payload,{onConflict:'registration_id,competition_stage'});
+    const {error}=await sb.from('competition_registrations')
+      .update({[column]:isPresent})
+      .eq('id',student.id);
     if(error)throw error;
+    student[column]=isPresent;
     student._attendance=student._attendance||{Preliminary:false,Final:false};
-    student._attendance[stage]=attended==='true';
+    student._attendance[stage]=isPresent;
     renderRegistrationManager();
   }catch(e){
-    alert('Could not save attendance: '+(e.message||String(e))+'\\n\\nCheck that the competition_attendance table and Admin RLS policies have been created in Supabase.');
+    alert('Could not save attendance: '+(e.message||String(e))+'\\n\\nPlease check that the columns preliminaries_attended and final_attended exist in public.competition_registrations and that Admin has UPDATE permission.');
   }
 }
 
