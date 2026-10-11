@@ -1,19 +1,29 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#111827">
-<meta name="description" content="Muslim Mercy Group Qur’an Competition portal for registration, administration, judges, and results.">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="./mmg-192.png">
-<link rel="apple-touch-icon" href="./mmg-192.png">
 <title>Muslim Mercy Group — 2026/1448 Qur'an Competition</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/html5-qrcode" defer></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#18202a}.wrap{max-width:1050px;margin:auto;padding:16px}.hidden{display:none!important}.card{background:#fff;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 3px 14px #0001}h1,h2,h3{margin-top:0}.muted{color:#667085;font-size:14px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.nav button{width:auto;flex:1;min-width:130px}.hero{padding:28px;text-align:center;background:linear-gradient(135deg,#111827,#374151);color:#fff}.hero .muted{color:#d1d5db}.hero h1{font-size:30px}.arabic{font-size:25px;direction:rtl}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.feature{border:1px solid #e4e7ec;border-radius:14px;padding:16px}.feature h3{margin-bottom:6px}.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:180px}.name-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.name-fields .field{min-width:0}.name-fields input{min-width:0;padding:12px 8px}@media(max-width:520px){.name-fields{gap:6px}.name-fields label{font-size:11px}.name-fields input{font-size:14px;padding:10px 6px}}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,textarea,select,button{width:100%;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}textarea{min-height:110px;resize:vertical}button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;margin-top:10px}button:disabled{opacity:.5}.secondary{background:#e9edf2;color:#111827}.danger{background:#b42318}.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}.success{background:#ecfdf3}.error{background:#fef3f2;color:#b42318}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700;margin:2px}.student-card{border:1px solid #e2e7ec;border-radius:14px;padding:14px;margin-top:12px}.photo-upload-link{display:inline-block;width:auto;padding:10px 14px;border-radius:10px;background:#111827;color:#fff;font-weight:700;cursor:pointer;margin-top:2px}.photo-file-name{margin-top:7px;word-break:break-all}.student-card h3{margin-bottom:8px}.remove{background:#fef3f2;color:#b42318}.question-title{font-size:21px;font-weight:800}.question-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.sub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12px;padding:12px;cursor:pointer}.sub-item.active{border-color:#111827;background:#f8fafc}.sub-item strong{display:block;margin-bottom:4px}.subnav{display:flex;gap:8px;align-items:center;margin-top:15px}.subnav button{width:auto;flex:1;margin-top:0}.subnum{font-weight:800;text-align:center;min-width:120px}.quran-pages{margin-top:12px}.quran-page-label{font-weight:700;margin:12px 0 7px}.quran-page{display:block;width:100%;height:auto;border-radius:10px;border:1px solid #ddd}.progress{height:8px;background:#e9edf2;border-radius:99px;overflow:hidden;margin-top:12px}.progress-bar{height:100%;background:#111827;width:20%}#reader{margin-top:12px}.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.score-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.big{font-size:28px;font-weight:800}.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.small{font-size:13px}.fullscreen-wrap:fullscreen{background:#fff;padding:20px;overflow:auto}.fullscreen-wrap:-webkit-full-screen{background:#fff;padding:20px;overflow:auto}.footer{text-align:center;color:#667085;padding:20px}.announcement{border-left:4px solid #111827;padding-left:12px;margin:10px 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e4e7ec;text-align:left}th{background:#f8fafc}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#18202a}.wrap{max-width:1050px;margin:auto;padding:16px}.hidden{display:none!important}.card{background:#fff;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 3px 14px #0001}h1,h2,h3{margin-top:0}.muted{color:#667085;font-size:14px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.nav button{width:auto;flex:1;min-width:130px}.hero{padding:28px;text-align:center;background:linear-gradient(135deg,#111827,#374151);color:#fff}.hero .muted{color:#d1d5db}.hero h1{font-size:30px}.arabic{font-size:25px;direction:rtl}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.feature{border:1px solid #e4e7ec;border-radius:14px;padding:16px}.feature h3{margin-bottom:6px}.row{display:flex;gap:10px;flex-wrap:wrap}.field{flex:1;min-width:180px}.name-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.name-fields .field{min-width:0}.name-fields input{min-width:0;padding:12px 8px}@media(max-width:520px){.name-fields{gap:6px}.name-fields label{font-size:11px}.name-fields input{font-size:14px;padding:10px 6px}}label{display:block;font-weight:700;font-size:13px;margin:10px 0 5px}input,textarea,select,button{width:100%;padding:12px;border:1px solid #ccd3db;border-radius:10px;font-size:16px}textarea{min-height:110px;resize:vertical}button{background:#111827;color:#fff;border:0;font-weight:700;cursor:pointer;margin-top:10px}button:disabled{opacity:.5}.secondary{background:#e9edf2;color:#111827}.danger{background:#b42318}.status{padding:10px;border-radius:10px;background:#f1f5f9;margin-top:10px}.success{background:#ecfdf3}.error{background:#fef3f2;color:#b42318}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eef2f6;font-size:12px;font-weight:700;margin:2px}.student-card{border:1px solid #e2e7ec;border-radius:14px;padding:14px;margin-top:12px}.photo-upload-link{display:inline-block;width:auto;padding:10px 14px;border-radius:10px;background:#111827;color:#
+fff;font-weight:700;cursor:pointer;margin-top:2px}.photo-file-name{margin-top:7px;word-break:break-all}.student-card h3{margin-bottom:8px}.remove{background:#fef3f2;color:#b42318}.question-title{font-size:21px;font-weight:800}.question-meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.s
+ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12px;padding:12px;cursor:pointer}.sub-item.active{border-color:#111827;background:#f8fafc}.sub-item strong{display:block;margin-bottom:4px}.subnav{display:flex;gap:8px;align-items:center;margin-top:15px}.subnav button{width:auto;flex:1;margin-top:0}.subnum{font-weight:800;text-align:center;min-width:120px}.quran-pages{margin-top:12px}.quran-page-label{font-weight:700;margin:12px 0 7px}.quran-page{display:block;width:100%;height:auto;border-radius:10px;border:1px solid #ddd}.progress{height:8px;background:#e9edf2;border-radius:99px;overflow:hidden;margin-top:12px}.progress-bar{height:100%;background:#111827;width:20%}#reader{margin-top:12px}.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.score-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.big{font-size:28px;font-weight:800}.topbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.small{font-size:13px}.fullscreen-wrap:fullscreen{background:#fff;padding:20px;overflow:auto}.fullscreen-wrap:-webkit-full-screen{background:#fff;padding:20px;overflow:auto}.footer{text-align:center;color:#667085;padding:20px}.announcement{border-left:4px solid #111827;padding-left:12px;margin:10px 0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #e4e7ec;text-align:left}th{background:#f8fafc}
 .category-button{width:100%;text-align:left;background:#fff;color:#18202a;border:1px solid #d0d5dd;border-radius:14px;padding:16px;margin:0;box-shadow:0 2px 8px #00000008}.category-button.active{border:2px solid #111827;background:#f8fafc}.category-button .category-name{font-weight:800;font-size:16px}.category-button .category-count{font-size:24px;font-weight:800;margin-top:7px}.category-button .muted{display:block;margin-top:4px}.category-button:active{transform:scale(.99)}.registration-stage-options{margin-top:16px}.stage-choice{min-height:145px}.stage-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.table-action{width:auto;min-width:125px;margin:0;padding:9px 12px;font-size:14px}.table-action.remove-final{background:#b42318}.limit-note{font-size:13px;color:#667085;margin:8px 0}.registration-table td{vertical-align:top}.registration-table td small{display:block;color:#667085;margin-top:3px}.empty-table{padding:14px;background:#f8fafc;border-radius:10px;color:#667085}.registration-tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.registration-tools button{width:auto;min-width:145px;margin:0}.print-only{display:none}.student-photo-click{cursor:zoom-in}.photo-lightbox{position:fixed;inset:0;background:#000d;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px}.photo-lightbox img{max-width:95vw;max-height:90vh;object-fit:contain;border-radius:12px;background:#fff}.photo-lightbox button{position:absolute;top:12px;right:12px;width:auto;background:#fff;color:#111827;padding:10px 14px}@media print{body{background:#fff;color:#000}.wrap{max-width:none;padding:0}.card{box-shadow:none;border:0;margin:0;padding:0}.no-print{display:none!important}.print-only{display:block}.registration-table{font-size:11px}.registration-table th,.registration-table td{padding:6px;border:1px solid #999}.registration-table th{background:#eee!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+/* Full-page section navigation */
+.section-back{width:auto;display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:11px 16px;background:#e9edf2;color:#111827;border-radius:10px}
+.section-screen{min-height:calc(100dvh - 36px);}
+#publicShell.public-section-open .hero{display:none}
+#publicShell.public-section-open #publicNav{display:none}
+#adminApp.admin-section-open>.nav{display:none}
+#adminDashboard{margin-top:14px}
+#adminApp.admin-section-open .admin-page:not(.hidden){min-height:calc(100dvh - 40px)}
+#publicShell .public-page:not(.hidden),#adminApp .admin-page:not(.hidden){animation:sectionIn .16s ease-out}
+@keyframes sectionIn{from{opacity:.75;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.wrap{padding:8px}.section-screen{min-height:calc(100dvh - 16px)}.section-back{width:100%;justify-content:flex-start}}
+
 </style>
 </head>
 <body>
@@ -130,7 +140,7 @@
 
 <div id="adminApp" class="hidden">
   <div class="card topbar"><div><h1>Admin Panel</h1><div id="adminName" class="muted">Administrator</div></div><button style="width:auto" class="secondary" onclick="logout()">Log out</button></div>
-  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')">➕ Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
+  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
@@ -145,18 +155,8 @@
       <p class="muted">All registered students appear in Preliminary Participants. Select qualified students for the final; their original registration records remain unchanged.</p>
       <button onclick="loadRegistrations()">↻ Refresh Registrations</button>
       <div id="registrationSummary" class="grid" style="margin-top:14px"></div>
-    </div>
-    <div id="registeredStudentsBox"></div>
-  </section>
-
-
-<section id="admin-add-student" class="admin-page hidden">
-  <div class="card">
-    <h2>Add Student</h2>
-    <p class="muted">Register a student directly from the Admin Panel. Choose Madrasa or Independent. For Independent students, madrasa and headteacher details are not required.</p>
-  </div>
-        <div class="card">
-        <h2>➕ Add Student Manually</h2>
+      <div class="feature" style="margin-top:16px">
+        <h3>➕ Manually Add a Student</h3>
         <p class="muted">For a student added by Admin. Choose Madrasa or Independent and complete the required details.</p>
         <div class="row"><div class="field"><label>Registration Type *</label><select id="adminAddType" onchange="toggleAdminAddType()"><option value="Madrasa">Madrasa</option><option value="Independent">Independent</option></select></div><div id="adminAddMadrasaNameField" class="field"><label>Madrasa Name *</label><input id="adminAddMadrasa" required></div></div>
         <div id="adminAddMadrasaFields" class="row"><div class="field"><label>Location *</label><input id="adminAddLocation" required></div><div class="field"><label>Madrasa Contact *</label><input id="adminAddContact" required></div></div>
@@ -167,9 +167,9 @@
         <div class="row"><div class="field"><label>Father / Guardian Contact *</label><input id="adminAddGuardian" required></div><div class="field"><label>Competition Category *</label><select id="adminAddCategory" required><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select></div><div class="field"><label>Student Photo *</label><input id="adminAddPhoto" type="file" accept="image/jpeg,image/png,image/webp" required></div></div>
         <button type="button" id="adminAddSubmit" onclick="adminAddStudent()">Add Student</button><div id="adminAddMsg" class="status hidden"></div>
       </div>
-
-</section>
-
+    </div>
+    <div id="registeredStudentsBox"></div>
+  </section>
 
 
 <section id="admin-judges" class="admin-page hidden">
@@ -239,14 +239,39 @@ const $=id=>document.getElementById(id);
 function msg(el,text,ok=false){el.textContent=text;el.className='status '+(ok?'success':'error');el.classList.remove('hidden')}
 function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function joinNames(...parts){return parts.map(v=>String(v||'').trim()).filter(Boolean).join(' ')}
-function showPublic(page){$('publicShell').classList.remove('hidden');$('loginShell').classList.add('hidden');$('judgeApp').classList.add('hidden');$('adminApp').classList.add('hidden');document.querySelectorAll('.public-page').forEach(x=>x.classList.add('hidden'));$('public-'+page).classList.remove('hidden');if(page==='competition')loadCompetitionInfo()}
+function addSectionBack(section, label, callback){
+  if(!section)return;
+  let back=section.querySelector(':scope > .section-back');
+  if(!back){back=document.createElement('button');back.type='button';back.className='section-back';back.textContent=label;back.addEventListener('click',callback);section.insertBefore(back,section.firstChild)}
+}
+function showPublic(page){
+  $('publicShell').classList.remove('hidden');$('loginShell').classList.add('hidden');$('judgeApp').classList.add('hidden');$('adminApp').classList.add('hidden');
+  document.querySelectorAll('.public-page').forEach(x=>x.classList.add('hidden'));
+  const section=$('public-'+page);if(!section)return;
+  section.classList.remove('hidden');
+  const isHome=page==='home';$('publicShell').classList.toggle('public-section-open',!isHome);
+  if(!isHome){section.classList.add('section-screen');addSectionBack(section,'← Back to Public Home',()=>showPublic('home'))}
+  if(page==='competition')loadCompetitionInfo();
+}
 function showLogin(){$('publicShell').classList.add('hidden');$('loginShell').classList.remove('hidden');$('judgeApp').classList.add('hidden');$('adminApp').classList.add('hidden')}
 function showAdmin(page){
+  const app=$('adminApp');
+  let dashboard=$('adminDashboard');
+  if(!dashboard){
+    dashboard=document.createElement('div');dashboard.id='adminDashboard';dashboard.className='card hidden';
+    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('registrations')">Registrations & Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
+    const nav=app.querySelector(':scope > .nav');nav.insertAdjacentElement('afterend',dashboard);
+  }
   document.querySelectorAll('.admin-page').forEach(x=>x.classList.add('hidden'));
-  $('admin-'+page).classList.remove('hidden');
+  if(!page||page==='dashboard'){
+    app.classList.remove('admin-section-open');dashboard.classList.remove('hidden');
+    return;
+  }
+  const section=$('admin-'+page);if(!section)return;
+  dashboard.classList.add('hidden');app.classList.add('admin-section-open');section.classList.remove('hidden');section.classList.add('section-screen');
+  addSectionBack(section,'← Back to Admin Dashboard',()=>showAdmin('dashboard'));
   if(page==='competition')loadAdminCompetition();
   if(page==='registrations')loadRegistrations();
-  if(page==='add-student'){toggleAdminAddType();toggleAdminPassportField();}
   if(page==='judges')loadAdminJudges();
 }
 function openStudentPhoto(url,name){
@@ -455,7 +480,7 @@ async function toggleJudge(id,current){
 
 async function loadCompetitionInfo(){const {data,error}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).eq('status','Published').maybeSingle();if(error){$('competitionInfo').innerHTML=`<div class="card status error">${esc(error.message)}</div>`;return}if(!data){$('competitionInfo').innerHTML='<div class="card status">The 2026/1448 competition information has not been published yet.</div>';return}$('pubTitle').textContent=data.title||'2026 / 1448 Competition';$('pubSubtitle').textContent=data.subtitle||'';const sections=[['Introduction',data.introduction],['Objectives',data.objectives],['Eligibility',data.eligibility],['Registration',data.registration_info],['Competition Dates',data.competition_dates],['Venue',data.venue],['Categories',data.categories],['Rules & Regulations',data.rules],['Prizes',data.prizes],['Announcements',data.announcements],['Frequently Asked Questions',data.faq],['Contact',data.contact_info]];$('competitionInfo').innerHTML=sections.filter(x=>x[1]).map(x=>`<div class="card"><h2>${esc(x[0])}</h2><div style="white-space:pre-wrap;line-height:1.7">${esc(x[1])}</div></div>`).join('');if(data.contact_info)$('publicContactInfo').textContent=data.contact_info}
 async function login(){const email=$('email').value.trim(),password=$('password').value;try{const {error}=await sb.auth.signInWithPassword({email,password});if(error)throw error;await openAuthenticatedApp()}catch(e){msg($('loginMsg'),e.message)}}
-async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('scores');loadScoreJudgeNames()}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?`${data.name||'This judge'}: barcode scanning enabled.`:`${data.name||'This judge'}: barcode scanning is disabled for this judge.`;await loadJudgeQuestion();startRealtime()}}
+async function openAuthenticatedApp(){const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('No authenticated user.');const {data,error}=await sb.from('Users').select('id,name,"Role",auth_user_id').eq('auth_user_id',user.id).maybeSingle();if(error)throw error;if(!data)throw new Error('Auth account is not connected to a Users record.');currentJudge=data;$('publicShell').classList.add('hidden');$('loginShell').classList.add('hidden');if(String(data['Role']).toLowerCase()==='admin'){$('adminApp').classList.remove('hidden');$('adminName').textContent=(data.name||'Admin')+' • Admin';showAdmin('dashboard');loadScoreJudgeNames()}else{$('judgeApp').classList.remove('hidden');$('judgeName').textContent=(data.name||'Judge')+' • '+(data['Role']||'');const j1=Number(data.id)===1;$('scanCard').classList.toggle('hidden',!j1);$('roleStatus').textContent=j1?`${data.name||'This judge'}: barcode scanning enabled.`:`${data.name||'This judge'}: barcode scanning is disabled for this judge.`;await loadJudgeQuestion();startRealtime()}}
 async function searchRegisteredStudents(searchTerm){
   const term=(searchTerm||'').trim();
   if(!term)return [];
@@ -942,16 +967,6 @@ async function loadAdminCompetition(){const {data}=await sb.from('competition_pu
 async function saveCompetitionInfo(){const payload={competition_year:YEAR,hijri_year:'1448',title:$('ciTitle').value.trim(),subtitle:$('ciSubtitle').value.trim(),introduction:$('ciIntroduction').value,objectives:$('ciObjectives').value,eligibility:$('ciEligibility').value,registration_info:$('ciRegistration').value,competition_dates:$('ciDates').value,venue:$('ciVenue').value,categories:$('ciCategories').value,rules:$('ciRules').value,prizes:$('ciPrizes').value,announcements:$('ciAnnouncements').value,faq:$('ciFaq').value,contact_info:$('ciContact').value,status:$('ciStatus').value,updated_at:new Date().toISOString()};const {error}=await sb.from('competition_public_info').upsert(payload,{onConflict:'competition_year'});if(error){msg($('ciMsg'),error.message);return}msg($('ciMsg'),'Competition information saved.',true)}
 async function logout(){await stopScanner();if(realtimeChannel)await sb.removeChannel(realtimeChannel);await sb.auth.signOut();location.reload()}
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session){try{await openAuthenticatedApp()}catch(e){console.error(e);await sb.auth.signOut()}}else{showPublic('home');loadCompetitionInfo()}})();
-</script>
-
-<script>
-// MMG PWA shell: online Supabase requests and private data are never cached.
-if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
-      .catch(err => console.warn('MMG offline shell could not be registered:', err));
-  });
-}
 </script>
 </body>
 </html>
