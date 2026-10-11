@@ -58,17 +58,16 @@ ub-list{display:grid;gap:8px}.sub-item{border:1px solid #e2e7ec;border-radius:12
       <p class="muted">One madrasa registration can include multiple participating students.</p>
       <div class="status">Please enter accurate information. Each successful registration is added immediately to the Registered Students list.</div>
       <div class="row">
-        <div class="field"><label>Madrasa Name *</label><input id="regMadrasaName"></div>
-        <div class="field"><label>Location</label><input id="regLocation"></div>
+        <div class="field"><label>Madrasa Name *</label><input id="regMadrasaName" required></div>
+        <div class="field"><label>Location *</label><input id="regLocation" required></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="regContact">Madrasa Contact *</label><input id="regContact" type="tel" autocomplete="tel" required></div>
       </div>
       <div class="name-fields">
         <div class="field"><label for="regHeadteacherFirst">Headteacher First Name *</label><input id="regHeadteacherFirst" autocomplete="given-name" required></div>
         <div class="field"><label for="regHeadteacherMiddle">Middle Name *</label><input id="regHeadteacherMiddle" autocomplete="additional-name" required></div>
         <div class="field"><label for="regHeadteacherLast">Last Name *</label><input id="regHeadteacherLast" autocomplete="family-name" required></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
-        <div class="field"><label>Madrasa Contact</label><input id="regContact"></div>
       </div>
     </div>
 
@@ -234,8 +233,8 @@ function addStudentRow(data={}){
       <div class="field"><label>Middle Name *</label><input class="s-middle" value="${esc(middle)}" autocomplete="additional-name" required></div>
       <div class="field"><label>Last Name *</label><input class="s-last" value="${esc(last)}" autocomplete="family-name" required></div>
     </div>
-    <div class="row"><div class="field"><label>Gender</label><select class="s-gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth</label><input class="s-dob" type="date" value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality</label><input class="s-nationality" value="${esc(data.nationality||'')}"></div></div>
-    <div class="row"><div class="field"><label>Student Photo</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp"><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" value="${esc(data.father_guardian_contact||'')}"></div></div>
+    <div class="row"><div class="field"><label>Gender *</label><select class="s-gender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="field"><label>Date of Birth *</label><input class="s-dob" type="date" required value="${esc(data.date_of_birth||'')}"></div><div class="field"><label>Nationality *</label><input class="s-nationality" required value="${esc(data.nationality||'')}"></div></div>
+    <div class="row"><div class="field"><label>Student Photo *</label><label class="photo-upload-link" for="${id}_photo">📷 Upload Student Photo</label><input id="${id}_photo" class="s-photo-file hidden" type="file" accept="image/jpeg,image/png,image/webp" required><div class="photo-file-name muted">No photo selected</div></div><div class="field"><label>Father / Guardian Contact *</label><input class="s-guardian" value="${esc(data.father_guardian_contact||'')}"></div></div>
     <label>Competition Category *</label><select class="s-category"><option value="">Select category</option><option>10 Juz</option><option>20 Juz</option><option>30 Juz</option><option>Qiraat (As'hab Attawassut)</option><option>Tafsir</option></select>
     <button type="button" class="remove" onclick="this.parentElement.remove()">Remove Student</button>`;
   box.appendChild(d);
@@ -250,6 +249,8 @@ async function submitRegistration(){
   const name=$('regMadrasaName').value.trim();
   const cards=[...document.querySelectorAll('.student-card')];
   if(!name){msg($('regMsg'),'Madrasa name is required.');return}
+  if(!$('regLocation').value.trim()){msg($('regMsg'),'Madrasa location is required.');return}
+  if(!$('regContact').value.trim()){msg($('regMsg'),'Madrasa contact is required.');return}
   if(!cards.length){msg($('regMsg'),'Add at least one student.');return}
   const headFirst=$('regHeadteacherFirst').value.trim();
   const headMiddle=$('regHeadteacherMiddle').value.trim();
@@ -262,7 +263,7 @@ async function submitRegistration(){
     const last=c.querySelector('.s-last').value.trim();
     const full_name=joinNames(first,middle,last);
     const x={first_name:first,middle_name:middle,last_name:last,full_name,gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};
-    if(!first||!middle||!last||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please enter all three student names (first, middle, and last), guardian contact, and competition category.');return}
+    if(!first||!middle||!last||!x.gender||!x.date_of_birth||!x.nationality||!x.photo_file||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please complete every required student field: all three names, gender, date of birth, nationality, photo, guardian contact, and competition category.');return}
     students.push(x);
   }
   const categoryCounts={};
@@ -273,7 +274,7 @@ async function submitRegistration(){
   try{
     for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}
     const cleanStudents=students.map(({photo_file,...s})=>s);
-    const headteacherFirst=$('regHeadteacherFirst').value.trim();const headteacherMiddle=$('regHeadteacherMiddle').value.trim();const headteacherLast=$('regHeadteacherLast').value.trim();const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_first_name:headteacherFirst,headteacher_middle_name:headteacherMiddle,headteacher_last_name:headteacherLast,headteacher_name:joinNames(headteacherFirst,headteacherMiddle,headteacherLast),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};
+    const headteacherFirst=$('regHeadteacherFirst').value.trim();const headteacherMiddle=$('regHeadteacherMiddle').value.trim();const headteacherLast=$('regHeadteacherLast').value.trim();const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_first_name:headteacherFirst,headteacher_middle_name:headteacherMiddle,headteacher_last_name:headteacherLast,headteacher_name:joinNames(headteacherFirst,headteacherMiddle,headteacherLast),madrasa_email:'',madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};
     const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});
     if(error)throw error;
     msg($('regMsg'),`Registration submitted successfully. Students are now registered. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);
