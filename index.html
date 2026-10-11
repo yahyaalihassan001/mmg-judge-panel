@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+TYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -601,9 +601,10 @@ function renderRegistrationManager(){
   const row=st=>{
     const id=Number(st.id);
     const madrasa=st._madrasa||{};
-    const action=isFinal
+    const stageAction=isFinal
       ? `<button type="button" class="table-action remove-final" onclick="setRegistrationStage(${id},'Preliminary')">Return to Preliminary</button>`
       : `<button type="button" class="table-action" ${limit&&finalistCount>=limit?'disabled title="Finalist limit reached"':''} onclick="setRegistrationStage(${id},'Final')">Select for Final</button>`;
+    const action=`<div style="display:flex;gap:6px;flex-wrap:wrap;min-width:150px">${stageAction}<button type="button" class="table-action danger" onclick="deleteRegisteredStudent(${id})">Remove</button></div>`;
     return `<tr>
       <td><b>${esc(st.student_code||'—')}</b></td>
       <td>${esc(st.full_name||'—')}<small>${esc(st.gender||'')}${st.date_of_birth?' • '+esc(st.date_of_birth):''}</small></td>
@@ -663,6 +664,27 @@ async function setRegistrationStage(registrationId,newStage){
   if(error){alert('Could not update competition stage: '+error.message);return}
   student.competition_stage=newStage;
   renderRegistrationManager();
+}
+
+async function deleteRegisteredStudent(registrationId){
+  const student=mmgRegistrationCache.students.find(s=>Number(s.id)===Number(registrationId));
+  if(!student){
+    alert('Student registration was not found. Refresh the list and try again.');
+    return;
+  }
+  const confirmed=confirm(`Remove ${student.full_name||'this student'} (${student.student_code||'no Student ID'}) from the registered list? This will permanently delete this registration record and cannot be undone.`);
+  if(!confirmed)return;
+
+  const {error}=await sb.from('competition_registrations')
+    .delete()
+    .eq('id',registrationId);
+
+  if(error){
+    alert('Could not remove the student registration: '+error.message);
+    return;
+  }
+
+  await loadRegistrations();
 }
 
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
