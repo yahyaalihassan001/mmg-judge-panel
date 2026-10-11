@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -261,7 +261,7 @@ async function submitRegistration(){
     const middle=c.querySelector('.s-middle').value.trim();
     const last=c.querySelector('.s-last').value.trim();
     const full_name=joinNames(first,middle,last);
-    const x={full_name,gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};
+    const x={first_name:first,middle_name:middle,last_name:last,full_name,gender:c.querySelector('.s-gender').value,date_of_birth:c.querySelector('.s-dob').value||null,nationality:c.querySelector('.s-nationality').value.trim(),photo_url:'',father_guardian_contact:c.querySelector('.s-guardian').value.trim(),competition_category:c.querySelector('.s-category').value,photo_file:c.querySelector('.s-photo-file').files[0]||null};
     if(!first||!middle||!last||!x.father_guardian_contact||!x.competition_category){msg($('regMsg'),'Please enter all three student names (first, middle, and last), guardian contact, and competition category.');return}
     students.push(x);
   }
@@ -273,7 +273,7 @@ async function submitRegistration(){
   try{
     for(let i=0;i<students.length;i++){if(students[i].photo_file)students[i].photo_url=await uploadRegistrationPhoto(students[i].photo_file,i)}
     const cleanStudents=students.map(({photo_file,...s})=>s);
-    const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_name:joinNames($('regHeadteacherFirst').value,$('regHeadteacherMiddle').value,$('regHeadteacherLast').value),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};
+    const headteacherFirst=$('regHeadteacherFirst').value.trim();const headteacherMiddle=$('regHeadteacherMiddle').value.trim();const headteacherLast=$('regHeadteacherLast').value.trim();const batch={competition_year:YEAR,madrasa_name:name,madrasa_location:$('regLocation').value.trim(),headteacher_first_name:headteacherFirst,headteacher_middle_name:headteacherMiddle,headteacher_last_name:headteacherLast,headteacher_name:joinNames(headteacherFirst,headteacherMiddle,headteacherLast),madrasa_email:$('regEmail').value.trim(),madrasa_contact:$('regContact').value.trim(),registration_status:'Registered'};
     const {data:b,error}=await sb.rpc('submit_mmg_registration',{p_batch:batch,p_students:cleanStudents});
     if(error)throw error;
     msg($('regMsg'),`Registration submitted successfully. Students are now registered. Reference: MMG-${YEAR}-${String(b).padStart(6,'0')}`,true);
