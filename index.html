@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -282,7 +282,7 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
     <div class="card"><h2>Judges' Comments</h2><div id="adminComments" class="muted">Load a student.</div></div>
-    <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label id="scoreLabelJ1">Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ2">Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ3">Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ4">Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
+    <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label id="scoreLabelJ1">Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.5" inputmode="decimal"></div><div><label id="scoreLabelJ2">Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.5" inputmode="decimal"></div><div><label id="scoreLabelJ3">Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.5" inputmode="decimal"></div><div><label id="scoreLabelJ4">Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.5" inputmode="decimal"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
   </section>
 
   <section id="admin-results" class="admin-page hidden">
@@ -795,7 +795,32 @@ async function adminLoadExistingScores(studentId,qid){
 }
 function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
 ['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updateAdminTotal()}));
-async function saveAdminScores(){if(!adminStudent||!currentSession){msg($('adminScoreMsg'),'Load a student with an active question first.');return}const vals=[Number($('scoreJ1').value),Number($('scoreJ2').value),Number($('scoreJ3').value),Number($('scoreJ4').value)];if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Each score must be between 0 and 100.');return}for(let i=0;i<4;i++){const judgeId=3+i;const {data:old}=await sb.from('scores').select('id').eq('student_id',adminStudent["student's_id"]).eq('question_id',currentSession.question_id).eq('judge_id',judgeId).maybeSingle();let error;if(old){({error}=await sb.from('scores').update({score:vals[i],scored_at:new Date().toISOString()}).eq('id',old.id))}else{({error}=await sb.from('scores').insert({student_id:adminStudent["student's_id"],question_id:currentSession.question_id,judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()}))}if(error){msg($('adminScoreMsg'),error.message);return}}msg($('adminScoreMsg'),'Scores saved successfully.',true)}
+async function saveAdminScores(){
+  if(!adminStudent){msg($('adminScoreMsg'),'Search for and confirm a student first.');return}
+  const studentCode=adminStudent.student_code || adminStudent["student's_id"] || adminStudent.id;
+  if(!studentCode){msg($('adminScoreMsg'),'The selected student has no student ID.');return}
+  const fields=['scoreJ1','scoreJ2','scoreJ3','scoreJ4'];
+  if(fields.some(id=>$(id).value.trim()==='')){msg($('adminScoreMsg'),'Enter all four judges’ scores before saving.');return}
+  const vals=fields.map(id=>Number($(id).value));
+  if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Error: each judge score must be between 0 and 100.');return}
+  for(let i=0;i<4;i++){
+    const judgeId=3+i;
+    let lookup=sb.from('scores').select('id').eq('student_id',String(studentCode)).eq('judge_id',judgeId);
+    if(currentSession?.question_id) lookup=lookup.eq('question_id',currentSession.question_id);
+    else lookup=lookup.is('question_id',null);
+    const {data:old,error:lookupError}=await lookup.limit(1).maybeSingle();
+    if(lookupError){msg($('adminScoreMsg'),lookupError.message);return}
+    const payload={student_id:String(studentCode),judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()};
+    if(currentSession?.question_id)payload.question_id=currentSession.question_id;
+    let result;
+    if(old)result=await sb.from('scores').update({score:vals[i],scored_at:payload.scored_at}).eq('id',old.id);
+    else result=await sb.from('scores').insert(payload);
+    if(result.error){
+      msg($('adminScoreMsg'),'Could not save scores: '+result.error.message+(!currentSession?.question_id?' Your database may require question_id to be filled in.':''));return;
+    }
+  }
+  msg($('adminScoreMsg'),'Scores saved successfully.',true);
+}
 const MMG_CATEGORIES=[
   '10 Juz',
   '20 Juz',
@@ -1289,7 +1314,7 @@ function applyMMGTranslations(){
       const english = reverse[trimmed];
       if(english) translated = original.replace(trimmed, english);
     }
-    node.nodeValue = translated;
+    if(node.nodeValue !== translated) node.nodeValue = translated;
   }
   document.querySelectorAll("input[placeholder],textarea[placeholder]").forEach(el=>{
     if(!el.dataset.mmgPlaceholderEn) el.dataset.mmgPlaceholderEn = el.placeholder;
@@ -1308,11 +1333,6 @@ function applyMMGTranslations(){
 }
 
 
-// Keep Arabic applied to content rendered later by Supabase or navigation.
-if(!window.__mmgTranslationObserver){
-  window.__mmgTranslationObserver=new MutationObserver(()=>{if(mmgLanguage==='ar')applyMMGTranslations();});
-  window.__mmgTranslationObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
-}
 
 </script>
 </body>
