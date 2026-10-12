@@ -178,9 +178,8 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
     <button onclick="showPublic('home')">Home</button>
     <button onclick="showPublic('competition')">🏆 2026/1448 Competition</button>
     <button onclick="showPublic('registration')">📝 Registration</button>
-    <button onclick="showPublic('results')">🏅 Events & Winners</button>
+    <button onclick="showPublic('results')">🏅 Results</button>
     <button onclick="showPublic('about')">About MMG</button>
-    <button onclick="showPublic('contact')">Contact</button>
     <button onclick="showLogin()">🔐 Admin / Judge Login</button>
   </div>
 
@@ -1245,18 +1244,15 @@ async function logout(){await stopScanner();if(realtimeChannel)await sb.removeCh
 let adminResultsCategory=null,adminResultsStage=null,adminResultsRows=[];
 let publicResultsCategory=null;
 function openAdminResultsCategory(category){
-  adminResultsCategory=category;
-  $('adminResultsStages').classList.remove('hidden');
-  $('adminResultsBack').classList.remove('hidden');
-  $('adminResultsTable').innerHTML='<p class="muted">Category: '+esc(category)+'. Choose Preliminaries or Final.</p>';
-  $('adminResultsActions').classList.add('hidden');
-  $('adminResultsMsg').classList.add('hidden');
+  adminResultsCategory=category;adminResultsStage=null;adminResultsRows=[];
+  $('adminResultsCategories').classList.add('hidden');$('adminResultsStages').classList.remove('hidden');$('adminResultsBack').classList.remove('hidden');
+  $('adminResultsBack').querySelector('button').textContent='← All Categories';
+  $('adminResultsTable').innerHTML='<div class="card"><h3>'+esc(category)+'</h3><p class="muted">Choose Preliminary or Final.</p></div>';
+  $('adminResultsActions').classList.add('hidden');$('adminResultsMsg').classList.add('hidden');
 }
 function backAdminResultsCategories(){
-  adminResultsCategory=null;adminResultsStage=null;adminResultsRows=[];
-  $('adminResultsStages').classList.add('hidden');$('adminResultsBack').classList.add('hidden');
-  $('adminResultsActions').classList.add('hidden');$('adminResultsTable').innerHTML='';
-  $('adminResultsMsg').classList.add('hidden');
+  if(adminResultsStage){adminResultsStage=null;$('adminResultsStages').classList.remove('hidden');$('adminResultsCategories').classList.add('hidden');$('adminResultsBack').querySelector('button').textContent='← All Categories';$('adminResultsActions').classList.add('hidden');$('adminResultsTable').innerHTML='<div class="card"><h3>'+esc(adminResultsCategory||'Results')+'</h3><p class="muted">Choose Preliminary or Final.</p></div>';$('adminResultsMsg').classList.add('hidden');return;}
+  adminResultsCategory=null;adminResultsStage=null;adminResultsRows=[];$('adminResultsCategories').classList.remove('hidden');$('adminResultsStages').classList.add('hidden');$('adminResultsBack').classList.add('hidden');$('adminResultsActions').classList.add('hidden');$('adminResultsTable').innerHTML='';$('adminResultsMsg').classList.add('hidden');
 }
 function renderAdminResultsEditor(rows,stage){
   const box=$('adminResultsTable');
@@ -1287,7 +1283,7 @@ function renderAdminResultsEditor(rows,stage){
   $('adminResultsActions').classList.remove('hidden');
 }
 async function loadAdminResultsStage(stage){
-  adminResultsStage=stage;
+  adminResultsStage=stage;$('adminResultsStages').classList.add('hidden');$('adminResultsCategories').classList.add('hidden');$('adminResultsBack').querySelector('button').textContent='← Back to stages';
   const box=$('adminResultsTable');box.innerHTML='<p class="muted">Loading results…</p>';
   $('adminResultsActions').classList.add('hidden');
   try{
@@ -1378,14 +1374,17 @@ async function publishAdminResults(){
     msg($('adminResultsMsg'),'Results published. The public dashboard can now display this version.',true);
   }catch(e){msg($('adminResultsMsg'),e.message||String(e));}
 }
+let publicResultsStage=null;
 function openPublicResultsCategory(category){
-  publicResultsCategory=category;$('publicResultStages').classList.remove('hidden');$('publicResultsBack').classList.remove('hidden');
-  $('publicResultsTable').innerHTML='<p class="muted">'+esc(category)+': choose Preliminaries or Final.</p>';$('publicResultsMsg').classList.add('hidden');
+  publicResultsCategory=category;publicResultsStage=null;$('publicResultCategories').classList.add('hidden');$('publicResultStages').classList.remove('hidden');$('publicResultsBack').classList.remove('hidden');$('publicResultsBack').querySelector('button').textContent='← All Categories';
+  $('publicResultsTable').innerHTML='<div class="card"><h3>'+esc(category)+'</h3><p class="muted">Choose Preliminary or Final.</p></div>';$('publicResultsMsg').classList.add('hidden');
 }
 function backPublicResultsCategories(){
-  publicResultsCategory=null;$('publicResultStages').classList.add('hidden');$('publicResultsBack').classList.add('hidden');$('publicResultsTable').innerHTML='';$('publicResultsMsg').classList.add('hidden');
+  if(publicResultsStage){publicResultsStage=null;$('publicResultStages').classList.remove('hidden');$('publicResultCategories').classList.add('hidden');$('publicResultsBack').querySelector('button').textContent='← All Categories';$('publicResultsTable').innerHTML='<div class="card"><h3>'+esc(publicResultsCategory||'Results')+'</h3><p class="muted">Choose Preliminary or Final.</p></div>';$('publicResultsMsg').classList.add('hidden');return;}
+  publicResultsCategory=null;$('publicResultCategories').classList.remove('hidden');$('publicResultStages').classList.add('hidden');$('publicResultsBack').classList.add('hidden');$('publicResultsTable').innerHTML='';$('publicResultsMsg').classList.add('hidden');
 }
 async function loadPublicResultsStage(stage){
+  publicResultsStage=stage;$('publicResultStages').classList.add('hidden');$('publicResultCategories').classList.add('hidden');$('publicResultsBack').querySelector('button').textContent='← Back to stages';
   const box=$('publicResultsTable');box.innerHTML='<p class="muted">Loading published results…</p>';
   try{
     const {data,error}=await sb.from('competition_results_publications').select('category,stage,results_json,status,published_at')
@@ -1394,9 +1393,9 @@ async function loadPublicResultsStage(stage){
     if(!data){box.innerHTML='<div class="status">No results have been published for this category and stage yet.</div>';return;}
     const rows=Array.isArray(data.results_json)?data.results_json:[];
     box.innerHTML=`<h3>${esc(publicResultsCategory)} — ${esc(stage==='Preliminary'?'Preliminaries':'Final')}</h3>
-      <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Name</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th><th>Judge 4</th><th>Total / 400</th><th>Average / 100</th></tr></thead><tbody>
-      ${rows.slice().sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999)).map((r,i)=>`<tr><td>${Number(r.rank)||i+1}</td><td>${esc(r.student_code||'—')}</td><td>${esc(r.full_name||'—')}</td>${(r.vals||[]).map(v=>`<td>${v===null||v===undefined?'—':Number(v)}</td>`).join('')}<td><b>${Number(r.total||0).toFixed(2).replace(/\\.00$/,'')}</b></td><td>${Number(r.average||0).toFixed(2)}</td></tr>`).join('')}
-      </tbody></table></div><p class="muted small">Published ${data.published_at?new Date(data.published_at).toLocaleString():'by MMG administration'}.</p>`;
+      <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Student Name</th><th>Total Score / 400</th></tr></thead><tbody>
+      ${rows.slice().sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999)).map((r,i)=>`<tr><td>${Number(r.rank)||i+1}</td><td>${esc(r.student_code||'—')}</td><td>${esc(r.full_name||'—')}</td><td><b>${Number(r.total||0).toFixed(2).replace(/\.00$/,'')}</b></td></tr>`).join('')}
+      </tbody></table></div><p class="muted small">Published ${data.published_at?new Date(data.published_at).toLocaleString():'by MMG administration'}.</p>`
   }catch(e){box.innerHTML='';msg($('publicResultsMsg'),(e.message||String(e))+' Results publishing requires the results-publication table and its access policies.');}
 }
 
@@ -1405,6 +1404,7 @@ const MMG_TRANSLATIONS = {
 "🏆 2026/1448 Competition":"🏆 مسابقة 2026/1448",
 "📝 Registration":"📝 التسجيل",
 "🏅 Events & Winners":"🏅 الفعاليات والفائزون",
+"🏅 Results":"🏅 النتائج","Results":"النتائج","Preliminaries":"التصفيات التمهيدية","Preliminary":"التصفيات التمهيدية","Final":"النهائي","Choose Preliminary or Final.":"اختر التصفيات التمهيدية أو النهائي.","Student Name":"اسم الطالب","Student name (editable)":"اسم الطالب (قابل للتعديل)","Total Score / 400":"مجموع الدرجات / ٤٠٠","Total":"المجموع","Average":"المتوسط","Rank":"الترتيب","Student ID":"رقم الطالب","← Back to stages":"← العودة إلى خيارات المرحلة","← All Categories":"← جميع الفئات","Loading results…":"جارٍ تحميل النتائج…","Loading published results…":"جارٍ تحميل النتائج المنشورة…","No students found for this category and stage.":"لم يتم العثور على طلاب لهذه الفئة والمرحلة.","No results have been published for this category and stage yet.":"لم تُنشر نتائج لهذه الفئة والمرحلة بعد.",
 "About MMG":"عن مجموعة الرحمة",
 "Contact":"اتصل بنا",
 "🔐 Admin / Judge Login":"🔐 دخول الإدارة / الحكام",
@@ -1586,9 +1586,11 @@ function applyMMGTranslations(){
     let translated = original;
     if(mmgLanguage === "ar"){
       if(MMG_TRANSLATIONS[trimmed]) translated = original.replace(trimmed, MMG_TRANSLATIONS[trimmed]);
+      else { for(const key of Object.keys(MMG_TRANSLATIONS).sort((a,b)=>b.length-a.length)){if(key.length>2&&trimmed.includes(key)){translated=original.replace(key,MMG_TRANSLATIONS[key]);break;}} }
     } else {
       const english = reverse[trimmed];
       if(english) translated = original.replace(trimmed, english);
+      else { for(const key of Object.keys(reverse).sort((a,b)=>b.length-a.length)){if(key.length>2&&trimmed.includes(key)){translated=original.replace(key,reverse[key]);break;}} }
     }
     if(node.nodeValue !== translated) if(node.nodeValue !== translated) node.nodeValue = translated;
   }
@@ -1601,6 +1603,9 @@ function applyMMGTranslations(){
       const reversePlaceholder = reverse[el.placeholder];
       el.placeholder = reversePlaceholder || en;
     }
+  });
+  document.querySelectorAll("[aria-label], [title]").forEach(el=>{
+    ["aria-label","title"].forEach(attr=>{if(!el.hasAttribute(attr))return;const k="mmg"+attr.replace(/-/g,'').replace(/^./,c=>c.toUpperCase())+"En";if(!el.dataset[k])el.dataset[k]=el.getAttribute(attr);const en=el.dataset[k];el.setAttribute(attr,mmgLanguage==="ar"?(MMG_TRANSLATIONS[en]||en):en);});
   });
   document.querySelectorAll("input[type=button],input[type=submit]").forEach(el=>{
     if(!el.dataset.mmgValueEn) el.dataset.mmgValueEn=el.value;
