@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -233,7 +233,26 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
     </div>
   </section>
 
-  <section id="public-results" class="public-page hidden"><div class="card"><h2>🏅 Events & Winners</h2><p class="muted">Published results and winners history will appear here.</p><div class="status">2026 / 1448 results will be published by MMG administration after the competition.</div></div></section>
+  <section id="public-results" class="public-page hidden">
+  <div class="card">
+    <h2>🏅 Results</h2>
+    <p class="muted">Official results published by Muslim Mercy Group.</p>
+    <div class="grid" id="publicResultCategories">
+      <button type="button" onclick="openPublicResultsCategory('10 Juz')">10 Juz</button>
+      <button type="button" onclick="openPublicResultsCategory('20 Juz')">20 Juz</button>
+      <button type="button" onclick="openPublicResultsCategory('30 Juz')">30 Juz</button>
+      <button type="button" onclick="openPublicResultsCategory(\"Qiraat (As'hab Attawassut)\")">Qiraat</button>
+      <button type="button" onclick="openPublicResultsCategory('Tafsir')">Tafsir</button>
+    </div>
+    <div id="publicResultStages" class="grid hidden" style="margin-top:14px">
+      <button type="button" onclick="loadPublicResultsStage('Preliminary')">Preliminaries</button>
+      <button type="button" onclick="loadPublicResultsStage('Final')">Final</button>
+    </div>
+    <div id="publicResultsBack" class="hidden" style="margin-top:12px"><button type="button" class="secondary" onclick="backPublicResultsCategories()">← All Categories</button></div>
+    <div id="publicResultsTable" style="margin-top:14px"></div>
+    <div id="publicResultsMsg" class="status hidden"></div>
+  </div>
+</section>
   <section id="public-about" class="public-page hidden"><div class="card"><h2>About Muslim Mercy Group</h2><p>The Muslim Mercy Group Qur'an Competition is intended to encourage Qur'an memorisation, recitation, Qiraat and understanding through Tafsir.</p><p class="muted">More official information can be published through the competition information manager.</p></div></section>
   <section id="public-contact" class="public-page hidden"><div class="card"><h2>Contact</h2><p>For registration and competition enquiries, please use the official MMG contact information provided by the organisers.</p><div id="publicContactInfo" class="status">Contact information will appear here when published.</div></div></section>
 </div>
@@ -302,6 +321,10 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
       </div>
       <div id="adminResultsBack" class="hidden" style="margin-top:12px"><button type="button" class="secondary" onclick="backAdminResultsCategories()">← All Categories</button></div>
       <div id="adminResultsTable" style="margin-top:14px"></div>
+      <div id="adminResultsActions" class="grid hidden" style="margin-top:14px">
+        <button type="button" class="secondary" onclick="saveAdminResultsDraft()">Save Draft</button>
+        <button type="button" onclick="publishAdminResults()">Publish Results</button>
+      </div>
       <div id="adminResultsMsg" class="status hidden"></div>
     </div>
   </section>
@@ -768,13 +791,32 @@ async function confirmAdminStudent(){
   if(!pendingAdminStudent){msg($('adminStudentMsg'),'Search and select a student first.');return;}
   const data=pendingAdminStudent;
   adminStudent=data;
-  const studentCode=data.student_code || data["student's_id"] || data.id;
-  currentSession=null;
-  $('adminStudentMsg').textContent='Student confirmed. You can enter scores without selecting a question.';
+  const studentCode=String(data.student_code || data["student's_id"] || data.id || '').trim();
+  if(!studentCode){msg($('adminStudentMsg'),'The selected student has no student ID.');return;}
+  // Automatically find the active session/question. The question remains hidden in the UI.
+  const {data:sessions,error}=await sb.from('competition_sessions')
+    .select('id,student_id,question_id,status,is_active,started_at,created_at')
+    .eq('student_id',studentCode)
+    .order('started_at',{ascending:false,nullsFirst:false})
+    .order('created_at',{ascending:false})
+    .limit(20);
+  if(error){msg($('adminStudentMsg'),'Could not check active question: '+error.message);return;}
+  const active=(sessions||[]).find(s=>s.question_id && (
+    s.is_active===true || String(s.status||'').toLowerCase()==='active'
+  ));
+  if(!active){
+    currentSession=null;
+    msg($('adminStudentMsg'),'Student confirmed, but no active question session was found for this student. Start/assign the question in the Judge 1 workflow first.');
+    $('adminStudentMsg').classList.remove('hidden');
+    pendingAdminStudent=null;
+    return;
+  }
+  currentSession=active;
+  $('adminStudentMsg').textContent='Student confirmed. Active question linked automatically; it is hidden from this score-entry screen.';
   $('adminStudentMsg').classList.remove('hidden','error');
   $('adminStudentMsg').classList.add('success');
   await adminLoadComments(studentCode);
-  await adminLoadExistingScores(studentCode,null);
+  await adminLoadExistingScores(studentCode,active.question_id);
   pendingAdminStudent=null;
 }
 async function adminLoadComments(id){const {data,error}=await sb.from('judge_comments').select('judge_id,comment,created_at').eq('student_id',id).order('created_at',{ascending:false});if(error){$('adminComments').textContent=error.message;return}$('adminComments').innerHTML=(data||[]).map(x=>`<div class="feature"><b>Judge ${({3:1,4:2,5:3,6:4}[x.judge_id]||x.judge_id)}</b><br>${esc(x.comment)}<div class="small">${esc(x.created_at)}</div></div>`).join('')||'No comments.'}
@@ -793,33 +835,61 @@ async function adminLoadExistingScores(studentId,qid){
   });
   updateAdminTotal();
 }
-function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
-['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updateAdminTotal()}));
+function updateAdminTotal(){
+  const fields=[1,2,3,4].map(i=>$('scoreJ'+i));
+  const values=fields.map(f=>f.value.trim()===''?null:Number(f.value));
+  const invalid=values.some(v=>v!==null&&(!Number.isFinite(v)||v<0||v>100));
+  if(invalid){$('adminTotal').textContent='—';$('adminAverage').textContent='—';return}
+  const nums=values.map(v=>v===null?0:v);
+  const total=nums.reduce((a,b)=>a+b,0);
+  $('adminTotal').textContent=total.toFixed(2).replace(/\.00$/,'');
+  $('adminAverage').textContent=(total/4).toFixed(2);
+}
+['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>{
+  const field=$(id);
+  if(field){
+    field.type='number'; field.min='0'; field.max='100'; field.step='0.5'; field.inputMode='decimal';
+    field.addEventListener('input',()=>{
+      const value=field.value.trim()===''?null:Number(field.value);
+      const invalid=value!==null&&(!Number.isFinite(value)||value<0||value>100);
+      field.setCustomValidity(invalid?'Score must be between 0 and 100.':'');
+      field.setAttribute('aria-invalid',invalid?'true':'false');
+      field.style.borderColor=invalid?'#c62828':'';
+      const status=$('adminScoreMsg');
+      if(invalid){msg(status,'Error: each judge score must be between 0 and 100.');}
+      else if(status && status.textContent.includes('between 0 and 100')){status.classList.add('hidden');}
+      updateAdminTotal();
+    });
+  }
+});
 async function saveAdminScores(){
-  if(!adminStudent){msg($('adminScoreMsg'),'Search for and confirm a student first.');return}
-  const studentCode=adminStudent.student_code || adminStudent["student's_id"] || adminStudent.id;
-  if(!studentCode){msg($('adminScoreMsg'),'The selected student has no student ID.');return}
+  if(!adminStudent){msg($('adminScoreMsg'),'Search for and confirm a student first.');return;}
+  if(!currentSession || !currentSession.question_id){
+    msg($('adminScoreMsg'),'No active question is assigned to this student. Assign/start the question first; you do not need to select it here.');
+    return;
+  }
+  const studentCode=String(adminStudent.student_code || adminStudent["student's_id"] || adminStudent.id || '').trim();
   const fields=['scoreJ1','scoreJ2','scoreJ3','scoreJ4'];
-  if(fields.some(id=>$(id).value.trim()==='')){msg($('adminScoreMsg'),'Enter all four judges’ scores before saving.');return}
+  if(fields.some(id=>$(id).value.trim()==='')){
+    msg($('adminScoreMsg'),'Enter all four judges’ scores before saving.');return;
+  }
   const vals=fields.map(id=>Number($(id).value));
-  if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Error: each judge score must be between 0 and 100.');return}
+  if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){
+    msg($('adminScoreMsg'),'Error: each judge score must be between 0 and 100. Correct the highlighted values before saving.');return;
+  }
   for(let i=0;i<4;i++){
     const judgeId=3+i;
-    let lookup=sb.from('scores').select('id').eq('student_id',String(studentCode)).eq('judge_id',judgeId);
-    if(currentSession?.question_id) lookup=lookup.eq('question_id',currentSession.question_id);
-    else lookup=lookup.is('question_id',null);
-    const {data:old,error:lookupError}=await lookup.limit(1).maybeSingle();
-    if(lookupError){msg($('adminScoreMsg'),lookupError.message);return}
-    const payload={student_id:String(studentCode),judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()};
-    if(currentSession?.question_id)payload.question_id=currentSession.question_id;
+    const {data:old,error:lookupError}=await sb.from('scores').select('id')
+      .eq('student_id',studentCode).eq('question_id',currentSession.question_id).eq('judge_id',judgeId).maybeSingle();
+    if(lookupError){msg($('adminScoreMsg'),'Could not check existing score: '+lookupError.message);return;}
+    const payload={student_id:studentCode,question_id:currentSession.question_id,judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()};
     let result;
     if(old)result=await sb.from('scores').update({score:vals[i],scored_at:payload.scored_at}).eq('id',old.id);
     else result=await sb.from('scores').insert(payload);
-    if(result.error){
-      msg($('adminScoreMsg'),'Could not save scores: '+result.error.message+(!currentSession?.question_id?' Your database may require question_id to be filled in.':''));return;
-    }
+    if(result.error){msg($('adminScoreMsg'),'Could not save scores: '+result.error.message);return;}
   }
   msg($('adminScoreMsg'),'Scores saved successfully.',true);
+  await adminLoadExistingScores(studentCode,currentSession.question_id);
 }
 const MMG_CATEGORIES=[
   '10 Juz',
@@ -1172,59 +1242,162 @@ async function logout(){await stopScanner();if(realtimeChannel)await sb.removeCh
 
 /* English/Arabic interface switch. English remains the default language. */
 
-let adminResultsCategory=null;
+let adminResultsCategory=null,adminResultsStage=null,adminResultsRows=[];
+let publicResultsCategory=null;
 function openAdminResultsCategory(category){
   adminResultsCategory=category;
   $('adminResultsStages').classList.remove('hidden');
   $('adminResultsBack').classList.remove('hidden');
   $('adminResultsTable').innerHTML='<p class="muted">Category: '+esc(category)+'. Choose Preliminaries or Final.</p>';
+  $('adminResultsActions').classList.add('hidden');
   $('adminResultsMsg').classList.add('hidden');
 }
 function backAdminResultsCategories(){
-  adminResultsCategory=null;
-  $('adminResultsStages').classList.add('hidden');
-  $('adminResultsBack').classList.add('hidden');
-  $('adminResultsTable').innerHTML='';
+  adminResultsCategory=null;adminResultsStage=null;adminResultsRows=[];
+  $('adminResultsStages').classList.add('hidden');$('adminResultsBack').classList.add('hidden');
+  $('adminResultsActions').classList.add('hidden');$('adminResultsTable').innerHTML='';
   $('adminResultsMsg').classList.add('hidden');
 }
-async function loadAdminResultsStage(stage){
+function renderAdminResultsEditor(rows,stage){
   const box=$('adminResultsTable');
-  box.innerHTML='<p class="muted">Loading results…</p>';
+  box.innerHTML=`<div class="stage-heading"><h3>${esc(adminResultsCategory)} — ${esc(stage==='Preliminary'?'Preliminaries':'Final')}</h3></div>
+  <p class="muted small">Review and edit student names, marks and display order. Changes remain private until published.</p>
+  <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Student name (editable)</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th><th>Judge 4</th><th>Total</th><th>Average</th></tr></thead><tbody>
+  ${rows.map((r,i)=>`<tr data-result-row="${i}"><td><input aria-label="Rank" type="number" min="1" step="1" value="${i+1}" data-field="rank" style="min-width:65px"></td><td>${esc(r.student_code||'—')}</td><td><input aria-label="Student name" data-field="full_name" value="${esc(r.full_name||'')}" style="min-width:150px"></td>${r.vals.map((v,j)=>`<td><input aria-label="Judge ${j+1}" data-score-index="${j}" type="number" min="0" max="100" step="0.5" value="${v===null?'':v}" style="min-width:80px"></td>`).join('')}<td data-total>${r.total}</td><td data-average>${r.average.toFixed(2)}</td></tr>`).join('')}
+  </tbody></table></div>`;
+  box.querySelectorAll('tbody tr').forEach((tr,i)=>{
+    tr.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{
+      const row=adminResultsRows[i];
+      if(inp.dataset.field==='rank')row.rank=Number(inp.value)||i+1;
+      else if(inp.dataset.field==='full_name')row.full_name=inp.value;
+      else if(inp.dataset.scoreIndex!==undefined){
+        const n=Number(inp.dataset.scoreIndex), raw=inp.value;
+        if(raw===''||!Number.isFinite(Number(raw))||Number(raw)<0||Number(raw)>100){
+          inp.setCustomValidity('Score must be between 0 and 100.'); inp.reportValidity(); return;
+        }
+        inp.setCustomValidity('');row.vals[n]=Number(raw);
+      }
+      row.total=row.vals.reduce((sum,v)=>sum+(v===null?0:Number(v)||0),0);
+      const count=row.vals.filter(v=>v!==null&&v!=='').length;
+      row.average=count?row.total/count:0;
+      tr.querySelector('[data-total]').textContent=row.total;
+      tr.querySelector('[data-average]').textContent=row.average.toFixed(2);
+    }));
+  });
+  $('adminResultsActions').classList.remove('hidden');
+}
+async function loadAdminResultsStage(stage){
+  adminResultsStage=stage;
+  const box=$('adminResultsTable');box.innerHTML='<p class="muted">Loading results…</p>';
+  $('adminResultsActions').classList.add('hidden');
   try{
+    // Prefer an already saved draft/published result so the Admin can review or revise it.
+    const {data:publication,error:pubError}=await sb.from('competition_results_publications')
+      .select('*').eq('competition_year',YEAR).eq('category',adminResultsCategory).eq('stage',stage).maybeSingle();
+    if(pubError && !/does not exist|schema cache/i.test(pubError.message))throw pubError;
+    if(publication?.results_json){
+      adminResultsRows=Array.isArray(publication.results_json)?publication.results_json:[];
+      renderAdminResultsEditor(adminResultsRows,stage);
+      msg($('adminResultsMsg'),publication.status==='Published'?'Currently published. Save Draft to keep changes private, or Publish Results to update the public version.':'Draft loaded. It is not visible to the public.');
+      return;
+    }
     const {data:students,error:studentError}=await sb.from('competition_registrations')
       .select('student_code,full_name,competition_category,competition_stage')
       .eq('competition_category',adminResultsCategory);
     if(studentError)throw studentError;
     const finalWanted=String(stage).toLowerCase()==='final';
     const stageStudents=(students||[]).filter(st=>{
-      const isFinal=String(st.competition_stage||'').toLowerCase()==='final';
+      const value=String(st.competition_stage||'').toLowerCase();
+      const isFinal=value==='final'||value.includes('final');
       return finalWanted===isFinal;
     });
     if(!stageStudents.length){box.innerHTML='<div class="empty-table">No students found for this category and stage.</div>';return;}
     const codes=stageStudents.map(st=>st.student_code).filter(Boolean);
     const {data:scores,error:scoreError}=await sb.from('scores')
-      .select('student_id,judge_id,score,question_id,created_at')
-      .in('student_id',codes).order('created_at',{ascending:false});
+      .select('student_id,judge_id,score,question_id,created_at').in('student_id',codes).order('created_at',{ascending:false});
     if(scoreError)throw scoreError;
-    const {data:judges}=await sb.from('judges').select('id,judge_number,name');
-    const judgeNumberById={};
-    (judges||[]).forEach(j=>{judgeNumberById[Number(j.id)]=Number(j.judge_number)||Number(j.id)-2;});
-    const rows=stageStudents.map(st=>{
+    const {data:judges,error:judgeError}=await sb.from('judges').select('id,judge_number,name');
+    if(judgeError)throw judgeError;
+    const judgeNumberById={};(judges||[]).forEach(j=>{judgeNumberById[Number(j.id)]=Number(j.judge_number)||Number(j.id)-2;});
+    adminResultsRows=stageStudents.map(st=>{
       const byJudge={};
       (scores||[]).filter(sc=>sc.student_id===st.student_code).forEach(sc=>{
-        const n=judgeNumberById[Number(sc.judge_id)] || ({3:1,4:2,5:3,6:4}[Number(sc.judge_id)]);
-        if(n>=1&&n<=4&&!Object.prototype.hasOwnProperty.call(byJudge,n))byJudge[n]=Number(sc.score)||0;
+        const n=judgeNumberById[Number(sc.judge_id)]||({3:1,4:2,5:3,6:4}[Number(sc.judge_id)]);
+        if(n>=1&&n<=4&&!Object.prototype.hasOwnProperty.call(byJudge,n))byJudge[n]=Number(sc.score);
       });
       const vals=[1,2,3,4].map(n=>byJudge[n]??null);
-      const total=vals.reduce((sum,v)=>sum+(v===null?0:v),0);
+      const total=vals.reduce((sum,v)=>sum+(v===null?0:Number(v)||0),0);
       const count=vals.filter(v=>v!==null).length;
-      return {st,vals,total,average:count?total/count:0,count};
-    }).sort((a,b)=>b.total-a.total);
-    box.innerHTML=`<div class="stage-heading"><h3>${esc(adminResultsCategory)} — ${esc(stage==='Preliminary'?'Preliminaries':'Final')}</h3><button type="button" class="secondary" style="width:auto" onclick="loadAdminResultsStage('${stage}')">↻ Refresh</button></div>
-      <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Name</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th><th>Judge 4</th><th>Total / 400</th><th>Average</th></tr></thead><tbody>
-      ${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.st.student_code||'—')}</td><td>${esc(r.st.full_name||'—')}</td>${r.vals.map(v=>`<td>${v===null?'—':v}</td>`).join('')}<td><b>${r.total.toFixed(2).replace(/\\.00$/,'')}</b></td><td>${r.average.toFixed(2)}</td></tr>`).join('')}
-      </tbody></table></div><p class="muted small">Rows with missing judge scores are provisional. Total and average use scores currently saved for each judge.</p>`;
-  }catch(e){box.innerHTML='';msg($('adminResultsMsg'),e.message||String(e));}
+      return {student_code:st.student_code,full_name:st.full_name,vals,total,average:count?total/count:0,rank:0};
+    }).sort((a,b)=>b.total-a.total).map((r,i)=>({...r,rank:i+1}));
+    renderAdminResultsEditor(adminResultsRows,stage);
+  }catch(e){
+    box.innerHTML='';msg($('adminResultsMsg'),(e.message||String(e))+' If the publication table is not created yet, run the accompanying SQL setup first.');
+  }
+}
+function collectAdminResultsEditor(){
+  const trs=$('adminResultsTable').querySelectorAll('tbody tr');
+  trs.forEach((tr,i)=>{
+    const row=adminResultsRows[i];if(!row)return;
+    const rank=Number(tr.querySelector('[data-field="rank"]')?.value);
+    row.rank=Number.isFinite(rank)&&rank>0?rank:i+1;
+    const name=tr.querySelector('[data-field="full_name"]')?.value;
+    if(name!==undefined)row.full_name=name.trim();
+    tr.querySelectorAll('[data-score-index]').forEach(inp=>{
+      const n=Number(inp.dataset.scoreIndex);
+      if(inp.value===''||!Number.isFinite(Number(inp.value))||Number(inp.value)<0||Number(inp.value)>100)throw new Error('Every judge score must be between 0 and 100. Leave no invalid values.');
+      row.vals[n]=Number(inp.value);
+    });
+    row.total=row.vals.reduce((sum,v)=>sum+(Number(v)||0),0);
+    const count=row.vals.filter(v=>v!==null&&v!=='').length;
+    row.average=count?row.total/count:0;
+  });
+  return adminResultsRows;
+}
+async function saveAdminResultsDraft(){
+  try{
+    if(!adminResultsCategory||!adminResultsStage)throw new Error('Choose a category and stage first.');
+    const rows=collectAdminResultsEditor();
+    const {data:{user}}=await sb.auth.getUser();
+    const payload={competition_year:YEAR,category:adminResultsCategory,stage:adminResultsStage,results_json:rows,status:'Draft',updated_by:user?.id||null,updated_at:new Date().toISOString()};
+    const {error}=await sb.from('competition_results_publications').upsert(payload,{onConflict:'competition_year,category,stage'});
+    if(error)throw error;
+    msg($('adminResultsMsg'),'Draft saved privately. It is not visible on the public dashboard.',true);
+  }catch(e){msg($('adminResultsMsg'),e.message||String(e));}
+}
+async function publishAdminResults(){
+  try{
+    if(!adminResultsCategory||!adminResultsStage)throw new Error('Choose a category and stage first.');
+    const rows=collectAdminResultsEditor();
+    if(!rows.length)throw new Error('There are no results to publish.');
+    const {data:{user}}=await sb.auth.getUser();
+    const now=new Date().toISOString();
+    const payload={competition_year:YEAR,category:adminResultsCategory,stage:adminResultsStage,results_json:rows,status:'Published',updated_by:user?.id||null,updated_at:now,published_at:now};
+    const {error}=await sb.from('competition_results_publications').upsert(payload,{onConflict:'competition_year,category,stage'});
+    if(error)throw error;
+    msg($('adminResultsMsg'),'Results published. The public dashboard can now display this version.',true);
+  }catch(e){msg($('adminResultsMsg'),e.message||String(e));}
+}
+function openPublicResultsCategory(category){
+  publicResultsCategory=category;$('publicResultStages').classList.remove('hidden');$('publicResultsBack').classList.remove('hidden');
+  $('publicResultsTable').innerHTML='<p class="muted">'+esc(category)+': choose Preliminaries or Final.</p>';$('publicResultsMsg').classList.add('hidden');
+}
+function backPublicResultsCategories(){
+  publicResultsCategory=null;$('publicResultStages').classList.add('hidden');$('publicResultsBack').classList.add('hidden');$('publicResultsTable').innerHTML='';$('publicResultsMsg').classList.add('hidden');
+}
+async function loadPublicResultsStage(stage){
+  const box=$('publicResultsTable');box.innerHTML='<p class="muted">Loading published results…</p>';
+  try{
+    const {data,error}=await sb.from('competition_results_publications').select('category,stage,results_json,status,published_at')
+      .eq('competition_year',YEAR).eq('category',publicResultsCategory).eq('stage',stage).eq('status','Published').maybeSingle();
+    if(error)throw error;
+    if(!data){box.innerHTML='<div class="status">No results have been published for this category and stage yet.</div>';return;}
+    const rows=Array.isArray(data.results_json)?data.results_json:[];
+    box.innerHTML=`<h3>${esc(publicResultsCategory)} — ${esc(stage==='Preliminary'?'Preliminaries':'Final')}</h3>
+      <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Name</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th><th>Judge 4</th><th>Total / 400</th><th>Average / 100</th></tr></thead><tbody>
+      ${rows.slice().sort((a,b)=>(Number(a.rank)||9999)-(Number(b.rank)||9999)).map((r,i)=>`<tr><td>${Number(r.rank)||i+1}</td><td>${esc(r.student_code||'—')}</td><td>${esc(r.full_name||'—')}</td>${(r.vals||[]).map(v=>`<td>${v===null||v===undefined?'—':Number(v)}</td>`).join('')}<td><b>${Number(r.total||0).toFixed(2).replace(/\\.00$/,'')}</b></td><td>${Number(r.average||0).toFixed(2)}</td></tr>`).join('')}
+      </tbody></table></div><p class="muted small">Published ${data.published_at?new Date(data.published_at).toLocaleString():'by MMG administration'}.</p>`;
+  }catch(e){box.innerHTML='';msg($('publicResultsMsg'),(e.message||String(e))+' Results publishing requires the results-publication table and its access policies.');}
 }
 
 const MMG_TRANSLATIONS = {
@@ -1314,7 +1487,7 @@ function applyMMGTranslations(){
       const english = reverse[trimmed];
       if(english) translated = original.replace(trimmed, english);
     }
-    if(node.nodeValue !== translated) node.nodeValue = translated;
+    if(node.nodeValue !== translated) if(node.nodeValue !== translated) node.nodeValue = translated;
   }
   document.querySelectorAll("input[placeholder],textarea[placeholder]").forEach(el=>{
     if(!el.dataset.mmgPlaceholderEn) el.dataset.mmgPlaceholderEn = el.placeholder;
@@ -1333,6 +1506,27 @@ function applyMMGTranslations(){
 }
 
 
+
+
+function installScoreRangeValidation(){
+  ['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>{
+    const el=$(id); if(!el || el.dataset.rangeGuardInstalled) return;
+    el.dataset.rangeGuardInstalled='1';
+    el.addEventListener('input',()=>{
+      const raw=el.value;
+      const invalid=raw!=='' && (!Number.isFinite(Number(raw)) || Number(raw)<0 || Number(raw)>100);
+      el.setCustomValidity(invalid?'Score must be between 0 and 100.':'');
+      el.setAttribute('aria-invalid',invalid?'true':'false');
+      el.style.borderColor=invalid?'#c62828':'';
+      if(invalid){
+        const note=$('adminScoreMsg');
+        if(note)msg(note,'Error: each judge score must be between 0 and 100.',false);
+      }
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded',installScoreRangeValidation);
+setTimeout(installScoreRangeValidation,0);
 
 </script>
 </body>
