@@ -277,13 +277,33 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
 
 <div id="adminApp" class="hidden">
   <div class="card topbar"><div><h1>Admin Panel</h1><div id="adminName" class="muted">Administrator</div></div><button style="width:auto" class="secondary" onclick="logout()">Log out</button></div>
-  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')">➕ Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
+  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('results')">Results</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')">➕ Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
-    <div class="card fullscreen-wrap" id="adminQuestionWrap"><div class="topbar"><h2>Current Question</h2><button style="width:auto" class="secondary" onclick="toggleFullscreen('adminQuestionWrap')">⛶ Full screen</button></div><div id="adminQuestionBox" class="muted">Load a student to see the active question.</div></div>
     <div class="card"><h2>Judges' Comments</h2><div id="adminComments" class="muted">Load a student.</div></div>
     <div class="card"><h2>Enter Judge Scores</h2><div class="score-grid"><div><label id="scoreLabelJ1">Judge 1</label><input id="scoreJ1" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ2">Judge 2</label><input id="scoreJ2" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ3">Judge 3</label><input id="scoreJ3" type="number" min="0" max="100" step="0.01"></div><div><label id="scoreLabelJ4">Judge 4</label><input id="scoreJ4" type="number" min="0" max="100" step="0.01"></div></div><div class="score-summary"><div class="feature"><div class="muted">Total / 400</div><div id="adminTotal" class="big">0</div></div><div class="feature"><div class="muted">Average / 100</div><div id="adminAverage" class="big">0</div></div></div><button onclick="saveAdminScores()">Save Scores</button><div id="adminScoreMsg" class="status hidden"></div></div>
+  </section>
+
+  <section id="admin-results" class="admin-page hidden">
+    <div class="card">
+      <h2>🏆 Results</h2>
+      <p class="muted">Choose a competition category, then view Preliminary or Final results from saved scores.</p>
+      <div id="adminResultsCategories" class="grid">
+        <button type="button" onclick="openAdminResultsCategory('10 Juz')">10 Juz</button>
+        <button type="button" onclick="openAdminResultsCategory('20 Juz')">20 Juz</button>
+        <button type="button" onclick="openAdminResultsCategory('30 Juz')">30 Juz</button>
+        <button type="button" onclick="openAdminResultsCategory(\"Qiraat (As'hab Attawassut)\")">Qiraat</button>
+        <button type="button" onclick="openAdminResultsCategory('Tafsir')">Tafsir</button>
+      </div>
+      <div id="adminResultsStages" class="grid hidden" style="margin-top:14px">
+        <button type="button" onclick="loadAdminResultsStage('Preliminary')">Preliminaries</button>
+        <button type="button" onclick="loadAdminResultsStage('Final')">Final</button>
+      </div>
+      <div id="adminResultsBack" class="hidden" style="margin-top:12px"><button type="button" class="secondary" onclick="backAdminResultsCategories()">← All Categories</button></div>
+      <div id="adminResultsTable" style="margin-top:14px"></div>
+      <div id="adminResultsMsg" class="status hidden"></div>
+    </div>
   </section>
 
   <section id="admin-registrations" class="admin-page hidden">
@@ -396,7 +416,7 @@ function showAdmin(page){
   let dashboard=$('adminDashboard');
   if(!dashboard){
     dashboard=document.createElement('div');dashboard.id='adminDashboard';dashboard.className='card hidden';
-    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('registrations')">Registrations</button><button type="button" onclick="showAdmin('add-student')">➕ Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
+    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('results')">Results</button><button type="button" onclick="showAdmin('registrations')">Registrations</button><button type="button" onclick="showAdmin('add-student')">➕ Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
     const nav=app.querySelector(':scope > .nav');nav.insertAdjacentElement('afterend',dashboard);
   }
   // Keep the existing Add Student form and its IDs/functions, but give it its own full-page section.
@@ -748,22 +768,31 @@ async function confirmAdminStudent(){
   if(!pendingAdminStudent){msg($('adminStudentMsg'),'Search and select a student first.');return;}
   const data=pendingAdminStudent;
   adminStudent=data;
-  const id=data.student_code;
-  msg($('adminStudentMsg'),'Student confirmed.',true);
-  const {data:q}=await sb.from('judge_question_view').select('*').eq('student_id',id).eq('status','active').limit(1).maybeSingle();
-  if(q){
-    $('adminQuestionBox').innerHTML=`<b>Question ${esc(q.question_number)}</b> — ${esc(q.title||'')}<br>Student: ${esc(id)}<br>Riwayah: ${esc(q.riwayah||'')}<br>${esc(q.surah||'')} ${esc(q.ayah_start||'')}–${esc(q.ayah_end||'')}`;
-    currentSession=q;
-  }else{
-    $('adminQuestionBox').textContent='No active question.';
-    currentSession=null;
-  }
-  await adminLoadComments(id);
-  await adminLoadExistingScores(id,q?.question_id);
+  const studentCode=data.student_code || data["student's_id"] || data.id;
+  currentSession=null;
+  $('adminStudentMsg').textContent='Student confirmed. You can enter scores without selecting a question.';
+  $('adminStudentMsg').classList.remove('hidden','error');
+  $('adminStudentMsg').classList.add('success');
+  await adminLoadComments(studentCode);
+  await adminLoadExistingScores(studentCode,null);
   pendingAdminStudent=null;
 }
 async function adminLoadComments(id){const {data,error}=await sb.from('judge_comments').select('judge_id,comment,created_at').eq('student_id',id).order('created_at',{ascending:false});if(error){$('adminComments').textContent=error.message;return}$('adminComments').innerHTML=(data||[]).map(x=>`<div class="feature"><b>Judge ${({3:1,4:2,5:3,6:4}[x.judge_id]||x.judge_id)}</b><br>${esc(x.comment)}<div class="small">${esc(x.created_at)}</div></div>`).join('')||'No comments.'}
-async function adminLoadExistingScores(studentId,qid){if(!qid)return;const {data}=await sb.from('scores').select('judge_id,score').eq('student_id',studentId).eq('question_id',qid);$('scoreJ1').value='';$('scoreJ2').value='';$('scoreJ3').value='';$('scoreJ4').value='';(data||[]).forEach(x=>{const m={3:'scoreJ1',4:'scoreJ2',5:'scoreJ3',6:'scoreJ4'}[x.judge_id];if(m)$(m).value=x.score});updateAdminTotal()}
+async function adminLoadExistingScores(studentId,qid){
+  $('scoreJ1').value='';$('scoreJ2').value='';$('scoreJ3').value='';$('scoreJ4').value='';
+  let query=sb.from('scores').select('judge_id,score,question_id,created_at').eq('student_id',studentId).order('created_at',{ascending:false}).limit(100);
+  const {data,error}=await query;
+  if(error){msg($('adminScoreMsg'),error.message);return;}
+  // Existing records may contain scores from more than one question. Use the most
+  // recently saved score per judge for this student, so Admin does not need a question.
+  const judgeToInput={3:'scoreJ1',4:'scoreJ2',5:'scoreJ3',6:'scoreJ4'};
+  const used=new Set();
+  (data||[]).forEach(row=>{
+    const input=judgeToInput[Number(row.judge_id)];
+    if(input && !used.has(input)){ $(input).value=row.score; used.add(input); }
+  });
+  updateAdminTotal();
+}
 function updateAdminTotal(){const a=[1,2,3,4].map(i=>Number($('scoreJ'+i).value)||0);const t=a.reduce((x,y)=>x+y,0);$('adminTotal').textContent=t.toFixed(2).replace(/\.00$/,'');$('adminAverage').textContent=(t/4).toFixed(2)}
 ['scoreJ1','scoreJ2','scoreJ3','scoreJ4'].forEach(id=>document.addEventListener('input',e=>{if(e.target.id===id)updateAdminTotal()}));
 async function saveAdminScores(){if(!adminStudent||!currentSession){msg($('adminScoreMsg'),'Load a student with an active question first.');return}const vals=[Number($('scoreJ1').value),Number($('scoreJ2').value),Number($('scoreJ3').value),Number($('scoreJ4').value)];if(vals.some(x=>!Number.isFinite(x)||x<0||x>100)){msg($('adminScoreMsg'),'Each score must be between 0 and 100.');return}for(let i=0;i<4;i++){const judgeId=3+i;const {data:old}=await sb.from('scores').select('id').eq('student_id',adminStudent["student's_id"]).eq('question_id',currentSession.question_id).eq('judge_id',judgeId).maybeSingle();let error;if(old){({error}=await sb.from('scores').update({score:vals[i],scored_at:new Date().toISOString()}).eq('id',old.id))}else{({error}=await sb.from('scores').insert({student_id:adminStudent["student's_id"],question_id:currentSession.question_id,judge_id:judgeId,score:vals[i],scored_at:new Date().toISOString()}))}if(error){msg($('adminScoreMsg'),error.message);return}}msg($('adminScoreMsg'),'Scores saved successfully.',true)}
@@ -1117,6 +1146,62 @@ async function logout(){await stopScanner();if(realtimeChannel)await sb.removeCh
 (async()=>{const {data:{session}}=await sb.auth.getSession();if(session){try{await openAuthenticatedApp()}catch(e){console.error(e);await sb.auth.signOut()}}else{showPublic('home');loadCompetitionInfo()}})();
 
 /* English/Arabic interface switch. English remains the default language. */
+
+let adminResultsCategory=null;
+function openAdminResultsCategory(category){
+  adminResultsCategory=category;
+  $('adminResultsStages').classList.remove('hidden');
+  $('adminResultsBack').classList.remove('hidden');
+  $('adminResultsTable').innerHTML='<p class="muted">Category: '+esc(category)+'. Choose Preliminaries or Final.</p>';
+  $('adminResultsMsg').classList.add('hidden');
+}
+function backAdminResultsCategories(){
+  adminResultsCategory=null;
+  $('adminResultsStages').classList.add('hidden');
+  $('adminResultsBack').classList.add('hidden');
+  $('adminResultsTable').innerHTML='';
+  $('adminResultsMsg').classList.add('hidden');
+}
+async function loadAdminResultsStage(stage){
+  const box=$('adminResultsTable');
+  box.innerHTML='<p class="muted">Loading results…</p>';
+  try{
+    const {data:students,error:studentError}=await sb.from('competition_registrations')
+      .select('student_code,full_name,competition_category,competition_stage')
+      .eq('competition_category',adminResultsCategory);
+    if(studentError)throw studentError;
+    const finalWanted=String(stage).toLowerCase()==='final';
+    const stageStudents=(students||[]).filter(st=>{
+      const isFinal=String(st.competition_stage||'').toLowerCase()==='final';
+      return finalWanted===isFinal;
+    });
+    if(!stageStudents.length){box.innerHTML='<div class="empty-table">No students found for this category and stage.</div>';return;}
+    const codes=stageStudents.map(st=>st.student_code).filter(Boolean);
+    const {data:scores,error:scoreError}=await sb.from('scores')
+      .select('student_id,judge_id,score,question_id,created_at')
+      .in('student_id',codes).order('created_at',{ascending:false});
+    if(scoreError)throw scoreError;
+    const {data:judges}=await sb.from('judges').select('id,judge_number,name');
+    const judgeNumberById={};
+    (judges||[]).forEach(j=>{judgeNumberById[Number(j.id)]=Number(j.judge_number)||Number(j.id)-2;});
+    const rows=stageStudents.map(st=>{
+      const byJudge={};
+      (scores||[]).filter(sc=>sc.student_id===st.student_code).forEach(sc=>{
+        const n=judgeNumberById[Number(sc.judge_id)] || ({3:1,4:2,5:3,6:4}[Number(sc.judge_id)]);
+        if(n>=1&&n<=4&&!Object.prototype.hasOwnProperty.call(byJudge,n))byJudge[n]=Number(sc.score)||0;
+      });
+      const vals=[1,2,3,4].map(n=>byJudge[n]??null);
+      const total=vals.reduce((sum,v)=>sum+(v===null?0:v),0);
+      const count=vals.filter(v=>v!==null).length;
+      return {st,vals,total,average:count?total/count:0,count};
+    }).sort((a,b)=>b.total-a.total);
+    box.innerHTML=`<div class="stage-heading"><h3>${esc(adminResultsCategory)} — ${esc(stage==='Preliminary'?'Preliminaries':'Final')}</h3><button type="button" class="secondary" style="width:auto" onclick="loadAdminResultsStage('${stage}')">↻ Refresh</button></div>
+      <div style="overflow-x:auto"><table class="registration-table"><thead><tr><th>Rank</th><th>Student ID</th><th>Name</th><th>Judge 1</th><th>Judge 2</th><th>Judge 3</th><th>Judge 4</th><th>Total / 400</th><th>Average</th></tr></thead><tbody>
+      ${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.st.student_code||'—')}</td><td>${esc(r.st.full_name||'—')}</td>${r.vals.map(v=>`<td>${v===null?'—':v}</td>`).join('')}<td><b>${r.total.toFixed(2).replace(/\\.00$/,'')}</b></td><td>${r.average.toFixed(2)}</td></tr>`).join('')}
+      </tbody></table></div><p class="muted small">Rows with missing judge scores are provisional. Total and average use scores currently saved for each judge.</p>`;
+  }catch(e){box.innerHTML='';msg($('adminResultsMsg'),e.message||String(e));}
+}
+
 const MMG_TRANSLATIONS = {
 "Home":"الرئيسية",
 "🏆 2026/1448 Competition":"🏆 مسابقة 2026/1448",
@@ -1220,6 +1305,13 @@ function applyMMGTranslations(){
     if(!el.dataset.mmgValueEn) el.dataset.mmgValueEn=el.value;
     el.value = mmgLanguage==="ar" ? (MMG_TRANSLATIONS[el.dataset.mmgValueEn]||el.dataset.mmgValueEn) : (reverse[el.value]||el.dataset.mmgValueEn);
   });
+}
+
+
+// Keep Arabic applied to content rendered later by Supabase or navigation.
+if(!window.__mmgTranslationObserver){
+  window.__mmgTranslationObserver=new MutationObserver(()=>{if(mmgLanguage==='ar')applyMMGTranslations();});
+  window.__mmgTranslationObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
 }
 
 </script>
