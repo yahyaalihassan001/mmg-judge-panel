@@ -1,0 +1,12 @@
+/* MMG test theme overrides — safe visual-only changes */
+#adminApp > .nav.admin-nav button,
+#adminApp .admin-nav button {
+  border: 3px solid #f4c430 !important;
+  outline: 1px solid rgba(244, 196, 48, 0.45) !important;
+  outline-offset: -2px !important;
+  box-shadow: 0 0 0 1px rgba(244, 196, 48, 0.2) !important;
+}
+#adminApp .admin-nav .add-student-plus {
+  color: #f4c430 !important;
+  font-weight: 900 !important;
+}
