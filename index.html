@@ -312,6 +312,12 @@ tbody tr:hover{background:#fff8df}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 @media print{body{background:#fff}.hero{box-shadow:none}}
 
+
+/* Admin navigation: one menu only, with yellow button outlines. */
+#adminApp > .admin-nav button{border:2px solid var(--mmg-yellow,#f5c842)!important;box-shadow:0 2px 7px rgba(13,44,82,.08)}
+#adminApp > .admin-nav button:hover{border-color:#e5b82e!important;box-shadow:0 0 0 2px rgba(245,200,66,.18)}
+.add-student-plus{color:var(--mmg-yellow,#f5c842)!important;font-weight:900;font-size:1.18em;display:inline-block;margin-right:4px;text-shadow:0 0 1px rgba(13,44,82,.25)}
+
 </style>
 </head>
 <body>
@@ -447,7 +453,7 @@ tbody tr:hover{background:#fff8df}
 
 <div id="adminApp" class="hidden">
   <div class="card topbar"><div><h1>Admin Panel</h1><div id="adminName" class="muted">Administrator</div></div><button style="width:auto" class="secondary" onclick="logout()">Log out</button></div>
-  <div class="nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('results')">Results</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')">➕ Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
+  <div class="nav admin-nav"><button onclick="showAdmin('scores')">Scores</button><button onclick="showAdmin('results')">Results</button><button onclick="showAdmin('registrations')">Registrations</button><button onclick="showAdmin('add-student')"><span class="add-student-plus">＋</span> Add Student</button><button onclick="showAdmin('judges')">Judges</button><button onclick="showAdmin('competition')">Competition Information</button></div>
 
   <section id="admin-scores" class="admin-page">
     <div class="card"><h2>Admin — Score Entry</h2><p class="muted">Only Admin enters the four judges' scores. Judges cannot enter or view scores.</p><label>Student ID or Student Name</label><input id="adminStudentId" placeholder="Enter MMG/26/001 or a student name" autocomplete="off"><button onclick="adminLoadStudent()">Search Student</button><div id="adminStudentMsg" class="status hidden"></div><div id="adminStudentCard" class="feature hidden"></div></div>
@@ -590,7 +596,7 @@ function showAdmin(page){
   let dashboard=$('adminDashboard');
   if(!dashboard){
     dashboard=document.createElement('div');dashboard.id='adminDashboard';dashboard.className='card hidden';
-    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section. It will open full-page.</p><div class="grid"><button type="button" onclick="showAdmin('scores')">Scores</button><button type="button" onclick="showAdmin('results')">Results</button><button type="button" onclick="showAdmin('registrations')">Registrations</button><button type="button" onclick="showAdmin('add-student')">➕ Add Student</button><button type="button" onclick="showAdmin('judges')">Judges</button><button type="button" onclick="showAdmin('competition')">Competition Information</button></div>`;
+    dashboard.innerHTML=`<h2>Admin Dashboard</h2><p class="muted">Choose a section from the buttons above. Each section opens full-page.</p>`;
     const nav=app.querySelector(':scope > .nav');nav.insertAdjacentElement('afterend',dashboard);
   }
   // Keep the existing Add Student form and its IDs/functions, but give it its own full-page section.
