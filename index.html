@@ -319,25 +319,7 @@ tbody tr:hover{background:#fff8df}
 .add-student-plus{color:var(--mmg-yellow,#f5c842)!important;font-weight:900;font-size:1.18em;display:inline-block;margin-right:4px;text-shadow:0 0 1px rgba(13,44,82,.25)}
 
 </style>
-<style>
-
-/* MMG TEST BRANCH: stronger yellow borders for navigation buttons */
-.nav button {
-  border: 2px solid #f4c430 !important;
-  box-shadow: 0 0 0 1px rgba(244,196,48,.18) !important;
-}
-/* Keep the Add Student button outline yellow and make its plus sign yellow */
-button[onclick*="add-student"],
-button[onclick*="showAdmin('add-student')"],
-button[onclick*='showAdmin("add-student")'] {
-  border: 2px solid #f4c430 !important;
-}
-button[onclick*="showAdmin('add-student')"]::first-letter,
-button[onclick*='showAdmin("add-student")']::first-letter {
-  color: #f4c430 !important;
-}
-
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <button id="languageToggle" type="button" onclick="toggleMMGLanguage()">العربية</button>
@@ -347,7 +329,7 @@ button[onclick*='showAdmin("add-student")']::first-letter {
   <div class="card hero">
     <div class="arabic">مجموعة الرحمة الإسلامية</div>
     <h1>Muslim Mercy Group</h1>
-    <h2>Qur'an Competition 2026 / 1448 AH</h2>
+    <h2>Holy Quran Competition</h2>
     <div class="muted">Qur'an • Qiraat • Tafsir</div>
   </div>
 
