@@ -212,12 +212,8 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
       <h2>📝 Competition Registration — 2026 / 1448</h2>
       <p class="muted">Register students from a madrasa or register an independent student without madrasa details.</p>
       <div class="status">Please enter accurate information. Each successful registration is added immediately to the Registered Students list.</div>
-      <label>Registration Type * — select one option</label>
-      <div class="registration-type-options" role="radiogroup" aria-label="Registration Type" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:8px 0 16px">
-        <label for="regTypeMadrasa" class="feature" style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0"><input id="regTypeMadrasa" type="radio" name="regTypeChoice" value="Madrasa" checked onchange="syncRegistrationType()" style="width:auto;margin:0"><span><strong>Madrasa</strong><br><span class="muted">Register through a madrasa</span></span></label>
-        <label for="regTypeIndependent" class="feature" style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0"><input id="regTypeIndependent" type="radio" name="regTypeChoice" value="Independent" onchange="syncRegistrationType()" style="width:auto;margin:0"><span><strong>Independent</strong><br><span class="muted">Register without a madrasa</span></span></label>
-      </div>
-      <input id="regType" type="hidden" value="Madrasa">
+      <label for="regType">Registration Type *</label>
+      <select id="regType" onchange="toggleRegistrationType()" required><option value="Madrasa">Madrasa</option><option value="Independent">Independent</option></select>
       <div id="madrasaDetails">
       <div class="row">
         <div class="field"><label>Madrasa Name *</label><input id="regMadrasaName" required></div>
@@ -250,7 +246,7 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
       <button type="button" onclick="openPublicResultsCategory('10 Juz')">10 Juz</button>
       <button type="button" onclick="openPublicResultsCategory('20 Juz')">20 Juz</button>
       <button type="button" onclick="openPublicResultsCategory('30 Juz')">30 Juz</button>
-      <button type="button" onclick="openPublicResultsCategory(\"Qiraat (As'hab Attawassut)\")">Qiraat</button>
+      <button type="button" onclick="openPublicResultsCategory(&quot;Qiraat (As'hab Attawassut)&quot;)">Qiraat</button>
       <button type="button" onclick="openPublicResultsCategory('Tafsir')">Tafsir</button>
     </div>
     <div id="publicResultStages" class="grid hidden" style="margin-top:14px">
@@ -328,7 +324,7 @@ html[dir="rtl"] .section-back{margin-left:0;margin-right:0}
         <button type="button" onclick="openAdminResultsCategory('10 Juz')">10 Juz</button>
         <button type="button" onclick="openAdminResultsCategory('20 Juz')">20 Juz</button>
         <button type="button" onclick="openAdminResultsCategory('30 Juz')">30 Juz</button>
-        <button type="button" onclick="openAdminResultsCategory(\"Qiraat (As'hab Attawassut)\")">Qiraat</button>
+        <button type="button" onclick="openAdminResultsCategory(&quot;Qiraat (As'hab Attawassut)&quot;)">Qiraat</button>
         <button type="button" onclick="openAdminResultsCategory('Tafsir')">Tafsir</button>
       </div>
       <div id="adminResultsStages" class="grid hidden" style="margin-top:14px">
@@ -502,10 +498,6 @@ function togglePassportField(input){
   wrap.classList.toggle('hidden',!required);
   field.required=required;
   if(!required)field.value='';
-}
-function syncRegistrationType(){
-  $('regType').value=$('regTypeIndependent').checked?'Independent':'Madrasa';
-  toggleRegistrationType();
 }
 function toggleRegistrationType(){
   const independent=$('regType').value==='Independent';
@@ -1258,36 +1250,7 @@ async function setRegistrationStage(registrationId,newStage){
 async function loadAdminCompetition(){const {data}=await sb.from('competition_public_info').select('*').eq('competition_year',YEAR).maybeSingle();if(!data)return;const map={ciTitle:'title',ciSubtitle:'subtitle',ciIntroduction:'introduction',ciObjectives:'objectives',ciEligibility:'eligibility',ciRegistration:'registration_info',ciDates:'competition_dates',ciVenue:'venue',ciCategories:'categories',ciRules:'rules',ciPrizes:'prizes',ciAnnouncements:'announcements',ciFaq:'faq',ciContact:'contact_info',ciStatus:'status'};Object.keys(map).forEach(id=>{$(id).value=data[map[id]]||''})}
 async function saveCompetitionInfo(){const payload={competition_year:YEAR,hijri_year:'1448',title:$('ciTitle').value.trim(),subtitle:$('ciSubtitle').value.trim(),introduction:$('ciIntroduction').value,objectives:$('ciObjectives').value,eligibility:$('ciEligibility').value,registration_info:$('ciRegistration').value,competition_dates:$('ciDates').value,venue:$('ciVenue').value,categories:$('ciCategories').value,rules:$('ciRules').value,prizes:$('ciPrizes').value,announcements:$('ciAnnouncements').value,faq:$('ciFaq').value,contact_info:$('ciContact').value,status:$('ciStatus').value,updated_at:new Date().toISOString()};const {error}=await sb.from('competition_public_info').upsert(payload,{onConflict:'competition_year'});if(error){msg($('ciMsg'),error.message);return}msg($('ciMsg'),'Competition information saved.',true)}
 async function logout(){await stopScanner();if(realtimeChannel)await sb.removeChannel(realtimeChannel);await sb.auth.signOut();location.reload()}
-// Direct public-page links: append #registration to open the registration form.
-(async()=>{
-  const requestedPage=(window.location.hash||'').replace(/^#/,'').trim().toLowerCase();
-  const publicPages=['home','competition','registration','results','about','contact'];
-  const {data:{session}}=await sb.auth.getSession();
-
-  // A public QR/link to registration should open the form even if this browser
-  // already has an admin/judge session saved.
-  if(requestedPage==='registration'){
-    showPublic('registration');
-    setTimeout(()=>{
-      const registrationSection=$('public-registration');
-      if(registrationSection) registrationSection.scrollIntoView({behavior:'smooth',block:'start'});
-    },150);
-    return;
-  }
-
-  if(session){
-    try{await openAuthenticatedApp()}
-    catch(e){
-      console.error(e);
-      await sb.auth.signOut();
-      showPublic(publicPages.includes(requestedPage)?requestedPage:'home');
-      if(!requestedPage||requestedPage==='home')loadCompetitionInfo();
-    }
-  }else{
-    showPublic(publicPages.includes(requestedPage)?requestedPage:'home');
-    loadCompetitionInfo();
-  }
-})();
+(async()=>{const {data:{session}}=await sb.auth.getSession();if(session){try{await openAuthenticatedApp()}catch(e){console.error(e);await sb.auth.signOut()}}else{showPublic('home');loadCompetitionInfo()}})();
 
 /* English/Arabic interface switch. English remains the default language. */
 
